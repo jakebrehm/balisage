@@ -9,19 +9,17 @@ from typing import Self
 class Classes:
     """Class for managing classes for HTML elements."""
 
+    DEFAULT_REPLACEMENTS = {" ": "-"}
+
     def __init__(
         self,
         *args: list[str],
     ) -> None:
         """Initializes the Classes object."""
 
-        # Initialize replacement lookup
-        self._replacements = {
-            " ": "-",
-        }
-
         # Initialize instance variables
         self._classes = OrderedDict()
+        self.reset_replacements()
 
         # Set the classes
         self.set(*args)
@@ -56,9 +54,27 @@ class Classes:
         self._replacements = replacements
         self.set(*self._classes.keys())
 
-    def add(self, name: str) -> None:
-        """Adds a class to the list of classes."""
-        self._classes[name] = self._sanitize_name(name)
+    def reset_replacements(self) -> None:
+        """Resets the replacements dictionary to its default value."""
+        self._replacements = self.DEFAULT_REPLACEMENTS
+
+    def add(self, *args: list[str]) -> None:
+        """Adds classes to the list of classes."""
+
+        # Determine the existing sanitized names
+        old_sanitized_names = list(self._classes.values())
+        # Determine the new sanitized names
+        new_original_names = args
+        new_sanitized_names = [self._sanitize_name(name) for name in args]
+        new_names = zip(new_original_names, new_sanitized_names)
+        # Check that duplicate classes aren't being added
+        filtered_names = {
+            new_original_name: new_sanitized_name
+            for new_original_name, new_sanitized_name in new_names
+            if new_sanitized_name not in old_sanitized_names
+        }
+        # Update the classes
+        self._classes.update(filtered_names)
 
     def set(self, *args: list[str]) -> None:
         """Sets the list of classes."""
@@ -70,15 +86,18 @@ class Classes:
         Returns the removed class (if it exists) as a tuple, otherwise None.
         The tuple is in the form of (class name, sanitized class name).
         """
+
+        # Try removing the class by its original name
         try:
             return (name, self._classes.pop(name))
         except KeyError:
             pass
-        try:
-            sanitized_name = self._sanitize_name(name)
-            return (sanitized_name, self._classes.pop(sanitized_name))
-        except KeyError:
-            raise KeyError(f"Class '{name}' not found.")
+        # Try removing the class by its sanitized name
+        for original_name, sanitized_name in self._classes.items():
+            if sanitized_name == self._sanitize_name(name):
+                return (original_name, self._classes.pop(original_name))
+        # If the class was not found, raise an exception
+        raise KeyError(f"Class '{name}' not found.")
 
     def clear(self) -> None:
         """Clears the list of classes."""
