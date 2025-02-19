@@ -2,8 +2,7 @@ from .elements.basic import Page
 from .elements.format import Div, HorizontalRule, LineBreak
 from .elements.image import Image
 from .elements.tables import Data, Header, Row, Table
-from .elements.text import Text
-from .structures.enums import TextType
+from .elements.text import Text, TextType
 
 __all__ = [
     "Page",

@@ -2,10 +2,20 @@
 Contains code for all text-related HTML elements.
 """
 
+from enum import Enum
 from typing import Any
 
 from ..core import HTMLBuilder
-from ..structures.enums import TextType
+
+
+class TextType(Enum):
+    P = "p"
+    H1 = "h1"
+    H2 = "h2"
+    H3 = "h3"
+    H4 = "h4"
+    H5 = "h5"
+    H6 = "h6"
 
 
 class Text(HTMLBuilder):
