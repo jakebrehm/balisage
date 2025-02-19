@@ -2,6 +2,8 @@
 Contains code for all formatting-related HTML elements.
 """
 
+from typing import Any
+
 from ..core import HTMLBuilder
 
 
@@ -11,7 +13,7 @@ class Image(HTMLBuilder):
     def __init__(
         self,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Image object."""
 

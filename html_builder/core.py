@@ -12,7 +12,7 @@ class HTMLBuilder(ABC):
     def __init__(
         self,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the HTMLTable object."""
 
@@ -171,5 +171,9 @@ class HTMLBuilder(ABC):
         return (" " + " ".join(result)) if result else ""
 
     def __str__(self) -> str:
-        """Gets a string representation of the object."""
+        """Gets a string version of the object."""
         return self.construct()
+
+    def __repr__(self) -> str:
+        """Gets a string representation of the object."""
+        return str(self)  # TODO: Implement

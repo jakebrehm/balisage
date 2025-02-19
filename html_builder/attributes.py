@@ -13,7 +13,7 @@ class Classes:
 
     def __init__(
         self,
-        *args: list[str],
+        *args: str,
     ) -> None:
         """Initializes the Classes object."""
 
@@ -58,7 +58,7 @@ class Classes:
         """Resets the replacements dictionary to its default value."""
         self._replacements = self.DEFAULT_REPLACEMENTS
 
-    def add(self, *args: list[str]) -> None:
+    def add(self, *args: str) -> None:
         """Adds classes to the list of classes."""
 
         # Determine the existing sanitized names
@@ -76,7 +76,7 @@ class Classes:
         # Update the classes
         self._classes.update(filtered_names)
 
-    def set(self, *args: list[str]) -> None:
+    def set(self, *args: str) -> None:
         """Sets the list of classes."""
         self._classes = {arg: self._sanitize_name(arg) for arg in args}
 

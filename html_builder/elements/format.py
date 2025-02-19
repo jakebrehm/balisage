@@ -10,7 +10,7 @@ from ..core import HTMLBuilder
 class LineBreak(HTMLBuilder):
     """Constructs an HTML line break."""
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """Initializes the LineBreak object."""
 
         # Initialize the builder
@@ -28,7 +28,7 @@ class HorizontalRule(HTMLBuilder):
     def __init__(
         self,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the HorizontalRule object."""
 
@@ -48,12 +48,12 @@ class Div(HTMLBuilder):
         self,
         data: Any | list[Any] | None = None,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Div object."""
 
         # Initialize the builder
-        super().__init__(classes, **kwargs)
+        super().__init__(classes=classes, **kwargs)
         self.tag = "div"
 
         # Set the data

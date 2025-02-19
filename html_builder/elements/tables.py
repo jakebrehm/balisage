@@ -2,12 +2,23 @@
 Contains code for all table-related HTML elements.
 """
 
+from __future__ import annotations
+
 from typing import Any, Self
 
-import numpy as np
-import pandas as pd
-
 from ..core import HTMLBuilder
+from ..utilities import requires_modules
+
+# Import optional dependencies
+try:
+    import numpy as np
+except ImportError:
+    pass
+
+try:
+    import pandas as pd
+except ImportError:
+    pass
 
 
 class Data(HTMLBuilder):
@@ -18,12 +29,12 @@ class Data(HTMLBuilder):
         data: list[Any],
         classes: str | list[str] | None = None,
         is_header: bool = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Data object."""
 
         # Initialize the builder
-        super().__init__(classes, **kwargs)
+        super().__init__(classes=classes, **kwargs)
         self.tag = "td" if not is_header else "th"
 
         # Store instance variables
@@ -59,12 +70,12 @@ class Row(HTMLBuilder):
         self,
         data: Any | list[Any],
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Row object."""
 
         # Initialize the builder
-        super().__init__(classes, **kwargs)
+        super().__init__(classes=classes, **kwargs)
         self.tag = "tr"
 
         # Set the data
@@ -110,12 +121,12 @@ class Header(Row):
         self,
         data: list[Any],  # TODO: Implement span?
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Header object."""
 
         # Initialize the builder
-        super().__init__(data, classes, **kwargs)
+        super().__init__(data, classes=classes, **kwargs)
 
     def construct(self) -> str:
         """Generates HTML from the stored elements."""
@@ -143,12 +154,12 @@ class Table(HTMLBuilder):
         data: list[Row] | list[list[Any]],
         header: Header | Row | None = None,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Table object."""
 
         # Initialize the builder
-        super().__init__(classes, **kwargs)
+        super().__init__(classes=classes, **kwargs)
         self.tag = "table"
 
         # Add header and data
@@ -232,6 +243,7 @@ class Table(HTMLBuilder):
         return html
 
     @classmethod
+    @requires_modules("pandas", "numpy")
     def from_df(
         cls,
         df: pd.DataFrame,
@@ -240,7 +252,7 @@ class Table(HTMLBuilder):
         body_classes: str | list[str] | None = None,
         alternating_rows: bool = True,
         columns_as_classes: bool = True,
-        **kwargs,
+        **kwargs: Any,
     ) -> Self:
         """Creates an HTMLTable object from a pandas dataframe.
 
@@ -261,7 +273,7 @@ class Table(HTMLBuilder):
             for i, item in enumerate(row):
                 data_classes = []
                 if columns_as_classes:
-                    data_classes.append(row.index[i])
+                    data_classes.append(row.index[i])  # TODO: Sanitize name
                 data.append(Data(item, classes=data_classes))
             html_row = Row(data, classes=body_classes)
             if alternating_rows:
