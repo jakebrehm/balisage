@@ -1,3 +1,4 @@
+from .attributes import Classes
 from .elements.basic import Page
 from .elements.format import Div, HorizontalRule, LineBreak
 from .elements.image import Image
@@ -13,6 +14,7 @@ from .elements.text import (
 )
 
 __all__ = [
+    "Classes",
     "Page",
     "Div",
     "HorizontalRule",
@@ -22,7 +24,6 @@ __all__ = [
     "Header",
     "Row",
     "Table",
-    "Paragraph",
     "Heading1",
     "Heading2",
     "Heading3",
@@ -30,10 +31,4 @@ __all__ = [
     "Heading5",
     "Heading6",
     "Paragraph",
-    "Heading1",
-    "Heading2",
-    "Heading3",
-    "Heading4",
-    "Heading5",
-    "Heading6",
 ]
