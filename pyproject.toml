@@ -18,6 +18,10 @@ dev = [
 
 [tool.pytest.ini_options]
 addopts = "-q"
+pythonpath = [
+    "src/",
+]
 testpaths = [
-    "test",
+    "test/",
+    "test/elements/",
 ]

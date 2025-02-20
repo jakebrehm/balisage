@@ -2,9 +2,7 @@
 Contains code for all formatting-related HTML elements.
 """
 
-from typing import Any
-
-from ..attributes import ClassesType
+from ..attributes import AttributesType, ClassesType
 from ..core import HTMLBuilder
 
 
@@ -13,15 +11,16 @@ class Image(HTMLBuilder):
 
     def __init__(
         self,
+        attributes: AttributesType | None = None,
         classes: ClassesType | None = None,
-        **kwargs: Any,
     ) -> None:
         """Initializes the Image object."""
 
         # Initialize the builder
-        super().__init__(classes=classes, **kwargs)
+        super().__init__(attributes=attributes, classes=classes)
         self.tag = "img"
 
     def construct(self) -> str:
         """Generates HTML from the stored elements."""
-        return f"<{self.tag}{self.attributes_to_string()}>"
+        attributes_string = f" {self.attributes}" if self.attributes else ""
+        return f"<{self.tag}{attributes_string}>"
