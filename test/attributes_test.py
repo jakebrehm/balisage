@@ -12,6 +12,9 @@ from html_builder.attributes import Attributes, Classes
 # TODO: Add edge case tests (invalid class names, data types, etc.)
 
 
+# MARK: Fixtures
+
+
 @pytest.fixture
 def classes() -> Classes:
     """Creates a sample Classes object."""
@@ -31,6 +34,9 @@ def attributes() -> Attributes:
             "itemscope": False,
         }
     )
+
+
+# MARK: Classes
 
 
 def test_classes_init(classes: Classes) -> None:
@@ -133,6 +139,13 @@ def test_classes_add(classes: Classes) -> None:
 
 def test_classes_set(classes: Classes) -> None:
     """Tests the set method of the Classes class."""
+
+    # # Try setting classes using a single string # TODO: Fix this
+    # classes.set("Class 3")
+    # expected = {"Class 3": "class-3"}
+    # assert classes.classes == OrderedDict(expected)
+
+    # Try setting classes using multiple strings
     classes.set("Class 3", "class4", "class--9")
     expected = {
         "Class 3": "class-3",
@@ -158,8 +171,10 @@ def test_classes_remove(classes: Classes) -> None:
     assert classes.classes == OrderedDict(expected_classes)
 
     # Try removing a class that does not exist
-    with pytest.raises(KeyError):
-        classes.remove("cl@ss99")
+    class_to_remove = "cl@ss99"
+    message = f"Class '{class_to_remove}' not found"
+    with pytest.raises(KeyError, match=message):
+        classes.remove(class_to_remove)
 
 
 def test_classes_clear(classes: Classes) -> None:
@@ -197,6 +212,16 @@ def test_classes_eq(classes: Classes) -> None:
     """Tests the __eq__ method of the Classes class."""
     assert classes == Classes("class 1", "class2")
     assert classes != Classes("class 1", "class3")
+    assert classes == {"class 1": "class-1", "class2": "class2"}
+    assert classes == OrderedDict({"class 1": "class-1", "class2": "class2"})
+    assert classes != 1
+    assert classes != 2.0
+    assert classes is not True
+    assert classes is not False
+    assert classes != tuple()
+    assert classes != list()
+    assert classes != dict()
+    assert classes is not None
 
 
 def test_classes_str(classes: Classes) -> None:
@@ -232,6 +257,55 @@ def test_attributes_from_string() -> None:
     assert attributes.attributes == OrderedDict(expected)
 
 
+def test_attributes_attributes(attributes: Attributes) -> None:
+    """Tests the attributes property of the Attributes class."""
+    expected = OrderedDict(
+        {
+            "class": Classes("class 1", "class2"),
+            "id": "test",
+            "width": 50,
+            "disabled": None,
+            "checked": True,
+            "itemscope": False,
+        }
+    )
+    assert attributes.attributes == expected
+
+
+def test_attributes_classes(attributes: Attributes) -> None:
+    """Tests the attributes property of the Attributes class."""
+
+    # Test getting classes
+    assert attributes.classes == Classes("class 1", "class2")
+
+    # Test setting classes as a string
+    expected = "class1"
+    attributes.classes = expected
+    assert attributes.classes == Classes.from_string(expected)
+    expected = "class1 class-2"
+    attributes.classes = expected
+    assert attributes.classes == Classes.from_string(expected)
+
+    # Test setting classes as a list of strings
+    expected = ["class 1", "class2", "Class 3", "cLass4"]
+    attributes.classes = expected
+    assert attributes.classes == Classes(*expected)
+
+    # Test setting classes as a Classes object
+    expected = Classes("class 1", "class2", "Class 3", "cLass4")
+    attributes.classes = expected
+    assert attributes.classes == expected
+
+    # Test setting classes as other data types
+    message = (
+        "classes setter accepts either a string, a list of strings, or an "
+        "instance of Attributes"
+    )
+    for invalid_value in [True, False, None, 1, 2.0, tuple(), list(), dict()]:
+        with pytest.raises(TypeError, match=message):
+            attributes.classes = invalid_value
+
+
 def test_attributes_add(attributes: Attributes) -> None:
     """Tests the add method of the Attributes class."""
 
@@ -255,7 +329,7 @@ def test_attributes_add(attributes: Attributes) -> None:
         "id": "test",
         "width": 50,
         "disabled": None,
-        "checked": False,
+        "checked": True,
         "itemscope": False,
         "required": True,
     }
@@ -268,8 +342,8 @@ def test_attributes_add(attributes: Attributes) -> None:
         "id": "test",
         "width": 50,
         "disabled": None,
-        "checked": False,
-        "itemscope": None,
+        "checked": True,
+        "itemscope": False,
         "required": True,
     }
     assert attributes.attributes == OrderedDict(expected)
@@ -281,12 +355,29 @@ def test_attributes_add(attributes: Attributes) -> None:
         "id": "test",
         "width": 50,
         "disabled": None,
-        "checked": False,
-        "itemscope": None,
+        "checked": True,
+        "itemscope": False,
         "required": True,
         "height": 50,
         "open": True,
         "alt": "Alternate text",
+    }
+    assert attributes.attributes == OrderedDict(expected)
+
+    # Try adding a mix of new and existing attributes
+    attributes.add({"checked": False, "title": "Title text"})
+    expected = {
+        "class": Classes("class 1", "class2"),
+        "id": "test",
+        "width": 50,
+        "disabled": None,
+        "checked": True,
+        "itemscope": False,
+        "required": True,
+        "height": 50,
+        "open": True,
+        "alt": "Alternate text",
+        "title": "Title text",
     }
     assert attributes.attributes == OrderedDict(expected)
 
@@ -311,7 +402,7 @@ def test_attributes_set(attributes: Attributes) -> None:
 def test_attributes_remove(attributes: Attributes) -> None:
     """Tests the remove method of the Attributes class."""
 
-    # Try removing a class by its name
+    # Try removing an attribute by its name
     expected_result = attributes.remove("id")
     expected_attributes = {
         "class": Classes("class 1", "class2"),
@@ -323,9 +414,11 @@ def test_attributes_remove(attributes: Attributes) -> None:
     assert expected_result == ("id", "test")
     assert attributes.attributes == OrderedDict(expected_attributes)
 
-    # Try removing a class that does not exist
-    with pytest.raises(KeyError):
-        attributes.remove("does-not-exist")
+    # Try removing an attribute that does not exist
+    attribute_to_remove = "does-not-exist"
+    message = f"Attribute '{attribute_to_remove}' not found"
+    with pytest.raises(KeyError, match=message):
+        attributes.remove(attribute_to_remove)
 
 
 def test_attributes_clear(attributes: Attributes) -> None:
@@ -409,6 +502,27 @@ def test_attributes_eq(attributes: Attributes) -> None:
         }
     )
     assert attributes != expected
+
+    # Try comparing the attributes object to dictionaries
+    expected = {
+        "class": Classes("class 1", "class2"),
+        "id": "test",
+        "width": 50,
+        "disabled": None,
+        "checked": True,
+        "itemscope": False,
+    }
+    assert attributes == expected
+
+    # Try comparing the attributes object to other data types
+    assert attributes != 1
+    assert attributes != 2.0
+    assert attributes is not True
+    assert attributes is not False
+    assert attributes != tuple()
+    assert attributes != list()
+    assert attributes != dict()
+    assert attributes is not None
 
 
 def test_attributes_str(attributes: Attributes) -> None:

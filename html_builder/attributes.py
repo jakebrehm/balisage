@@ -61,7 +61,10 @@ class Classes:
         self._replacements = self.DEFAULT_REPLACEMENTS
 
     def add(self, *args: str) -> None:
-        """Adds classes to the list of classes."""
+        """Adds classes to the list of classes.
+
+        Note that duplicate classes will be ignored.
+        """
 
         # Determine the existing sanitized names
         old_sanitized_names = list(self._classes.values())
@@ -99,7 +102,7 @@ class Classes:
             if sanitized_name == self._sanitize_name(name):
                 return original_name, self._classes.pop(original_name)
         # If the class was not found, raise an exception
-        raise KeyError(f"Class '{name}' not found.")
+        raise KeyError(f"Class '{name}' not found")
 
     def clear(self) -> None:
         """Clears the list of classes."""
@@ -125,7 +128,12 @@ class Classes:
 
     def __eq__(self, other: Self) -> bool:
         """Determines whether two Classes objects are equal."""
-        return self._classes == other._classes
+        # TODO: Needs testing
+        if isinstance(other, self.__class__):
+            return self._classes == other._classes
+        elif isinstance(other, (dict, OrderedDict)):
+            return self._classes == other
+        return False
 
     def __str__(self) -> str:
         """Gets the string version of the object."""
@@ -137,6 +145,7 @@ class Classes:
         return f"{self.__class__.__name__}({arg_string})"
 
 
+ClassesType: TypeAlias = Classes | str | list[str]
 AttributeValue: TypeAlias = str | bool | None
 AttributeDict: TypeAlias = dict[str, AttributeValue]
 AttributeOrderedDict: TypeAlias = OrderedDict[str, AttributeValue]
@@ -146,13 +155,20 @@ AttributeMap: TypeAlias = AttributeOrderedDict | AttributeDict
 class Attributes:
     """Class for managing attributes for HTML elements."""
 
-    def __init__(self, attributes: AttributeMap | None = None) -> None:
+    def __init__(
+        self,
+        attributes: AttributeMap | None = None,
+        # classes: ClassesType | None = None, # TODO: Implement?
+    ) -> None:
         """Initializes the Attributes object."""
 
         # Initialize instance variables
         self._attributes: AttributeOrderedDict = OrderedDict()
+        # self._classes = classes if classes is not None else Classes() # TODO: Implement?
 
-        # Set the classes
+        # TODO: Override classes if they were provided
+
+        # Set the attributes
         if attributes is not None:
             self.set(attributes)
 
@@ -177,8 +193,55 @@ class Attributes:
         """
         return self._attributes
 
+    @property
+    def classes(self) -> Classes | None:
+        """Gets the stored classes."""
+        if "class" not in self._attributes:
+            return None
+        return self._attributes["class"]
+
+    @classes.setter
+    def classes(self, classes: ClassesType) -> None:
+        """Sets the stored classes.
+
+        Valid data types for the classes property are:
+        - A string
+        - A list of strings
+        - A tuple of strings
+        - An instance of the Classes class
+
+        Other data types will raise a TypeError.
+
+        Note that a provided value with data type string will be assumed to be
+        a class string, and thus the Classes.from_string method will be used
+        to create the Classes object.
+        """
+        if isinstance(classes, str):
+            classes = Classes.from_string(classes)
+        elif (
+            isinstance(classes, (tuple, list))
+            and classes
+            and all(isinstance(i, str) for i in classes)
+        ):
+            classes = Classes(*classes)
+        elif not isinstance(classes, Classes):
+            raise TypeError(  # TODO: Type checking should be in Classes.__init__
+                f"{Attributes.classes.fget.__name__} setter accepts either a "
+                "string, a list of strings, or an instance of "
+                f"{self.__class__.__name__}"
+            )
+        self._attributes["class"] = classes
+
     def add(self, attributes: AttributeMap) -> None:
-        """Adds attributes to the list of attributes."""
+        """Adds attributes to the list of attributes.
+
+        Note that duplicate attributes will be ignored.
+        """
+        attributes = {
+            key: value
+            for key, value in attributes.items()
+            if key not in self._attributes
+        }
         if "class" in attributes and isinstance(attributes["class"], str):
             attributes["class"] = Classes.from_string(attributes["class"])
         self._attributes.update(attributes)
@@ -195,6 +258,8 @@ class Attributes:
         Returns the removed attribute (if it exists) as a tuple, otherwise None.
         The tuple is in the form of (attribute name, attribute value).
         """
+        if name not in self._attributes:
+            raise KeyError(f"Attribute '{name}' not found")
         return name, self._attributes.pop(name)
 
     def clear(self) -> None:
@@ -222,7 +287,12 @@ class Attributes:
 
     def __eq__(self, other: Self) -> bool:
         """Determines whether two Attributes objects are equal."""
-        return self._attributes == other._attributes
+        # TODO: Needs testing
+        if isinstance(other, self.__class__):
+            return self._attributes == other._attributes
+        elif isinstance(other, (dict, OrderedDict)):
+            return self._attributes == other
+        return False
 
     def __str__(self) -> str:
         """Gets the string version of the object."""
@@ -233,5 +303,4 @@ class Attributes:
         return f"{self.__class__.__name__}(attributes={self._attributes!r})"
 
 
-ClassesType: TypeAlias = Classes | str | list[str]
 AttributesType: TypeAlias = Attributes | AttributeMap
