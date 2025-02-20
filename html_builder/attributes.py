@@ -13,10 +13,7 @@ class Classes:
 
     DEFAULT_REPLACEMENTS: dict[str, str] = {" ": "-"}
 
-    def __init__(
-        self,
-        *args: str,
-    ) -> None:
+    def __init__(self, *args: str) -> None:
         """Initializes the Classes object."""
 
         # Initialize instance variables
@@ -155,18 +152,11 @@ AttributeMap: TypeAlias = AttributeOrderedDict | AttributeDict
 class Attributes:
     """Class for managing attributes for HTML elements."""
 
-    def __init__(
-        self,
-        attributes: AttributeMap | None = None,
-        # classes: ClassesType | None = None, # TODO: Implement?
-    ) -> None:
+    def __init__(self, attributes: AttributeMap | None = None) -> None:
         """Initializes the Attributes object."""
 
         # Initialize instance variables
         self._attributes: AttributeOrderedDict = OrderedDict()
-        # self._classes = classes if classes is not None else Classes() # TODO: Implement?
-
-        # TODO: Override classes if they were provided
 
         # Set the attributes
         if attributes is not None:
