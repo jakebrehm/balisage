@@ -3,6 +3,7 @@ Contains miscellaneous code such as utility functions.
 """
 
 import importlib
+import re
 from functools import wraps
 from types import ModuleType
 from typing import Any, Callable
@@ -37,3 +38,8 @@ def requires_modules(*dependencies: str) -> Callable[[Callable], Callable]:
         return wrapper
 
     return decorator
+
+
+def split_preserving_quotes(string: str, on: str = " ") -> list[str]:
+    """Splits a string into a list of strings, preserving quotes."""
+    return re.findall(r"[^'\s]+='[^']*'|\S+", string)

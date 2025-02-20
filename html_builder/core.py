@@ -5,13 +5,15 @@ Contains core functionality for the package.
 from abc import ABC, abstractmethod
 from typing import Any
 
+from .attributes import Classes, ClassesType
+
 
 class HTMLBuilder(ABC):
     """Base class for HTML Builder objects."""
 
     def __init__(
         self,
-        classes: str | list[str] | None = None,
+        classes: ClassesType | None = None,
         **kwargs: Any,
     ) -> None:
         """Initializes the HTMLTable object."""
@@ -43,7 +45,7 @@ class HTMLBuilder(ABC):
         return self._elements
 
     @property
-    def attributes(self) -> list[str]:
+    def attributes(self) -> dict[str : Any | None]:
         """Gets the stored attributes."""
         return self._attributes
 
@@ -73,7 +75,7 @@ class HTMLBuilder(ABC):
 
     def set_attribute(
         self,
-        attribute: str | dict[str:Any],
+        attribute: str | dict[str:Any],  # TODO: Check type hint
         value: Any | None = None,
     ) -> None:
         """Set an attributes of the HTML object."""
@@ -108,20 +110,22 @@ class HTMLBuilder(ABC):
 
     def add_class(self, name: str) -> None:
         """Adds a class to the HTML object."""
-        cleaned_name = self._string_to_class(name)
         if "class" not in self._attributes:
             self._attributes["class"] = []
-        self._attributes["class"].append(cleaned_name)
+        self._attributes["class"].add(name)
 
     def remove_class(self, name: str) -> None:
         """Removes a class from the HTML object."""
-        cleaned_name = self._string_to_class(name)
         if "class" in self._attributes:
-            if cleaned_name in self._attributes["class"]:
-                self._attributes["class"].remove(cleaned_name)
+            self._attributes["class"].remove(name)
 
-    def set_classes(self, names: str | list[str]) -> None:
+    def set_classes(self, names: ClassesType) -> None:
         """Adds a class to the HTML object."""
+
+        # If the names are already a Classes object, return
+        if isinstance(names, Classes):
+            self._attributes["class"] = names
+            return
 
         # Convert the class name to a list if necessary
         if isinstance(names, str):
@@ -137,7 +141,7 @@ class HTMLBuilder(ABC):
             )
 
         # Clear the stored classes and add the provided ones
-        self._attributes["class"] = names
+        self._attributes["class"] = Classes(*names)
 
     def clear_classes(self) -> list[str] | None:
         """Clears the classes of the HTML object.
@@ -146,27 +150,16 @@ class HTMLBuilder(ABC):
         """
         return self._attributes.pop("class", None)
 
-    def _string_to_class(self, name: str) -> str:
-        """Converts a name into a class name."""
-        return name.lower().strip().replace(" ", "-")
-
-    def classes_to_string(self) -> str:
-        """Builds a class string from a list of class names."""
-        if "class" in self._attributes:
-            return " ".join(self._attributes["class"])
-        return ""
-
     def attributes_to_string(self) -> str:
         """Builds an attribute string from a dictionary of attributes."""
         result = []
         for key, value in self._attributes.items():
-            if value:
-                if key == "class":
-                    string = f"{key}='{self.classes_to_string()}'"
-                else:
-                    string = f"{key}='{value}'"
-            else:
+            if (value is None) or (isinstance(value, bool) and value):
                 string = f"{key}"
+            elif value:
+                string = f"{key}='{value}'"
+            else:
+                continue
             result.append(string)
         return (" " + " ".join(result)) if result else ""
 

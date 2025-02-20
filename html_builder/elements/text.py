@@ -26,12 +26,12 @@ class Text(HTMLBuilder):
         text: str,
         tag: TextType = TextType.P,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Text object."""
 
         # Initialize the builder
-        super().__init__(classes, **kwargs)
+        super().__init__(classes=classes, **kwargs)
         self.tag = tag.value
 
         # Set the text
@@ -64,12 +64,12 @@ class Paragraph(Text):
         self,
         text: str,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Paragraph object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.P, classes, **kwargs)
+        super().__init__(text, TextType.P, classes=classes, **kwargs)
 
 
 class Heading1(Text):
@@ -79,12 +79,12 @@ class Heading1(Text):
         self,
         text: str,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Heading1 object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.H1, classes, **kwargs)
+        super().__init__(text, TextType.H1, classes=classes, **kwargs)
 
 
 class Heading2(Text):
@@ -94,12 +94,12 @@ class Heading2(Text):
         self,
         text: str,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Heading2 object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.H2, classes, **kwargs)
+        super().__init__(text, TextType.H2, classes=classes, **kwargs)
 
 
 class Heading3(Text):
@@ -109,12 +109,12 @@ class Heading3(Text):
         self,
         text: str,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Heading3 object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.H3, classes, **kwargs)
+        super().__init__(text, TextType.H3, classes=classes, **kwargs)
 
 
 class Heading4(Text):
@@ -124,12 +124,12 @@ class Heading4(Text):
         self,
         text: str,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Heading4 object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.H4, classes, **kwargs)
+        super().__init__(text, TextType.H4, classes=classes, **kwargs)
 
 
 class Heading5(Text):
@@ -139,12 +139,12 @@ class Heading5(Text):
         self,
         text: str,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Heading5 object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.H5, classes, **kwargs)
+        super().__init__(text, TextType.H5, classes=classes, **kwargs)
 
 
 class Heading6(Text):
@@ -154,9 +154,9 @@ class Heading6(Text):
         self,
         text: str,
         classes: str | list[str] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initializes the Heading6 object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.H6, classes, **kwargs)
+        super().__init__(text, TextType.H6, classes=classes, **kwargs)
