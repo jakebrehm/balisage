@@ -1,4 +1,4 @@
-from .attributes import Classes
+from .attributes import Attributes, Classes
 from .elements.basic import Page
 from .elements.format import Div, HorizontalRule, LineBreak
 from .elements.image import Image
@@ -14,6 +14,7 @@ from .elements.text import (
 )
 
 __all__ = [
+    "Attributes",
     "Classes",
     "Page",
     "Div",
