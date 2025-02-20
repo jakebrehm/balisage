@@ -234,6 +234,12 @@ def test_classes_eq(classes: Classes) -> None:
     assert classes is not None
 
 
+def test_classes_bool(classes: Classes) -> None:
+    """Tests the __bool__ method of the Classes class."""
+    assert bool(classes) is True
+    assert bool(Classes()) is False
+
+
 def test_classes_str(classes: Classes) -> None:
     """Tests the __str__ method of the Classes class."""
     assert str(classes) == "class-1 class2"
@@ -531,6 +537,12 @@ def test_attributes_eq(attributes: Attributes) -> None:
     assert attributes != list()
     assert attributes != dict()
     assert attributes is not None
+
+
+def test_attributes_bool(attributes: Attributes) -> None:
+    """Tests the __bool__ method of the Attributes class."""
+    assert bool(attributes) is True
+    assert bool(Attributes()) is False
 
 
 def test_attributes_str(attributes: Attributes) -> None:

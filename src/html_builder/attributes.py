@@ -134,6 +134,10 @@ class Classes:
             return set(self._classes.values()) == set(other.values())
         return False
 
+    def __bool__(self) -> bool:
+        """Determines whether the instance is empty."""
+        return len(self._classes) > 0
+
     def __str__(self) -> str:
         """Gets the string version of the object."""
         return self.construct()
@@ -283,6 +287,10 @@ class Attributes:
         elif isinstance(other, dict):
             return self._attributes == other
         return False
+
+    def __bool__(self) -> bool:
+        """Determines whether the instance is empty."""
+        return len(self._attributes) > 0
 
     def __str__(self) -> str:
         """Gets the string version of the object."""

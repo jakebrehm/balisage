@@ -41,3 +41,4 @@ def test_image_construct(image: Image) -> None:
     """Tests the construct method of the Image class."""
     expected = "<img id='test' disabled class='class-1 class2'>"
     assert image.construct() == expected
+    assert Image().construct() == "<img>"
