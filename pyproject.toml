@@ -23,5 +23,4 @@ pythonpath = [
 ]
 testpaths = [
     "test/",
-    "test/elements/",
 ]

@@ -60,7 +60,7 @@ def test_html_builder_repr(builder: HTMLBuilder) -> None:
     expected = (
         "HTMLBuilder(attributes="
         "Attributes(attributes="
-        "OrderedDict([('id', 'test'), ('disabled', True)])"
+        "{'id': 'test', 'disabled': True}"
         "))"
     )
     assert repr(builder) == expected

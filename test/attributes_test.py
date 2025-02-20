@@ -2,7 +2,6 @@
 Contains tests for the attributes module.
 """
 
-from collections import OrderedDict
 from copy import deepcopy
 
 import pytest
@@ -42,7 +41,7 @@ def attributes() -> Attributes:
 def test_classes_init(classes: Classes) -> None:
     """Tests the initialization of the Classes class."""
     expected = {"class 1": "class-1", "class2": "class2"}
-    assert classes.classes == OrderedDict(expected)
+    assert classes.classes == expected
 
 
 def test_classes_from_string() -> None:
@@ -54,7 +53,7 @@ def test_classes_from_string() -> None:
         "Class-3": "class-3",
         "cLass4": "class4",
     }
-    assert classes.classes == OrderedDict(expected)
+    assert classes.classes == expected
 
 
 def test_classes_replacements(classes: Classes) -> None:
@@ -66,8 +65,8 @@ def test_classes_replacements(classes: Classes) -> None:
         "class 1": "class-1",
         "class2": "class2",
     }
-    assert classes.replacements == OrderedDict(expected_replacements)
-    assert classes.classes == OrderedDict(expected_classes)
+    assert classes.replacements == expected_replacements
+    assert classes.classes == expected_classes
 
     # Try setting new replacements
     new_replacements = {" ": "!", "a": "@"}
@@ -76,8 +75,8 @@ def test_classes_replacements(classes: Classes) -> None:
         "class2": "cl@ss2",
     }
     classes.replacements = new_replacements
-    assert classes.replacements == OrderedDict(new_replacements)
-    assert classes.classes == OrderedDict(expected_classes)
+    assert classes.replacements == new_replacements
+    assert classes.classes == expected_classes
 
     # Try resetting the replacements
     classes.reset_replacements()
@@ -94,7 +93,7 @@ def test_classes_add(classes: Classes) -> None:
         "class2": "class2",
         "Class 3": "class-3",
     }
-    assert classes.classes == OrderedDict(expected)
+    assert classes.classes == expected
 
     # Try adding a single class that already exists pre-sanitation
     classes.add("Class 3")
@@ -103,7 +102,7 @@ def test_classes_add(classes: Classes) -> None:
         "class2": "class2",
         "Class 3": "class-3",
     }
-    assert classes.classes == OrderedDict(expected)
+    assert classes.classes == expected
 
     # Try adding a single class that already exists post-sanitation
     classes.add("class-3")
@@ -112,7 +111,7 @@ def test_classes_add(classes: Classes) -> None:
         "class2": "class2",
         "Class 3": "class-3",
     }
-    assert classes.classes == OrderedDict(expected)
+    assert classes.classes == expected
 
     # Try adding new classes with existing names pre-sanitation
     classes.add("class4", "class 1", "Class 5")
@@ -123,7 +122,7 @@ def test_classes_add(classes: Classes) -> None:
         "class4": "class4",
         "Class 5": "class-5",
     }
-    assert classes.classes == OrderedDict(expected)
+    assert classes.classes == expected
 
     # Try adding new classes with existing names post-sanitation
     classes.add("class4", "CLASS-1", "Class 5")
@@ -134,7 +133,7 @@ def test_classes_add(classes: Classes) -> None:
         "class4": "class4",
         "Class 5": "class-5",
     }
-    assert classes.classes == OrderedDict(expected)
+    assert classes.classes == expected
 
 
 def test_classes_set(classes: Classes) -> None:
@@ -143,7 +142,7 @@ def test_classes_set(classes: Classes) -> None:
     # Try setting classes using a single string
     classes.set("Class 3")
     expected = {"Class 3": "class-3"}
-    assert classes.classes == OrderedDict(expected)
+    assert classes.classes == expected
 
     # Try setting classes using multiple strings
     classes.set("Class 3", "class4", "class--9")
@@ -152,7 +151,7 @@ def test_classes_set(classes: Classes) -> None:
         "class4": "class4",
         "class--9": "class--9",
     }
-    assert classes.classes == OrderedDict(expected)
+    assert classes.classes == expected
 
 
 def test_classes_remove(classes: Classes) -> None:
@@ -162,13 +161,13 @@ def test_classes_remove(classes: Classes) -> None:
     expected_result = classes.remove("class 1")
     expected_classes = {"class2": "class2"}
     assert expected_result == ("class 1", "class-1")
-    assert classes.classes == OrderedDict(expected_classes)
+    assert classes.classes == expected_classes
 
     # Try removing a class by its post-sanitized name
     expected_result = classes.remove("class2")
     expected_classes = {}
     assert expected_result == ("class2", "class2")
-    assert classes.classes == OrderedDict(expected_classes)
+    assert classes.classes == expected_classes
 
     # Try removing a class that does not exist
     class_to_remove = "cl@ss99"
@@ -180,7 +179,7 @@ def test_classes_remove(classes: Classes) -> None:
 def test_classes_clear(classes: Classes) -> None:
     """Tests the clear method of the Classes class."""
     classes.clear()
-    assert classes.classes == OrderedDict()
+    assert classes.classes == dict()
 
 
 def test_classes_sanitize_name(classes: Classes) -> None:
@@ -225,7 +224,6 @@ def test_classes_eq(classes: Classes) -> None:
     assert classes == {"class-1": "class-1", "class2": "class2"}
 
     # Try comparing the classes object to other data types
-    assert classes == OrderedDict({"class 1": "class-1", "class2": "class2"})
     assert classes != 1
     assert classes != 2.0
     assert classes is not True
@@ -259,28 +257,26 @@ def test_attributes_init(attributes: Attributes) -> None:
         "checked": True,
         "itemscope": False,
     }
-    assert attributes.attributes == OrderedDict(expected)
+    assert attributes.attributes == expected
 
 
 def test_attributes_from_string() -> None:
     """Tests the from_string method of the Attributes class."""
     attributes = Attributes.from_string("class='class-1 class2' id='test-1'")
     expected = {"class": Classes("class-1", "class2"), "id": "test-1"}
-    assert attributes.attributes == OrderedDict(expected)
+    assert attributes.attributes == expected
 
 
 def test_attributes_attributes(attributes: Attributes) -> None:
     """Tests the attributes property of the Attributes class."""
-    expected = OrderedDict(
-        {
-            "class": Classes("class 1", "class2"),
-            "id": "test",
-            "width": 50,
-            "disabled": None,
-            "checked": True,
-            "itemscope": False,
-        }
-    )
+    expected = {
+        "class": Classes("class 1", "class2"),
+        "id": "test",
+        "width": 50,
+        "disabled": None,
+        "checked": True,
+        "itemscope": False,
+    }
     assert attributes.attributes == expected
 
 
@@ -332,7 +328,7 @@ def test_attributes_add(attributes: Attributes) -> None:
         "itemscope": False,
         "required": True,
     }
-    assert attributes.attributes == OrderedDict(expected)
+    assert attributes.attributes == expected
 
     # Try adding a single attribute that already exists
     attributes.add({"checked": False})
@@ -345,7 +341,7 @@ def test_attributes_add(attributes: Attributes) -> None:
         "itemscope": False,
         "required": True,
     }
-    assert attributes.attributes == OrderedDict(expected)
+    assert attributes.attributes == expected
 
     # Try adding multiple new attributes that already exist
     attributes.add({"itemscope": None, "disabled": None})
@@ -358,7 +354,7 @@ def test_attributes_add(attributes: Attributes) -> None:
         "itemscope": False,
         "required": True,
     }
-    assert attributes.attributes == OrderedDict(expected)
+    assert attributes.attributes == expected
 
     # Try adding multiple new attributes that do not exist
     attributes.add({"height": 50, "open": True, "alt": "Alternate text"})
@@ -374,7 +370,7 @@ def test_attributes_add(attributes: Attributes) -> None:
         "open": True,
         "alt": "Alternate text",
     }
-    assert attributes.attributes == OrderedDict(expected)
+    assert attributes.attributes == expected
 
     # Try adding a mix of new and existing attributes
     attributes.add({"checked": False, "title": "Title text"})
@@ -391,7 +387,7 @@ def test_attributes_add(attributes: Attributes) -> None:
         "alt": "Alternate text",
         "title": "Title text",
     }
-    assert attributes.attributes == OrderedDict(expected)
+    assert attributes.attributes == expected
 
 
 def test_attributes_set(attributes: Attributes) -> None:
@@ -406,9 +402,9 @@ def test_attributes_set(attributes: Attributes) -> None:
         "alt": "Attributes test",
     }
     attributes.set(expected)
-    assert attributes.attributes == OrderedDict(expected)
-    attributes.set(OrderedDict(expected))
-    assert attributes.attributes == OrderedDict(expected)
+    assert attributes.attributes == expected
+    attributes.set(expected)
+    assert attributes.attributes == expected
 
 
 def test_attributes_remove(attributes: Attributes) -> None:
@@ -424,7 +420,7 @@ def test_attributes_remove(attributes: Attributes) -> None:
         "itemscope": False,
     }
     assert expected_result == ("id", "test")
-    assert attributes.attributes == OrderedDict(expected_attributes)
+    assert attributes.attributes == expected_attributes
 
     # Try removing an attribute that does not exist
     attribute_to_remove = "does-not-exist"
@@ -436,7 +432,7 @@ def test_attributes_remove(attributes: Attributes) -> None:
 def test_attributes_clear(attributes: Attributes) -> None:
     """Tests the clear method of the Attributes class."""
     attributes.clear()
-    assert attributes.attributes == OrderedDict()
+    assert attributes.attributes == dict()
 
 
 def test_attributes_construct(attributes: Attributes) -> None:
@@ -543,16 +539,16 @@ def test_attributes_str(attributes: Attributes) -> None:
     assert str(attributes) == expected
 
 
-def test_attributes_repr(attributes: Attributes) -> None:
+def test_attributes_repr(attributes: Attributes) -> None:  # TODO: Fix
     """Tests the __repr__ method of the Attributes class."""
     expected = (
-        "Attributes(attributes=OrderedDict(["
-        "('class', Classes('class 1', 'class2')), "
-        "('id', 'test'), "
-        "('width', 50), "
-        "('disabled', None), "
-        "('checked', True), "
-        "('itemscope', False)"
-        "]))"
+        "Attributes(attributes={"
+        "'class': Classes('class 1', 'class2'), "
+        "'id': 'test', "
+        "'width': 50, "
+        "'disabled': None, "
+        "'checked': True, "
+        "'itemscope': False"
+        "})"
     )
     assert repr(attributes) == expected

@@ -2,7 +2,6 @@
 Contains code related to HTML attributes.
 """
 
-from collections import OrderedDict
 from typing import Self, TypeAlias
 
 from .utilities import split_preserving_quotes
@@ -17,7 +16,7 @@ class Classes:
         """Initializes the Classes object."""
 
         # Initialize instance variables
-        self._classes = OrderedDict()
+        self._classes = dict()
         self.reset_replacements()
 
         # Set the classes
@@ -29,8 +28,8 @@ class Classes:
         return cls(*string.split(" "))
 
     @property
-    def classes(self) -> OrderedDict[str:str]:
-        """Gets the stored classes as an ordered dictionary.
+    def classes(self) -> dict[str:str]:
+        """Gets the stored classes as a dictionary.
 
         Keys are the original class names, values are the sanitized class names.
         """
@@ -131,7 +130,7 @@ class Classes:
         """
         if isinstance(other, self.__class__):
             return set(self._classes.values()) == set(other._classes.values())
-        elif isinstance(other, (dict, OrderedDict)):
+        elif isinstance(other, dict):
             return set(self._classes.values()) == set(other.values())
         return False
 
@@ -147,9 +146,7 @@ class Classes:
 
 ClassesType: TypeAlias = Classes | str | list[str]
 AttributeValue: TypeAlias = str | bool | None
-AttributeDict: TypeAlias = dict[str, AttributeValue]
-AttributeOrderedDict: TypeAlias = OrderedDict[str, AttributeValue]
-AttributeMap: TypeAlias = AttributeOrderedDict | AttributeDict
+AttributeMap: TypeAlias = dict[str, AttributeValue]
 
 
 class Attributes:
@@ -159,7 +156,7 @@ class Attributes:
         """Initializes the Attributes object."""
 
         # Initialize instance variables
-        self._attributes: AttributeOrderedDict = OrderedDict()
+        self._attributes: AttributeMap = dict()
 
         # Set the attributes
         if attributes is not None:
@@ -168,7 +165,7 @@ class Attributes:
     @classmethod
     def from_string(cls, string: str) -> Self:
         """Creates an Attributes object from a string."""
-        attributes = OrderedDict()
+        attributes = dict()
         pairs = split_preserving_quotes(string)
         for pair in pairs:
             key, _, value = pair.partition("=")
@@ -179,7 +176,7 @@ class Attributes:
         return cls(attributes)
 
     @property
-    def attributes(self) -> AttributeOrderedDict:
+    def attributes(self) -> AttributeMap:
         """Gets the stored attributes.
 
         Keys are the attribute names, values are the attribute values.
@@ -243,7 +240,7 @@ class Attributes:
         """Sets the list of attributes."""
         if "class" in attributes and isinstance(attributes["class"], str):
             attributes["class"] = Classes.from_string(attributes["class"])
-        self._attributes = OrderedDict(attributes)
+        self._attributes = dict(attributes)
 
     def remove(self, name: str) -> AttributeValue | None:
         """Removes attributes from the list of attributes.
@@ -283,7 +280,7 @@ class Attributes:
         # TODO: Needs testing
         if isinstance(other, self.__class__):
             return self._attributes == other._attributes
-        elif isinstance(other, (dict, OrderedDict)):
+        elif isinstance(other, dict):
             return self._attributes == other
         return False
 
