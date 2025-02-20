@@ -140,10 +140,10 @@ def test_classes_add(classes: Classes) -> None:
 def test_classes_set(classes: Classes) -> None:
     """Tests the set method of the Classes class."""
 
-    # # Try setting classes using a single string # TODO: Fix this
-    # classes.set("Class 3")
-    # expected = {"Class 3": "class-3"}
-    # assert classes.classes == OrderedDict(expected)
+    # Try setting classes using a single string
+    classes.set("Class 3")
+    expected = {"Class 3": "class-3"}
+    assert classes.classes == OrderedDict(expected)
 
     # Try setting classes using multiple strings
     classes.set("Class 3", "class4", "class--9")
@@ -210,9 +210,21 @@ def test_classes_construct(classes: Classes) -> None:
 
 def test_classes_eq(classes: Classes) -> None:
     """Tests the __eq__ method of the Classes class."""
+
+    # Try comparing to another Classes object with different keys
+    other_classes = Classes("class-1", "class2")
+    assert classes == other_classes
+
+    # Try comparing the classes object to other instances of the Classes class
+    assert classes == classes
     assert classes == Classes("class 1", "class2")
     assert classes != Classes("class 1", "class3")
+
+    # Try comparing the classes object to near-equivalent dictionaries
     assert classes == {"class 1": "class-1", "class2": "class2"}
+    assert classes == {"class-1": "class-1", "class2": "class2"}
+
+    # Try comparing the classes object to other data types
     assert classes == OrderedDict({"class 1": "class-1", "class2": "class2"})
     assert classes != 1
     assert classes != 2.0

@@ -124,12 +124,15 @@ class Classes:
         return " ".join(self._classes.values())
 
     def __eq__(self, other: Self) -> bool:
-        """Determines whether two Classes objects are equal."""
-        # TODO: Needs testing
+        """Determines whether two Classes objects are equal.
+
+        Since keys are only kept for historical reasons, equality is determined
+        by comparing the values (e.g., sanitized class names) of the classes.
+        """
         if isinstance(other, self.__class__):
-            return self._classes == other._classes
+            return set(self._classes.values()) == set(other._classes.values())
         elif isinstance(other, (dict, OrderedDict)):
-            return self._classes == other
+            return set(self._classes.values()) == set(other.values())
         return False
 
     def __str__(self) -> str:
