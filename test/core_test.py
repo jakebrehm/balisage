@@ -4,7 +4,8 @@ Contains tests for the core module.
 
 import pytest
 
-from html_builder.attributes import Attributes, Classes
+from html_builder import Div, LineBreak
+from html_builder.attributes import Attributes, Classes, Elements
 from html_builder.core import HTMLBuilder
 
 
@@ -25,11 +26,13 @@ def test_html_builder_init() -> None:
     builder = HTMLBuilder()
     assert builder.attributes == Attributes()
     assert builder.classes is None
+    assert builder.elements == Elements()
 
     # Pass attributes
     builder = HTMLBuilder(attributes=Attributes({"id": "test"}))
     assert builder.attributes == Attributes({"id": "test"})
     assert builder.classes is None
+    assert builder.elements == Elements()
 
     # Pass classes via attributes argument
     expected_classes = Classes("class 1", "class2")
@@ -38,21 +41,38 @@ def test_html_builder_init() -> None:
     assert builder.attributes == expected_attributes
     assert builder.attributes.classes == expected_classes
     assert builder.classes == expected_classes
+    assert builder.elements == Elements()
 
     # Pass classes via classes argument (not overriding attributes)
     builder = HTMLBuilder(classes=expected_classes)
     assert builder.attributes == expected_attributes
     assert builder.attributes.classes == expected_classes
     assert builder.classes == expected_classes
+    assert builder.elements == Elements()
 
     # Pass classes via classes argument (overriding attributes)
     passed_attributes = Attributes({"id": "test", "class": "class3 Class-4"})
     expected_attributes = Attributes({"id": "test", "class": "class-1 class2"})
-    expected_classes = Classes("class 1", "class2")  # TODO: Remove
     builder = HTMLBuilder(attributes=passed_attributes, classes=expected_classes)
     assert builder.attributes == expected_attributes
     assert builder.attributes.classes == expected_classes
     assert builder.classes == expected_classes
+    assert builder.elements == Elements()
+
+    # Pass elements as an Elements object
+    expected_elements = Elements(Div(), LineBreak())
+    builder = HTMLBuilder(elements=expected_elements)
+    assert builder.attributes == Attributes()
+    assert builder.classes is None
+    assert builder.elements == expected_elements
+
+    # Pass elements as a list of elements
+    passed_elements = [Div(), LineBreak()]
+    expected_elements = Elements(*passed_elements)
+    builder = HTMLBuilder(elements=passed_elements)
+    assert builder.attributes == Attributes()
+    assert builder.classes is None
+    assert builder.elements == expected_elements
 
 
 def test_html_builder_repr(builder: HTMLBuilder) -> None:

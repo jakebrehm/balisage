@@ -2,9 +2,7 @@
 Contains code for all formatting-related HTML elements.
 """
 
-from typing import Any
-
-from ..attributes import AttributesType, ClassesType
+from ..attributes import AttributesType, ClassesType, ElementsType
 from ..core import HTMLBuilder
 
 
@@ -19,7 +17,11 @@ class LineBreak(HTMLBuilder):
         """Initializes the LineBreak object."""
 
         # Initialize the builder
-        super().__init__(attributes=attributes, classes=classes)
+        super().__init__(
+            elements=None,
+            attributes=attributes,
+            classes=classes,
+        )
         self.tag = "br"
 
     def construct(self) -> str:
@@ -39,7 +41,10 @@ class HorizontalRule(LineBreak):
         """Initializes the HorizontalRule object."""
 
         # Initialize the builder
-        super().__init__(attributes=attributes, classes=classes)
+        super().__init__(
+            attributes=attributes,
+            classes=classes,
+        )
         self.tag = "hr"
 
 
@@ -48,35 +53,19 @@ class Div(HTMLBuilder):
 
     def __init__(
         self,
-        data: Any | list[Any] | None = None,  # TODO: Rework to use Elements
+        elements: ElementsType | None = None,
         attributes: AttributesType | None = None,
         classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Div object."""
 
         # Initialize the builder
-        super().__init__(attributes=attributes, classes=classes)
+        super().__init__(
+            elements=elements,
+            attributes=attributes,
+            classes=classes,
+        )
         self.tag = "div"
-
-        # Set the data
-        if data is not None:
-            self.set_data(data)
-
-    def add_data(self, data: Any) -> None:
-        """Adds data."""
-        self.add_element(data)
-
-    def set_data(self, data: Any | list[Any]) -> None:
-        """Sets the data."""
-        self.clear_elements()
-        if isinstance(data, list):
-            self.add_elements(data)
-        else:
-            self.add_element(data)
-
-    def add(self, data: Any) -> None:
-        """Adds data. Simple wrapper around add_data."""
-        self.add_data(data)
 
     def construct(self) -> str:
         """Generates HTML from the stored elements."""

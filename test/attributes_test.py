@@ -6,7 +6,8 @@ from copy import deepcopy
 
 import pytest
 
-from html_builder.attributes import Attributes, Classes
+from html_builder import Div, HorizontalRule, Image, LineBreak
+from html_builder.attributes import Attributes, Classes, Element, Elements
 
 # TODO: Add edge case tests (invalid class names, data types, etc.)
 
@@ -33,6 +34,28 @@ def attributes() -> Attributes:
             "itemscope": False,
         }
     )
+
+
+@pytest.fixture
+def element_data() -> list[Element]:
+    """Creates a sample list of data."""
+    return [
+        Div(
+            elements=Elements(
+                HorizontalRule(),
+                Image(
+                    attributes=Attributes({"src": "image.png"}),
+                ),
+            )
+        ),
+        LineBreak(),
+    ]
+
+
+@pytest.fixture
+def elements(element_data: list[Element]) -> Elements:
+    """Creates a sample Elements object that has elements."""
+    return Elements(*element_data)
 
 
 # MARK: Classes
@@ -517,7 +540,7 @@ def test_attributes_eq(attributes: Attributes) -> None:
     )
     assert attributes != expected
 
-    # Try comparing the attributes object to dictionaries
+    # Try comparing the attributes object to a dictionary
     expected = {
         "class": Classes("class 1", "class2"),
         "id": "test",
@@ -551,7 +574,7 @@ def test_attributes_str(attributes: Attributes) -> None:
     assert str(attributes) == expected
 
 
-def test_attributes_repr(attributes: Attributes) -> None:  # TODO: Fix
+def test_attributes_repr(attributes: Attributes) -> None:
     """Tests the __repr__ method of the Attributes class."""
     expected = (
         "Attributes(attributes={"
@@ -564,3 +587,176 @@ def test_attributes_repr(attributes: Attributes) -> None:  # TODO: Fix
         "})"
     )
     assert repr(attributes) == expected
+
+
+# MARK: Elements
+
+
+def test_elements_init(elements: Elements, element_data: list[Element]) -> None:
+    """Tests the initialization of the Elements class."""
+    expected = element_data
+    assert elements.elements == expected
+
+
+def test_elements_add(elements: Elements, element_data: list[Element]) -> None:
+    """Tests the add method of the Elements class."""
+
+    # Try adding a single new element
+    new_element = HorizontalRule()
+    elements.add(new_element)
+    expected_elements = element_data + [new_element]
+    assert elements.elements == expected_elements
+
+    # Try adding multiple new elements
+    new_elements = [LineBreak(), HorizontalRule()]
+    elements.add(*new_elements)
+    expected_elements = expected_elements + new_elements
+    assert elements.elements == expected_elements
+
+
+def test_elements_set(elements: Elements) -> None:
+    """Tests the set method of the Elements class."""
+
+    # Try setting a single element
+    new_data = HorizontalRule()
+    elements.set(new_data)
+    assert elements.elements == [new_data]
+
+    # Try setting multiple elements
+    new_data = [LineBreak(), HorizontalRule()]
+    elements.set(*new_data)
+    assert elements.elements == new_data
+
+
+def test_elements_insert(elements: Elements, element_data: list[Element]) -> None:
+    """Tests the insert method of the Elements class."""
+    new_element = HorizontalRule()
+    element_data.insert(1, new_element)
+    elements.insert(1, new_element)
+    assert elements.elements == element_data
+
+
+def test_elements_update(elements: Elements, element_data: list[Element]) -> None:
+    """Tests the update method of the Elements class."""
+    new_element = HorizontalRule()
+    expected_data = element_data
+    expected_data[0] = new_element
+    elements.update(0, new_element)
+    assert elements.elements[0] == new_element
+    assert elements.elements == expected_data
+    assert len(elements.elements) == 2
+
+
+def test_elements_remove(elements: Elements, element_data: list[Element]) -> None:
+    """Tests the remove and __delitem__ methods of the Elements class."""
+
+    # Test the remove method
+    elements.remove(-1)
+    assert elements.elements == element_data[:-1]
+    assert len(elements.elements) == (len(element_data) - 1)
+
+    # Test the __delitem__ method
+    del elements[-1]
+    assert elements.elements == []
+    assert len(elements.elements) == 0
+
+
+def test_elements_pop(elements: Elements, element_data: list[Element]) -> None:
+    """Tests the pop method of the Elements class."""
+    popped_element = elements.pop(0)
+    assert popped_element == element_data[0]
+    assert elements.elements == element_data[1:]
+    assert len(elements.elements) == (len(element_data) - 1)
+
+
+def test_elements_clear(elements: Elements) -> None:
+    """Tests the clear method of the Elements class."""
+    elements.clear()
+    assert elements.elements == []
+    assert len(elements.elements) == 0
+
+
+def test_elements_get_set(elements: Elements, element_data: list[Element]) -> None:
+    """Tests the __getitem__ and __setitem__ methods of the Elements class."""
+    new_element = HorizontalRule()
+    expected_data = element_data
+    expected_data[0] = new_element
+    elements[0] = new_element
+    assert elements[0] == new_element
+    assert elements.elements == expected_data
+    assert len(elements.elements) == 2
+
+
+def test_elements_iter(elements: Elements, element_data: list[Element]) -> None:
+    """Tests the __iter__ method of the Elements class."""
+    for actual_element, expected_element in zip(elements, element_data):
+        assert actual_element == expected_element
+
+
+def test_elements_eq(elements: Elements, element_data: list[Element]) -> None:
+    """Tests the __eq__ method of the Elements class."""
+
+    # Try comparing the elements object to itself
+    assert elements == elements
+
+    # Try comparing the elements object to one with the same values
+    expected = Elements(*element_data)
+    assert elements == expected
+
+    # Try comparing the elements object to itself with values changed
+    expected = deepcopy(elements)
+    expected.add(HorizontalRule())
+    assert elements != expected
+
+    # Try comparing the elements object to one with different values
+    expected = Elements(HorizontalRule(), LineBreak())
+    assert elements != expected
+
+    # Try comparing the elements object to a list of elements
+    assert elements == element_data
+
+    # Try comparing the elements object to other data types
+    assert elements != 1
+    assert elements != 2.0
+    assert elements is not True
+    assert elements is not False
+    assert elements != tuple()
+    assert elements != list()
+    assert elements != dict()
+    assert elements is not None
+
+
+def test_elements_bool(elements: Elements) -> None:
+    """Tests the __bool__ method of the Elements class."""
+    assert bool(elements) is True
+    assert bool(Elements()) is False
+
+
+def test_elements_len(elements: Elements) -> None:
+    """Tests the __len__ method of the Elements class."""
+    assert len(elements) == len(elements.elements)
+    assert len(elements) == 2
+    assert len(elements) != 3
+    assert len(elements) != 1.0
+    assert len(elements) != list()
+    assert len(elements) != tuple()
+    assert len(elements) != dict()
+    assert len(elements) is not True
+    assert len(elements) is not False
+    assert len(elements) is not None
+
+
+def test_elements_str(elements: Elements, element_data: list[Element]) -> None:
+    """Tests the __str__ method of the Elements class."""
+    assert str(elements) == "[Div<2 subelements>, LineBreak]"
+
+
+def test_elements_repr(elements: Elements, element_data: list[Element]) -> None:
+    """Tests the __repr__ method of the Elements class."""
+    expected = (
+        "Elements("
+        "Div(attributes=Attributes(attributes={})), "
+        "LineBreak(attributes=Attributes(attributes={}))"
+        ")"
+    )
+    assert repr(elements) == expected

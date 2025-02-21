@@ -17,7 +17,11 @@ class Image(HTMLBuilder):
         """Initializes the Image object."""
 
         # Initialize the builder
-        super().__init__(attributes=attributes, classes=classes)
+        super().__init__(
+            elements=None,
+            attributes=attributes,
+            classes=classes,
+        )
         self.tag = "img"
 
     def construct(self) -> str:

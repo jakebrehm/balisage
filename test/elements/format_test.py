@@ -2,11 +2,9 @@
 Contains tests for the elements.format module.
 """
 
-from typing import Any
-
 import pytest
 
-from html_builder.attributes import Attributes, Classes
+from html_builder.attributes import Attributes, Classes, Element, Elements
 from html_builder.elements.format import Div, HorizontalRule, LineBreak
 from html_builder.elements.image import Image
 
@@ -14,13 +12,13 @@ from html_builder.elements.image import Image
 
 
 @pytest.fixture
-def sample_data() -> list[Any]:
+def sample_elements() -> Elements:
     """Creates a sample list of data."""
-    return [
+    return Elements(
         Image(attributes=Attributes({"src": "image1.png"})),
         LineBreak(),
         Image(attributes=Attributes({"src": "image2.png", "alt": "Image 2"})),
-    ]
+    )
 
 
 @pytest.fixture
@@ -42,10 +40,10 @@ def horizontal_rule() -> HorizontalRule:
 
 
 @pytest.fixture
-def div(sample_data: list[Any]) -> Div:
+def div(sample_elements: list[Element]) -> Div:
     """Creates a sample Div object that has classes and attributes."""
     return Div(
-        data=sample_data,
+        elements=sample_elements,
         attributes=Attributes({"id": "test", "disabled": True}),
         classes=Classes("class 1", "class2"),
     )
@@ -101,10 +99,10 @@ def test_horizontal_rule_construct(horizontal_rule: HorizontalRule) -> None:
     assert HorizontalRule().construct() == "<hr>"
 
 
-# MARK: Horizontal Rule
+# MARK: Div
 
 
-def test_div_init(div: Div, sample_data: list[Any]) -> None:
+def test_div_init(div: Div, sample_elements: Elements) -> None:
     """Tests the initialization of the Div class."""
     expected_attributes = Attributes(
         {
@@ -113,29 +111,26 @@ def test_div_init(div: Div, sample_data: list[Any]) -> None:
             "class": Classes("class 1", "class2"),
         }
     )
-    assert div.elements == sample_data
+    assert div.elements == sample_elements
     assert div.attributes == expected_attributes
     assert div.classes == Classes("class 1", "class2")
     assert div.classes == Classes("class-1", "class2")
     assert div.tag == "div"
 
 
-def test_div_add_data(div: Div, sample_data: list[Any]) -> None:
+def test_div_add_data(div: Div, sample_elements: Elements) -> None:
     """Tests the add_data method of the Div class."""
-    new_data = HorizontalRule()
-    div.add_data(new_data)
-    expected_data = sample_data + [new_data]
-    assert div.elements == (expected_data)
     new_data = LineBreak()
-    div.add(new_data)
-    expected_data = expected_data + [new_data]
-    assert div.elements == expected_data
+    div.elements.add(new_data)
+    sample_elements.add(new_data)
+    assert div.elements == sample_elements.elements
+    assert div.elements.elements == sample_elements.elements
 
 
 def test_div_set_data(div: Div) -> None:
     """Tests the set_data method of the Div class."""
     new_data = [HorizontalRule(), LineBreak(attributes={"id": "test"})]
-    div.set_data(new_data)
+    div.elements.set(*new_data)
     assert div.elements == new_data
 
 

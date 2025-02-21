@@ -2,7 +2,7 @@
 Contains code related to HTML attributes.
 """
 
-from typing import Self, TypeAlias
+from typing import Any, Iterator, Self, TypeAlias
 
 from .utilities import split_preserving_quotes
 
@@ -12,7 +12,7 @@ class Classes:
 
     DEFAULT_REPLACEMENTS: dict[str, str] = {" ": "-"}
 
-    def __init__(self, *args: str) -> None:
+    def __init__(self, *names: str) -> None:
         """Initializes the Classes object."""
 
         # Initialize instance variables
@@ -20,7 +20,7 @@ class Classes:
         self.reset_replacements()
 
         # Set the classes
-        self.set(*args)
+        self.set(*names)
 
     @classmethod
     def from_string(cls, string: str) -> Self:
@@ -56,7 +56,7 @@ class Classes:
         """Resets the replacements dictionary to its default value."""
         self._replacements = self.DEFAULT_REPLACEMENTS
 
-    def add(self, *args: str) -> None:
+    def add(self, *names: str) -> None:
         """Adds classes to the list of classes.
 
         Note that duplicate classes will be ignored.
@@ -65,8 +65,8 @@ class Classes:
         # Determine the existing sanitized names
         old_sanitized_names = list(self._classes.values())
         # Determine the new sanitized names
-        new_original_names = args
-        new_sanitized_names = [self._sanitize_name(name) for name in args]
+        new_original_names = names
+        new_sanitized_names = [self._sanitize_name(name) for name in names]
         new_names = zip(new_original_names, new_sanitized_names)
         # Check that duplicate classes aren't being added
         filtered_names = {
@@ -77,9 +77,9 @@ class Classes:
         # Update the classes
         self._classes.update(filtered_names)
 
-    def set(self, *args: str) -> None:
+    def set(self, *names: str) -> None:
         """Sets the list of classes."""
-        self._classes = {arg: self._sanitize_name(arg) for arg in args}
+        self._classes = {arg: self._sanitize_name(arg) for arg in names}
 
     def remove(self, name: str) -> tuple[str, str]:
         """Removes a class from the list of classes.
@@ -160,7 +160,7 @@ class Attributes:
         """Initializes the Attributes object."""
 
         # Initialize instance variables
-        self._attributes: AttributeMap = dict()
+        self._attributes = dict()
 
         # Set the attributes
         if attributes is not None:
@@ -281,7 +281,6 @@ class Attributes:
 
     def __eq__(self, other: Self) -> bool:
         """Determines whether two Attributes objects are equal."""
-        # TODO: Needs testing
         if isinstance(other, self.__class__):
             return self._attributes == other._attributes
         elif isinstance(other, dict):
@@ -302,3 +301,103 @@ class Attributes:
 
 
 AttributesType: TypeAlias = Attributes | AttributeMap
+Element: TypeAlias = Any  # TODO: Change type hint?
+
+
+class Elements:
+    """Class for managing subelements of HTML elements."""
+
+    def __init__(self, *elements: Element) -> None:
+        """Initializes the Elements object."""
+
+        # Initialize instance variables
+        self._elements: list[Element] = []
+
+        # TODO: Add a way to restrict changing the elements?
+
+        # Set the elements
+        self.set(*elements)
+
+    @property
+    def elements(self) -> list[Element]:
+        """Gets the stored elements."""
+        return self._elements
+
+    def add(self, *elements: Element) -> None:
+        """Adds elements to the list of elements."""
+        self._elements.extend(elements)
+
+    def set(self, *elements: Element) -> None:
+        """Sets the list of elements."""
+        self._elements = list(elements)
+
+    def insert(self, index: int, element: Element) -> None:
+        """Inserts the provided element at the specified index."""
+        self._elements.insert(index, element)
+
+    def update(self, index: int, element: Element) -> None:
+        """Updates the provided element at the specified index."""
+        self._elements[index] = element
+
+    def remove(self, index: int) -> None:
+        """Removes the element at the specified index."""
+        del self._elements[index]
+
+    def pop(self, index: int) -> Element:
+        """Pops and returns the element at the specified index."""
+        return self._elements.pop(index)
+
+    def clear(self) -> None:
+        """Clears the list of elements."""
+        self._elements.clear()
+
+    def __getitem__(self, index: int) -> Element:
+        """Gets the element at the specified index."""
+        return self._elements[index]
+
+    def __setitem__(self, index: int, element: Element) -> None:
+        """Sets the element at the specified index."""
+        self.update(index, element)
+
+    def __delitem__(self, index: int) -> None:
+        """Deletes the element at the specified index."""
+        self.remove(index)
+
+    def __iter__(self) -> Iterator[Element]:
+        """Iterates over the elements in the list."""
+        return iter(self._elements)
+
+    def __eq__(self, other: Self) -> bool:
+        """Determines whether two Elements objects are equal."""
+        if isinstance(other, self.__class__):
+            return self._elements == other._elements
+        elif isinstance(other, list):
+            return self._elements == other
+        return False
+
+    def __bool__(self) -> bool:
+        """Determines whether the instance is empty."""
+        return len(self._elements) > 0
+
+    def __len__(self) -> int:
+        """Gets the number of elements in the list."""
+        return len(self._elements)
+
+    def __str__(self) -> str:
+        """Gets the string version of the object."""
+        element_info = []
+        for element in self._elements:
+            name = element.__class__.__name__
+            subelements = len(element._elements)
+            element_info.append(
+                f"{name}<{subelements} subelements>" if subelements else name
+            )
+        return f"[{', '.join(element_info)}]"
+
+    def __repr__(self) -> str:
+        """Gets the string representation of the object."""
+        contents = ", ".join(repr(e) for e in self._elements)
+        return f"{self.__class__.__name__}({contents})"
+
+
+ElementsType: TypeAlias = Elements | list[Element]
