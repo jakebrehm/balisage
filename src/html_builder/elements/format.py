@@ -24,6 +24,8 @@ class LineBreak(HTMLBuilder):
         )
         self.tag = "br"
 
+        self.elements.max_elements = 0
+
     def construct(self) -> str:
         """Generates HTML from the stored elements."""
         attributes_string = f" {self.attributes}" if self.attributes else ""

@@ -64,9 +64,6 @@ class HTMLBuilder(ABC):
         if isinstance(other, self.__class__):
             attributes_equal = self.attributes == other.attributes
             elements_equal = self.elements == other.elements
-            print(self.attributes, other.attributes)  # TODO: Remove
-            print(self.elements, other.elements)
-            print(attributes_equal, elements_equal)
             return attributes_equal and elements_equal
         return False
 

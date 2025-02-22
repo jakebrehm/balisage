@@ -2,6 +2,8 @@
 Contains tests for the elements.format module.
 """
 
+import re
+
 import pytest
 
 from html_builder.attributes import Attributes, Classes, Element, Elements
@@ -66,6 +68,11 @@ def test_line_break_init(line_break: LineBreak) -> None:
     assert line_break.classes == Classes("class-1", "class2")
     assert line_break.tag == "br"
 
+    # Verify that elements cannot be added
+    message = "1 element would exceed the maximum number of elements (0)"
+    with pytest.raises(ValueError, match=re.escape(message)):
+        line_break.elements.add(HorizontalRule())
+
 
 def test_line_break_construct(line_break: LineBreak) -> None:
     """Tests the construct method of the LineBreak class."""
@@ -90,6 +97,11 @@ def test_horizontal_rule_init(horizontal_rule: HorizontalRule) -> None:
     assert horizontal_rule.classes == Classes("class 1", "class2")
     assert horizontal_rule.classes == Classes("class-1", "class2")
     assert horizontal_rule.tag == "hr"
+
+    # Verify that elements cannot be added
+    message = "1 element would exceed the maximum number of elements (0)"
+    with pytest.raises(ValueError, match=re.escape(message)):
+        horizontal_rule.elements.add(HorizontalRule())
 
 
 def test_horizontal_rule_construct(horizontal_rule: HorizontalRule) -> None:
