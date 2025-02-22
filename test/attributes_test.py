@@ -711,10 +711,22 @@ def test_elements_remove(elements: Elements, element_data: list[Element]) -> Non
 
 def test_elements_pop(elements: Elements, element_data: list[Element]) -> None:
     """Tests the pop method of the Elements class."""
+
+    # Pop with an integer argument
     popped_element = elements.pop(0)
     assert popped_element == element_data[0]
     assert elements.elements == element_data[1:]
     assert len(elements.elements) == (len(element_data) - 1)
+
+    # Pop with a non-integer argument
+    with pytest.raises(TypeError):
+        elements.pop("1")
+
+    # Pop with no arguments
+    popped_element = elements.pop()
+    assert popped_element == element_data[-1]
+    assert elements.elements == []
+    assert len(elements.elements) == (len(element_data) - 2)
 
 
 def test_elements_clear(elements: Elements) -> None:

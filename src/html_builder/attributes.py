@@ -362,7 +362,7 @@ class Elements:
         """Removes the element at the specified index."""
         del self._elements[index]
 
-    def pop(self, index: int) -> Element:
+    def pop(self, index: int = -1) -> Element:
         """Pops and returns the element at the specified index."""
         return self._elements.pop(index)
 

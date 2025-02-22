@@ -118,13 +118,79 @@ def test_div_init(div: Div, sample_elements: Elements) -> None:
     assert div.tag == "div"
 
 
-def test_div_add_data(div: Div, sample_elements: Elements) -> None:
-    """Tests the add_data method of the Div class."""
+def test_div_add(div: Div, sample_elements: Elements) -> None:
+    """Tests the add method of the Div class."""
     new_data = LineBreak()
-    div.elements.add(new_data)
+    div.add(new_data)
     sample_elements.add(new_data)
+    assert div.elements == sample_elements
+    assert div.elements.elements == sample_elements.elements
+
+
+def test_div_set(div: Div, sample_elements: Elements) -> None:
+    """Tests the set method of the Div class."""
+    new_data = [HorizontalRule(), LineBreak(attributes={"id": "test"})]
+    div.set(*new_data)
+    sample_elements._elements = new_data
     assert div.elements == sample_elements.elements
     assert div.elements.elements == sample_elements.elements
+
+
+def test_div_insert(div: Div, sample_elements: Elements) -> None:
+    """Tests the insert method of the Div class."""
+    new_data = HorizontalRule()
+    sample_elements._elements.insert(1, new_data)
+    div.insert(1, new_data)
+    assert div.elements == sample_elements
+    assert div.elements.elements == sample_elements.elements
+    assert len(div.elements) == len(sample_elements.elements)
+
+
+def test_div_update(div: Div, sample_elements: Elements) -> None:
+    """Tests the update method of the Div class."""
+    new_data = LineBreak()
+    sample_elements._elements[2] = new_data
+    div.update(2, new_data)
+    assert div.elements == sample_elements
+    assert div.elements.elements == sample_elements.elements
+
+
+def test_div_remove(div: Div, sample_elements: Elements) -> None:
+    """Tests the remove method of the Div class."""
+    div.remove(1)
+    sample_elements.remove(1)
+    assert div.elements == sample_elements
+    assert div.elements.elements == sample_elements.elements
+    assert len(div.elements) == len(sample_elements.elements)
+
+
+def test_div_pop(div: Div, sample_elements: Elements) -> None:
+    """Tests the pop method of the Div class."""
+
+    # Pop with an integer argument
+    div.pop(1)
+    sample_elements._elements = (
+        sample_elements.elements[:1] + sample_elements.elements[2:]
+    )
+    assert div.elements == sample_elements
+    assert div.elements.elements == sample_elements.elements
+
+    # Pop with a non-integer argument
+    with pytest.raises(TypeError):
+        div.pop("1")
+
+    # Pop with no arguments
+    div.pop()
+    sample_elements._elements = sample_elements.elements[:-1]
+    assert div.elements == sample_elements
+    assert div.elements.elements == sample_elements.elements
+
+
+def test_div_clear(div: Div) -> None:
+    """Tests the clear method of the Div class."""
+    div.clear()
+    assert div.elements == Elements()
+    assert div.elements.elements == []
 
 
 def test_div_set_data(div: Div) -> None:
