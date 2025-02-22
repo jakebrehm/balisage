@@ -427,14 +427,7 @@ class Elements:
 
     def __str__(self) -> str:
         """Gets the string version of the object."""
-        element_info = []
-        for element in self._elements:
-            name = element.__class__.__name__
-            subelements = len(element._elements)
-            element_info.append(
-                f"{name}<{subelements} subelements>" if subelements else name
-            )
-        return f"[{', '.join(element_info)}]"
+        return "".join(str(e) for e in self._elements)
 
     def __repr__(self) -> str:
         """Gets the string representation of the object."""

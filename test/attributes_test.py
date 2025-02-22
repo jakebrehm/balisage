@@ -833,12 +833,12 @@ def test_elements_len(elements: Elements) -> None:
     assert len(elements) is not None
 
 
-def test_elements_str(elements: Elements, element_data: list[Element]) -> None:
+def test_elements_str(elements: Elements) -> None:
     """Tests the __str__ method of the Elements class."""
-    assert str(elements) == "[Div<2 subelements>, LineBreak]"
+    assert str(elements) == "<div><hr><img src='image.png'></div><br>"
 
 
-def test_elements_repr(elements: Elements, element_data: list[Element]) -> None:
+def test_elements_repr(elements: Elements) -> None:
     """Tests the __repr__ method of the Elements class."""
     expected = (
         "Elements("
