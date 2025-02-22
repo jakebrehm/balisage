@@ -3,8 +3,8 @@ Contains code for all text-related HTML elements.
 """
 
 from enum import Enum
-from typing import Any
 
+from ..attributes import AttributesType, ClassesType
 from ..core import HTMLBuilder
 
 
@@ -25,28 +25,43 @@ class Text(HTMLBuilder):
         self,
         text: str,
         tag: TextType = TextType.P,
-        classes: str | list[str] | None = None,
-        **kwargs: Any,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Text object."""
 
         # Initialize the builder
-        super().__init__(classes=classes, **kwargs)
+        super().__init__(
+            elements=None,
+            attributes=attributes,
+            classes=classes,
+        )
         self.tag = tag.value
 
-        # Set the text
-        self.set_text(text)
+        self.elements.max_elements = 1
 
-    def set_text(self, text: Any) -> None:
-        """Sets the text."""
-        self.clear_elements()
-        self.add_element(text)
+        # Set the text
+        self.set(text)
+
+    @property
+    def text(self) -> str:
+        """Gets the text."""
+        return self.elements[0] if self.elements else ""
+
+    def set(self, text: str) -> None:
+        """Convenience wrapper for the self.elements.set method."""
+        self.elements.set(text)
+
+    def clear(self) -> None:
+        """Convenience wrapper for the self.elements.clear method."""
+        self.elements.clear()
 
     def construct(self) -> str:
         """Generates HTML from the stored elements."""
 
         # Open the tag
-        html = f"<{self.tag}{self.attributes_to_string()}>"
+        attributes_string = f" {self.attributes}" if self.attributes else ""
+        html = f"<{self.tag}{attributes_string}>"
 
         # Add the data
         for element in self.elements:
@@ -63,13 +78,18 @@ class Paragraph(Text):
     def __init__(
         self,
         text: str,
-        classes: str | list[str] | None = None,
-        **kwargs: Any,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Paragraph object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.P, classes=classes, **kwargs)
+        super().__init__(
+            text,
+            TextType.P,
+            attributes=attributes,
+            classes=classes,
+        )
 
 
 class Heading1(Text):
@@ -78,13 +98,18 @@ class Heading1(Text):
     def __init__(
         self,
         text: str,
-        classes: str | list[str] | None = None,
-        **kwargs: Any,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Heading1 object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.H1, classes=classes, **kwargs)
+        super().__init__(
+            text,
+            TextType.H1,
+            attributes=attributes,
+            classes=classes,
+        )
 
 
 class Heading2(Text):
@@ -93,13 +118,18 @@ class Heading2(Text):
     def __init__(
         self,
         text: str,
-        classes: str | list[str] | None = None,
-        **kwargs: Any,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Heading2 object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.H2, classes=classes, **kwargs)
+        super().__init__(
+            text,
+            TextType.H2,
+            attributes=attributes,
+            classes=classes,
+        )
 
 
 class Heading3(Text):
@@ -108,13 +138,18 @@ class Heading3(Text):
     def __init__(
         self,
         text: str,
-        classes: str | list[str] | None = None,
-        **kwargs: Any,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Heading3 object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.H3, classes=classes, **kwargs)
+        super().__init__(
+            text,
+            TextType.H3,
+            attributes=attributes,
+            classes=classes,
+        )
 
 
 class Heading4(Text):
@@ -123,13 +158,18 @@ class Heading4(Text):
     def __init__(
         self,
         text: str,
-        classes: str | list[str] | None = None,
-        **kwargs: Any,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Heading4 object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.H4, classes=classes, **kwargs)
+        super().__init__(
+            text,
+            TextType.H4,
+            attributes=attributes,
+            classes=classes,
+        )
 
 
 class Heading5(Text):
@@ -138,13 +178,18 @@ class Heading5(Text):
     def __init__(
         self,
         text: str,
-        classes: str | list[str] | None = None,
-        **kwargs: Any,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Heading5 object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.H5, classes=classes, **kwargs)
+        super().__init__(
+            text,
+            TextType.H5,
+            attributes=attributes,
+            classes=classes,
+        )
 
 
 class Heading6(Text):
@@ -153,10 +198,15 @@ class Heading6(Text):
     def __init__(
         self,
         text: str,
-        classes: str | list[str] | None = None,
-        **kwargs: Any,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Heading6 object."""
 
         # Initialize the builder
-        super().__init__(text, TextType.H6, classes=classes, **kwargs)
+        super().__init__(
+            text,
+            TextType.H6,
+            attributes=attributes,
+            classes=classes,
+        )
