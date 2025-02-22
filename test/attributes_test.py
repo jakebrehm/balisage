@@ -598,6 +598,42 @@ def test_elements_init(elements: Elements, element_data: list[Element]) -> None:
     assert elements.elements == expected
 
 
+def test_elements_max_elements(elements: Elements) -> None:
+    """Tests the max_elements property of the Elements class."""
+
+    # Test the default max_elements and setting to valid values
+    assert elements.max_elements is None
+    for test_value in [10, None]:
+        elements.max_elements = test_value
+        assert elements.max_elements == test_value
+
+    # Verify that a new instance's max elements is None
+    assert Elements().max_elements is None
+
+    # Set max elements to a value that is not an int or None
+    message = "max_elements must be an int or None"
+    test_values = ["10", 10.0, True, False, tuple(), list(), dict()]
+    for test_value in test_values:
+        with pytest.raises(TypeError, match=message):
+            elements.max_elements = test_value
+
+    # Set max elements to a negative value
+    message = "max_elements must be a positive integer"
+    with pytest.raises(ValueError, match=message):
+        elements.max_elements = -1
+
+    # Set max elements to a value equal to the current number of elements
+    elements.max_elements = 2
+
+    # Set max elements to a value less than the current number of elements
+    message = (
+        "max_elements must be greater than or equal to the current "
+        r"number of elements \(2\)"
+    )
+    with pytest.raises(ValueError, match=message):
+        elements.max_elements = 1
+
+
 def test_elements_add(elements: Elements, element_data: list[Element]) -> None:
     """Tests the add method of the Elements class."""
 
@@ -674,6 +710,33 @@ def test_elements_clear(elements: Elements) -> None:
     elements.clear()
     assert elements.elements == []
     assert len(elements.elements) == 0
+
+
+def test_elements_raise_if_exceeds_max_elements(elements: Elements) -> None:
+    """Tests the _raise_if_exceeds_max_elements method of the Elements class."""
+
+    # Try adding a new element to exceed max_elements
+    elements.max_elements = 2
+    message = r"3 elements would exceed the maximum number of elements \(2\)"
+    with pytest.raises(ValueError, match=message):
+        elements.add(LineBreak())
+
+    # Try inserting a new element to exceed max_elements
+    message = r"3 elements would exceed the maximum number of elements \(2\)"
+    with pytest.raises(ValueError, match=message):
+        elements.insert(0, LineBreak())
+
+    # Try setting new elements to exceed max_elements
+    message = r"3 elements would exceed the maximum number of elements \(2\)"
+    with pytest.raises(ValueError, match=message):
+        elements.set(LineBreak(), HorizontalRule(), Div())
+
+    # Test different versions of pluralization in the error message
+    elements.clear()
+    elements.max_elements = 0
+    message = r"1 element would exceed the maximum number of elements \(0\)"
+    with pytest.raises(ValueError, match=message):
+        elements.add(LineBreak())
 
 
 def test_elements_get_set(elements: Elements, element_data: list[Element]) -> None:

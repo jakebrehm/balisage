@@ -312,8 +312,7 @@ class Elements:
 
         # Initialize instance variables
         self._elements: list[Element] = []
-
-        # TODO: Add a way to restrict changing the elements?
+        self._max_elements: int | None = None
 
         # Set the elements
         self.set(*elements)
@@ -323,16 +322,45 @@ class Elements:
         """Gets the stored elements."""
         return self._elements
 
+    @property
+    def max_elements(self) -> int | None:
+        """Gets the maximum number of elements."""
+        return self._max_elements
+
+    @max_elements.setter
+    def max_elements(self, value: int | None) -> None:
+        """Sets the maximum number of elements."""
+        is_integer = isinstance(value, int) and not isinstance(value, bool)
+        is_none = value is None
+        current_elements = len(self._elements)
+        property_name = Elements.max_elements.fget.__name__
+        if not is_integer and not is_none:
+            raise TypeError(f"{property_name} must be an int or None")
+        elif is_integer and value < 0:
+            raise ValueError(f"{property_name} must be a positive integer")
+        elif is_integer and value < current_elements:
+            raise ValueError(
+                f"{property_name} must be greater than or equal to the current "
+                f"number of elements ({current_elements})"
+            )
+        self._max_elements = value
+
     def add(self, *elements: Element) -> None:
         """Adds elements to the list of elements."""
+        self._raise_if_exceeds_max_elements(new_elements=len(elements))
         self._elements.extend(elements)
 
     def set(self, *elements: Element) -> None:
         """Sets the list of elements."""
+        self._raise_if_exceeds_max_elements(
+            new_elements=len(elements),
+            ignore_current_elements=True,
+        )
         self._elements = list(elements)
 
     def insert(self, index: int, element: Element) -> None:
         """Inserts the provided element at the specified index."""
+        self._raise_if_exceeds_max_elements(new_elements=1)
         self._elements.insert(index, element)
 
     def update(self, index: int, element: Element) -> None:
@@ -350,6 +378,29 @@ class Elements:
     def clear(self) -> None:
         """Clears the list of elements."""
         self._elements.clear()
+
+    def _raise_if_exceeds_max_elements(
+        self,
+        new_elements: int,
+        ignore_current_elements: bool = False,
+    ) -> None:
+        """Determines whether the provided elements can be added."""
+
+        if self.max_elements is None:
+            return
+        elif ignore_current_elements:
+            # Check if the number of new elements exceeds the max elements
+            proposed_elements = new_elements
+        else:
+            # Check if the total number of elements exceeds the max elements
+            proposed_elements = len(self._elements) + new_elements
+        exceeds_max_elements = proposed_elements > self.max_elements
+        if exceeds_max_elements:
+            proposed_string = "element" if proposed_elements == 1 else "elements"
+            raise ValueError(
+                f"{proposed_elements} {proposed_string} would exceed the "
+                f"maximum number of elements ({self.max_elements})"
+            )
 
     def __getitem__(self, index: int) -> Element:
         """Gets the element at the specified index."""
