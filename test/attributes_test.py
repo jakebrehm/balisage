@@ -2,6 +2,7 @@
 Contains tests for the attributes module.
 """
 
+import re
 from copy import deepcopy
 
 import pytest
@@ -63,8 +64,7 @@ def elements(element_data: list[Element]) -> Elements:
 
 def test_classes_init(classes: Classes) -> None:
     """Tests the initialization of the Classes class."""
-    expected = {"class 1": "class-1", "class2": "class2"}
-    assert classes.classes == expected
+    assert classes.classes == {"class 1": "class-1", "class2": "class2"}
 
 
 def test_classes_from_string() -> None:
@@ -175,6 +175,19 @@ def test_classes_set(classes: Classes) -> None:
         "class--9": "class--9",
     }
     assert classes.classes == expected
+
+    # Try settings with no arguments
+    classes.set()
+    assert classes.classes == {}
+
+    # Try setting with a mix of strings and non-strings
+    message = "Arguments passed to set must be strings"
+    with pytest.raises(TypeError, match=message):
+        classes.set("Class 3", 1, 2.0, True, None, tuple(), list(), dict())
+
+    # Try setting with only non-strings
+    with pytest.raises(TypeError, match=message):
+        classes.set(1, 2.0, True, None, tuple(), list(), dict())
 
 
 def test_classes_remove(classes: Classes) -> None:
@@ -312,32 +325,31 @@ def test_attributes_attributes(attributes: Attributes) -> None:
 def test_attributes_classes(attributes: Attributes) -> None:
     """Tests the attributes property of the Attributes class."""
 
-    # Test getting classes
-    assert attributes.classes == Classes("class 1", "class2")
-
     # Test setting classes as a string
-    expected = "class1"
-    attributes.classes = expected
-    assert attributes.classes == Classes.from_string(expected)
-    expected = "class1 class-2"
-    attributes.classes = expected
-    assert attributes.classes == Classes.from_string(expected)
-
-    # Test setting classes as a list of strings
-    expected = ["class 1", "class2", "Class 3", "cLass4"]
-    attributes.classes = expected
-    assert attributes.classes == Classes(*expected)
+    expected = {"class1": "class1"}
+    attributes.classes = "class1"
+    assert attributes.classes.classes == expected
+    expected = {"class1": "class1", "class-2": "class-2"}
+    attributes.classes = "class1 class-2"
+    assert attributes.classes.classes == expected
 
     # Test setting classes as a Classes object
-    expected = Classes("class 1", "class2", "Class 3", "cLass4")
-    attributes.classes = expected
-    assert attributes.classes == expected
+    expected = {
+        "class 1": "class-1",
+        "class2": "class2",
+        "Class 3": "class-3",
+        "cLass4": "class4",
+    }
+    attributes.classes = Classes("class 1", "class2", "Class 3", "cLass4")
+    assert attributes.classes.classes == expected
+
+    # Test setting classes as a list of strings
+    invalid_value = ["class 1", "class2", "Class 3", "cLass4"]
+    message = "Arguments passed to set must be strings"
+    with pytest.raises(TypeError, match=message):
+        attributes.classes = invalid_value
 
     # Test setting classes as other data types
-    message = (
-        "classes setter accepts either a string, a list of strings, or an "
-        "instance of Attributes"
-    )
     for invalid_value in [True, False, None, 1, 2.0, tuple(), list(), dict()]:
         with pytest.raises(TypeError, match=message):
             attributes.classes = invalid_value
@@ -628,9 +640,9 @@ def test_elements_max_elements(elements: Elements) -> None:
     # Set max elements to a value less than the current number of elements
     message = (
         "max_elements must be greater than or equal to the current "
-        r"number of elements \(2\)"
+        "number of elements (2)"
     )
-    with pytest.raises(ValueError, match=message):
+    with pytest.raises(ValueError, match=re.escape(message)):
         elements.max_elements = 1
 
 
@@ -717,25 +729,25 @@ def test_elements_raise_if_exceeds_max_elements(elements: Elements) -> None:
 
     # Try adding a new element to exceed max_elements
     elements.max_elements = 2
-    message = r"3 elements would exceed the maximum number of elements \(2\)"
-    with pytest.raises(ValueError, match=message):
+    message = "3 elements would exceed the maximum number of elements (2)"
+    with pytest.raises(ValueError, match=re.escape(message)):
         elements.add(LineBreak())
 
     # Try inserting a new element to exceed max_elements
-    message = r"3 elements would exceed the maximum number of elements \(2\)"
-    with pytest.raises(ValueError, match=message):
+    message = "3 elements would exceed the maximum number of elements (2)"
+    with pytest.raises(ValueError, match=re.escape(message)):
         elements.insert(0, LineBreak())
 
     # Try setting new elements to exceed max_elements
-    message = r"3 elements would exceed the maximum number of elements \(2\)"
-    with pytest.raises(ValueError, match=message):
+    message = "3 elements would exceed the maximum number of elements (2)"
+    with pytest.raises(ValueError, match=re.escape(message)):
         elements.set(LineBreak(), HorizontalRule(), Div())
 
     # Test different versions of pluralization in the error message
     elements.clear()
     elements.max_elements = 0
-    message = r"1 element would exceed the maximum number of elements \(0\)"
-    with pytest.raises(ValueError, match=message):
+    message = "1 element would exceed the maximum number of elements (0)"
+    with pytest.raises(ValueError, match=re.escape(message)):
         elements.add(LineBreak())
 
 

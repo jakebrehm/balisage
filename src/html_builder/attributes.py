@@ -79,6 +79,9 @@ class Classes:
 
     def set(self, *names: str) -> None:
         """Sets the list of classes."""
+        method_name = self.set.__name__
+        if not all(isinstance(i, str) for i in names):
+            raise TypeError(f"Arguments passed to {method_name} must be strings")
         self._classes = {arg: self._sanitize_name(arg) for arg in names}
 
     def remove(self, name: str) -> tuple[str, str]:
@@ -148,7 +151,7 @@ class Classes:
         return f"{self.__class__.__name__}({arg_string})"
 
 
-ClassesType: TypeAlias = Classes | str | list[str]
+ClassesType: TypeAlias = Classes | str
 AttributeValue: TypeAlias = str | bool | None
 AttributeMap: TypeAlias = dict[str, AttributeValue]
 
@@ -200,10 +203,7 @@ class Attributes:
 
         Valid data types for the classes property are:
         - A string
-        - A list of strings
-        - A tuple of strings
         - An instance of the Classes class
-
         Other data types will raise a TypeError.
 
         Note that a provided value with data type string will be assumed to be
@@ -212,18 +212,9 @@ class Attributes:
         """
         if isinstance(classes, str):
             classes = Classes.from_string(classes)
-        elif (
-            isinstance(classes, (tuple, list))
-            and classes
-            and all(isinstance(i, str) for i in classes)
-        ):
-            classes = Classes(*classes)
         elif not isinstance(classes, Classes):
-            raise TypeError(  # TODO: Type checking should be in Classes.__init__
-                f"{Attributes.classes.fget.__name__} setter accepts either a "
-                "string, a list of strings, or an instance of "
-                f"{self.__class__.__name__}"
-            )
+            # Handle any invalid data types during conversion
+            classes = Classes(classes)
         self._attributes["class"] = classes
 
     def add(self, attributes: AttributeMap) -> None:
