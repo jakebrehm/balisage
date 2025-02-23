@@ -2,8 +2,7 @@
 Contains code for all top-level HTML classes.
 """
 
-from typing import Any
-
+from ..attributes import Element, ElementsType
 from ..core import HTMLBuilder
 
 
@@ -12,78 +11,72 @@ class Page(HTMLBuilder):
 
     def __init__(
         self,
-        data: list[Any] | None = None,
+        elements: ElementsType | None = None,
         title: str | None = None,
         lang: str = "en",
         charset: str = "UTF-8",
-        stylesheets: str | list[str] | None = None,
+        stylesheets: list[str] | None = None,
     ) -> None:
         """Initializes the Page object."""
 
         # Initialize the builder
-        super().__init__(classes=None)
+        super().__init__(
+            elements=elements,
+            attributes=None,
+            classes=None,
+        )
         self.tag = "html"
 
         # Initialize instance variables
-        self._stylesheets: list[str] = []
-
-        # Store instance variables
         self.title = title
         self.lang = lang
         self.charset = charset
-
-        # Add stylesheets
-        match stylesheets:
-            case str():
-                self.add_stylesheet(stylesheets)
-            case list():
-                self.add_stylesheets(stylesheets)
-            case _:
-                raise TypeError(
-                    "stylesheets argument must be provided as a string "
-                    "or list of strings."
-                )
-
-        # Set the data
-        if data is not None:
-            self.set_data(data)
+        self.stylesheets: list[str] = stylesheets
 
     @property
     def stylesheets(self) -> list[str]:
-        """Gets the list of stylesheets."""
+        """Gets the stylesheets."""
         return self._stylesheets
 
-    def add_stylesheet(self, stylesheet: str) -> None:
-        """Adds a stylesheet to link."""
-        self._stylesheets.append(stylesheet)
+    @stylesheets.setter
+    def stylesheets(self, value: list[str]) -> None:
+        """Sets the stylesheets."""
+        message = "stylesheets must be provided as a list of strings"
+        if value is not None:
+            if isinstance(value, list):
+                if value and not all(isinstance(i, str) for i in value):
+                    raise TypeError(message)
+            else:
+                raise TypeError(message)
+        self._stylesheets: list[str] = value if value else []
 
-    def add_stylesheets(self, stylesheet: list[str]) -> None:
-        """Adds stylesheets to link."""
-        self._stylesheets.extend(stylesheet)
+    def add(self, *elements: Element) -> None:
+        """Convenience wrapper for the self.elements.add method."""
+        self.elements.add(*elements)
 
-    def clear_stylesheets(self) -> None:
-        """Clears all stylesheets."""
-        self._stylesheets.clear()
+    def set(self, *elements: Element) -> None:
+        """Convenience wrapper for the self.elements.set method."""
+        self.elements.set(*elements)
 
-    def add_data(self, data: Any) -> None:
-        """Adds data."""
-        self.add_element(data)
+    def insert(self, index: int, element: Element) -> None:
+        """Convenience wrapper for the self.elements.insert method."""
+        self.elements.insert(index, element)
 
-    def set_data(self, data: Any | list[Any]) -> None:
-        """Sets the data."""
-        self.clear_elements()
-        if isinstance(data, list):
-            self.add_elements(data)
-        else:
-            self.add_element(data)
+    def update(self, index: int, element: Element) -> None:
+        """Convenience wrapper for the self.elements.update method."""
+        self.elements.update(index, element)
 
-    def clear_data(self) -> None:
-        """Clears the data."""
-        self.clear_elements()
+    def remove(self, index: int) -> None:
+        """Convenience wrapper for the self.elements.remove method."""
+        self.elements.remove(index)
 
-    def add(self, data: Any) -> None:
-        """Adds data. Simple wrapper around add_data."""
-        self.add_data(data)
+    def pop(self, index: int = -1) -> Element:
+        """Convenience wrapper for the self.elements.pop method."""
+        return self.elements.pop(index)
+
+    def clear(self) -> None:
+        """Convenience wrapper for the self.elements.clear method."""
+        self.elements.clear()
 
     def construct(self) -> str:
         """Generates HTML from the stored elements."""

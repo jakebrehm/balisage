@@ -205,13 +205,6 @@ def test_div_clear(div: Div) -> None:
     assert div.elements.elements == []
 
 
-def test_div_set_data(div: Div) -> None:
-    """Tests the set_data method of the Div class."""
-    new_data = [HorizontalRule(), LineBreak(attributes={"id": "test"})]
-    div.elements.set(*new_data)
-    assert div.elements == new_data
-
-
 def test_div_construct(div: Div) -> None:
     """Tests the construct method of the Div class."""
     expected = (
