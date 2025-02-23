@@ -22,5 +22,5 @@ pythonpath = [
     "src/",
 ]
 testpaths = [
-    "test/",
+    "tests/",
 ]
