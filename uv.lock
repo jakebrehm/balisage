@@ -26,6 +26,7 @@ data = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "pandas" },
     { name = "pytest" },
 ]
 
@@ -33,7 +34,10 @@ dev = [
 requires-dist = [{ name = "pandas", marker = "extra == 'data'", specifier = ">=2.2.3" }]
 
 [package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = ">=8.3.4" }]
+dev = [
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "pytest", specifier = ">=8.3.4" },
+]
 
 [[package]]
 name = "iniconfig"

@@ -13,6 +13,7 @@ data = [
 
 [dependency-groups]
 dev = [
+    "pandas>=2.2.3",
     "pytest>=8.3.4",
 ]
 
