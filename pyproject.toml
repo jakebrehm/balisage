@@ -4,6 +4,24 @@ version = "0.1.0"
 description = "Build HTML files piece-by-piece using Python."
 readme = "readme.md"
 requires-python = ">=3.11"
-dependencies = [
+dependencies = []
+
+[project.optional-dependencies]
+data = [
     "pandas>=2.2.3",
+]
+
+[dependency-groups]
+dev = [
+    "pandas>=2.2.3",
+    "pytest>=8.3.4",
+]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+pythonpath = [
+    "src/",
+]
+testpaths = [
+    "tests/",
 ]
