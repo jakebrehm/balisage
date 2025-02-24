@@ -13,11 +13,23 @@ class Page(HTMLBuilder):
         self,
         title: str,
         elements: ElementsType | None = None,
-        lang: str = "en",  # TODO: Make optional
-        charset: str = "UTF-8",  # TODO: Make optional
+        lang: str = "en",
+        charset: str | None = "UTF-8",
         stylesheets: list[str] | None = None,
     ) -> None:
-        """Initializes the Page object."""
+        """Initializes the Page object.
+
+        A non-empty title is required for valid HTML.
+
+        The 'lang' attribute is "en" (english) by default, but can be changed
+        to any valid language code.
+
+        If no charset is provided, the default value of "UTF-8" will be used;
+        however, if the charset is set to None, no charset meta tag will be
+        added to the HTML.
+
+        If no stylesheets are provided, no link tags will be added to the HTML.
+        """
 
         # Initialize the builder
         super().__init__(
@@ -102,7 +114,8 @@ class Page(HTMLBuilder):
 
         # Add the header
         html += "<head>"
-        html += f"<meta charset='{self.charset}'>"
+        if self.charset:
+            html += f"<meta charset='{self.charset}'>"
         html += f"<title>{self.title}</title>"
         for href in self.stylesheets:
             html += f"<link rel='stylesheet' href='{href}'>"

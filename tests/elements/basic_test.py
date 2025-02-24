@@ -63,6 +63,15 @@ def test_page_init(page: Page, sample_elements: Elements) -> None:
     assert page.charset == "UTF-8"
     assert page._stylesheets == []
 
+    # Test with passing some arguments as None
+    page = Page("Test page", charset=None)
+    assert page.elements == Elements()
+    assert page.tag == "html"
+    assert page.title == "Test page"
+    assert page.lang == "en"
+    assert page.charset is None
+    assert page._stylesheets == []
+
     # Test with no arguments
     with pytest.raises(TypeError):
         page = Page()
@@ -191,7 +200,7 @@ def test_page_construct(page: Page) -> None:
     """Tests the construct method of the Page class."""
 
     # Define expected HTML
-    expected_boilerplate = (
+    boilerplate = (
         "<!DOCTYPE html>"
         "<html{language}>"
         "<head>"
@@ -206,7 +215,7 @@ def test_page_construct(page: Page) -> None:
     )
 
     # Test with arguments from fixture
-    assert page.construct() == expected_boilerplate.format(
+    assert page.construct() == boilerplate.format(
         language=" lang='fr'",
         charset="<meta charset='UTF-16'>",
         title="Test page",
@@ -226,9 +235,18 @@ def test_page_construct(page: Page) -> None:
     )
 
     # Test with an instance made with minimal arguments
-    assert Page("Test page").construct() == expected_boilerplate.format(
+    assert Page("Test page").construct() == boilerplate.format(
         language=" lang='en'",
         charset="<meta charset='UTF-8'>",
+        title="Test page",
+        stylesheets="",
+        body="",
+    )
+
+    # Test with charset passed as None
+    assert Page("Test page", charset=None).construct() == boilerplate.format(
+        language=" lang='en'",
+        charset="",
         title="Test page",
         stylesheets="",
         body="",
