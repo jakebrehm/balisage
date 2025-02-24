@@ -13,6 +13,14 @@ from .attributes import (
     Elements,
     ElementsType,
 )
+from .utilities import requires_modules
+
+# Import optional dependencies
+try:
+    from bs4 import BeautifulSoup
+    from bs4.formatter import HTMLFormatter
+except ImportError:
+    pass
 
 
 class HTMLBuilder(ABC):
@@ -44,10 +52,17 @@ class HTMLBuilder(ABC):
         html += f"</{self.tag}>"
         return html
 
-    def save(self, filepath: str) -> None:
+    @requires_modules("bs4")
+    def prettify(self, indent: int = 2) -> str:
+        """Generates HTML from the stored elements."""
+        formatter = HTMLFormatter(void_element_close_prefix="", indent=indent)
+        soup = BeautifulSoup(self.construct(), "html.parser")
+        return soup.prettify(formatter=formatter)
+
+    def save(self, filepath: str, prettify: bool = False) -> None:
         """Saves the HTML data to the specified filepath."""
         with open(filepath, "w", encoding="utf-8") as f:
-            f.write(self.construct())
+            f.write(self.construct() if not prettify else self.prettify())
 
     @property
     def elements(self) -> list[Any]:

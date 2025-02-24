@@ -11,7 +11,9 @@ import pytest
 from html_builder import Div, LineBreak
 from html_builder.attributes import Attributes, Classes, Elements
 from html_builder.core import HTMLBuilder
+from html_builder.elements.basic import Page
 from html_builder.elements.format import HorizontalRule
+from html_builder.elements.text import Heading1, Paragraph
 
 # MARK: Fixtures
 
@@ -88,17 +90,54 @@ def test_html_builder_init() -> None:
     assert builder.elements == expected_elements
 
 
+def test_html_builder_prettify() -> None:
+    """Tests the prettify method of the HTMLBuilder class."""
+
+    # Create a test page
+    page = Page(
+        elements=Elements(
+            Heading1("Test heading"),
+            HorizontalRule(),
+            Div(
+                elements=Elements(
+                    Paragraph("Test paragraph 1"),
+                    LineBreak(),
+                    Paragraph("Test paragraph 2"),
+                )
+            ),
+        ),
+        title="Test title",
+    )
+
+    # Determine the current directory
+    current_directory = pathlib.Path(__file__).parent.resolve()
+
+    # Test with default arguments
+    filepath = os.path.join(current_directory, r"_data/prettify_indent_2.html")
+    with open(filepath, "r", encoding="utf-8") as f:
+        expected = f.read()
+    assert page.prettify() == expected
+
+    # Test with a different indent
+    filepath = os.path.join(current_directory, r"_data/prettify_indent_4.html")
+    with open(filepath, "r", encoding="utf-8") as f:
+        expected = f.read()
+    assert page.prettify(indent=4) == expected
+
+
 def test_html_builder_save() -> None:
     """Tests the save method of the HTMLBuilder class."""
 
     # Override the abstract construct method
     old_method = HTMLBuilder.construct
-    HTMLBuilder.construct = lambda _: "<This is a mock HTMLBuilder object>"
+    HTMLBuilder.construct = lambda _: (
+        "<!DOCTYPE html><html><body><p>Test paragraph</p></body></html>"
+    )
     builder = HTMLBuilder()
 
     # Determine the filepath to save to and create any necessary directories
     current_directory = pathlib.Path(__file__).parent.resolve()
-    filepath = os.path.join(current_directory, r"_data/test.html")
+    filepath = os.path.join(current_directory, r"_temp/test.html")
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
     builder.save(filepath)
@@ -106,6 +145,18 @@ def test_html_builder_save() -> None:
     with open(filepath, "r", encoding="utf-8") as f:
         data = f.read()
     assert data == builder.construct()
+    os.remove(filepath)
+
+    # Test with prettify
+    filepath = os.path.join(current_directory, r"_temp/prettify_save.html")
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
+    builder.save(filepath, prettify=True)
+    assert os.path.exists(filepath)
+    with open(filepath, "r", encoding="utf-8") as f:
+        data = f.read()
+    print(builder.prettify())  # TODO: Remove
+    assert data == builder.prettify()
     os.remove(filepath)
 
     # Reset the method
