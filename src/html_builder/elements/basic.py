@@ -11,10 +11,10 @@ class Page(HTMLBuilder):
 
     def __init__(
         self,
+        title: str,
         elements: ElementsType | None = None,
-        title: str | None = None,
-        lang: str = "en",
-        charset: str = "UTF-8",
+        lang: str = "en",  # TODO: Make optional
+        charset: str = "UTF-8",  # TODO: Make optional
         stylesheets: list[str] | None = None,
     ) -> None:
         """Initializes the Page object."""
@@ -32,6 +32,19 @@ class Page(HTMLBuilder):
         self.lang = lang
         self.charset = charset
         self.stylesheets: list[str] = stylesheets
+
+    @property
+    def title(self) -> str:
+        """Gets the title."""
+        return self._title
+
+    @title.setter
+    def title(self, value: str) -> None:
+        """Sets the title. Title must be a non-empty string."""
+        if not (isinstance(value, str) and value):
+            property_name = Page.title.fget.__name__
+            raise TypeError(f"{property_name} must be a non-empty string")
+        self._title = value
 
     @property
     def stylesheets(self) -> list[str]:
@@ -90,8 +103,7 @@ class Page(HTMLBuilder):
         # Add the header
         html += "<head>"
         html += f"<meta charset='{self.charset}'>"
-        if self.title:
-            html += f"<title>{self.title}</title>"
+        html += f"<title>{self.title}</title>"
         for href in self.stylesheets:
             html += f"<link rel='stylesheet' href='{href}'>"
         html += "</head>"
