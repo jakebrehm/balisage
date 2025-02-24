@@ -444,16 +444,18 @@ def test_attributes_add(attributes: Attributes) -> None:
     # Try adding a string to a fresh instance
     attributes = Attributes()
     assert attributes == Attributes()
-    assert attributes.attributes == dict()
+    assert attributes.attributes == {"class": Classes()}
     attributes.add({"class": "class-3"})
-    assert attributes.attributes == {"class": Classes("class-3")}
+    assert attributes.attributes == {"class": Classes()}
+    assert attributes.attributes != {"class": Classes("class-3")}
 
     # Try adding a Classes object to a fresh instance
     attributes = Attributes()
     assert attributes == Attributes()
-    assert attributes.attributes == dict()
+    assert attributes.attributes == {"class": Classes()}
     attributes.add({"class": Classes("class-3")})
-    assert attributes.attributes == {"class": Classes("class-3")}
+    assert attributes.attributes == {"class": Classes()}
+    assert attributes.attributes != {"class": Classes("class-3")}
 
 
 def test_attributes_set(attributes: Attributes) -> None:
@@ -485,6 +487,13 @@ def test_attributes_set(attributes: Attributes) -> None:
     attributes.set(expected)
     assert attributes.attributes == expected
 
+    # Set to attributes with no classes
+    attributes = Attributes()
+    attributes.set({})
+    assert attributes.attributes == {"class": Classes()}
+    attributes.set({"class": None})
+    assert attributes.attributes == {"class": Classes()}
+
 
 def test_attributes_remove(attributes: Attributes) -> None:
     """Tests the remove method of the Attributes class."""
@@ -504,7 +513,7 @@ def test_attributes_remove(attributes: Attributes) -> None:
 
     # Try removing the class attributes
     attributes.remove("class")
-    expected_attributes.pop("class")
+    expected_attributes["class"] = Classes()
     assert attributes.attributes == expected_attributes
     assert attributes.classes == Classes()
 
@@ -519,7 +528,7 @@ def test_attributes_clear(attributes: Attributes) -> None:
     """Tests the clear method of the Attributes class."""
     attributes.clear()
     assert attributes == Attributes()
-    assert attributes.attributes == dict()
+    assert attributes.attributes == {"class": Classes()}
     assert attributes.classes == Classes()
 
 
@@ -528,6 +537,7 @@ def test_attributes_construct(attributes: Attributes) -> None:
     assert attributes.construct() == (
         "class='class-1 class2' id='test' width='50' disabled checked"
     )
+    assert Attributes().construct() == ""
 
 
 def test_attributes_get_set(attributes: Attributes) -> None:
@@ -562,8 +572,9 @@ def test_attributes_get_set(attributes: Attributes) -> None:
 
     # Test with a fresh instance
     attributes = Attributes()
+    assert attributes["class"] == Classes()
     with pytest.raises(KeyError):
-        attributes["class"]
+        attributes["id"]
 
 
 def test_attributes_eq(attributes: Attributes) -> None:
@@ -630,6 +641,15 @@ def test_attributes_bool(attributes: Attributes) -> None:
     """Tests the __bool__ method of the Attributes class."""
     assert bool(attributes) is True
     assert bool(Attributes()) is False
+    # Try with an Attributes instance that has no classes
+    attributes = Attributes(
+        {
+            "id": "test",
+            "disabled": True,
+            "class": Classes(),
+        }
+    )
+    assert bool(attributes) is True
 
 
 def test_attributes_str(attributes: Attributes) -> None:
@@ -894,8 +914,8 @@ def test_elements_repr(elements: Elements) -> None:
     """Tests the __repr__ method of the Elements class."""
     expected = (
         "Elements("
-        "Div(attributes=Attributes(attributes={})), "
-        "LineBreak(attributes=Attributes(attributes={}))"
+        "Div(attributes=Attributes(attributes={'class': Classes()})), "
+        "LineBreak(attributes=Attributes(attributes={'class': Classes()}))"
         ")"
     )
     assert repr(elements) == expected

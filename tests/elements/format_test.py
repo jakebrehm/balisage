@@ -65,7 +65,6 @@ def test_line_break_init(line_break: LineBreak) -> None:
     )
     assert line_break.attributes == expected_attributes
     assert line_break.classes == Classes("class 1", "class2")
-    assert line_break.classes == Classes("class-1", "class2")
     assert line_break.tag == "br"
 
     # Verify that elements cannot be added

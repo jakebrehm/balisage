@@ -13,6 +13,8 @@ from html_builder.attributes import Attributes, Classes, Elements
 from html_builder.core import HTMLBuilder
 from html_builder.elements.format import HorizontalRule
 
+# MARK: Fixtures
+
 
 @pytest.fixture()
 def builder() -> HTMLBuilder:
@@ -24,6 +26,9 @@ def builder() -> HTMLBuilder:
     )
 
 
+# MARK: HTMLBuilder
+
+
 def test_html_builder_init() -> None:
     """Tests the initialization of the HTMLBuilder class."""
 
@@ -33,13 +38,13 @@ def test_html_builder_init() -> None:
     # Pass nothing
     builder = HTMLBuilder()
     assert builder.attributes == Attributes()
-    assert builder.classes is None
+    assert builder.classes == Classes()
     assert builder.elements == Elements()
 
     # Pass attributes
     builder = HTMLBuilder(attributes=Attributes({"id": "test"}))
     assert builder.attributes == Attributes({"id": "test"})
-    assert builder.classes is None
+    assert builder.classes == Classes()
     assert builder.elements == Elements()
 
     # Pass classes via attributes argument
@@ -71,7 +76,7 @@ def test_html_builder_init() -> None:
     expected_elements = Elements(Div(), LineBreak())
     builder = HTMLBuilder(elements=expected_elements)
     assert builder.attributes == Attributes()
-    assert builder.classes is None
+    assert builder.classes == Classes()
     assert builder.elements == expected_elements
 
     # Pass elements as a list of elements
@@ -79,7 +84,7 @@ def test_html_builder_init() -> None:
     expected_elements = Elements(*passed_elements)
     builder = HTMLBuilder(elements=passed_elements)
     assert builder.attributes == Attributes()
-    assert builder.classes is None
+    assert builder.classes == Classes()
     assert builder.elements == expected_elements
 
 
@@ -87,6 +92,7 @@ def test_html_builder_save() -> None:
     """Tests the save method of the HTMLBuilder class."""
 
     # Override the abstract construct method
+    old_method = HTMLBuilder.construct
     HTMLBuilder.construct = lambda _: "<This is a mock HTMLBuilder object>"
     builder = HTMLBuilder()
 
@@ -101,6 +107,9 @@ def test_html_builder_save() -> None:
         data = f.read()
     assert data == builder.construct()
     os.remove(filepath)
+
+    # Reset the method
+    HTMLBuilder.construct = old_method
 
 
 def test_html_builder_eq(builder: HTMLBuilder) -> None:
@@ -166,10 +175,13 @@ def test_html_builder_eq(builder: HTMLBuilder) -> None:
 
 def test_html_builder_str() -> None:
     """Tests the __str__ method of the HTMLBuilder class."""
+    old_method = HTMLBuilder.construct
     expected = "<This is a mock HTMLBuilder object>"
     HTMLBuilder.construct = lambda _: expected
     builder = HTMLBuilder()
     assert str(builder) == expected
+    # Reset the method
+    HTMLBuilder.construct = old_method
 
 
 def test_html_builder_repr(builder: HTMLBuilder) -> None:
@@ -177,7 +189,7 @@ def test_html_builder_repr(builder: HTMLBuilder) -> None:
     expected = (
         "HTMLBuilder(attributes="
         "Attributes(attributes="
-        "{'id': 'test', 'disabled': True}"
+        "{'id': 'test', 'disabled': True, 'class': Classes()}"
         "))"
     )
     assert repr(builder) == expected

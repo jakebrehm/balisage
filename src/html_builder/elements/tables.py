@@ -4,8 +4,10 @@ Contains code for all table-related HTML elements.
 
 from __future__ import annotations
 
-from typing import Any, Self
+from copy import deepcopy
+from typing import Any, Iterator, Self
 
+from ..attributes import AttributesType, Classes, ClassesType, Elements
 from ..core import HTMLBuilder
 from ..utilities import requires_modules
 
@@ -26,41 +28,57 @@ class Data(HTMLBuilder):
 
     def __init__(
         self,
-        data: list[Any],
-        classes: str | list[str] | None = None,
+        data: Any | None = None,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
         is_header: bool = False,
-        **kwargs: Any,
     ) -> None:
         """Initializes the Data object."""
 
         # Initialize the builder
-        super().__init__(classes=classes, **kwargs)
+        super().__init__(
+            elements=None,
+            attributes=attributes,
+            classes=classes,
+        )
         self.tag = "td" if not is_header else "th"
+
+        self.elements.max_elements = 1
 
         # Store instance variables
         self._is_header = is_header
 
         # Set the data
-        self.set_data(data)
+        if data is not None:
+            self.set(data)
 
-    def set_data(self, data: Any) -> None:
-        """Sets the data."""
-        self.clear_elements()
-        self.add_element(data)
+    @property
+    def data(self) -> str:
+        """Gets the data."""
+        return self.elements[0] if self.elements else None
+
+    def set(self, data: str) -> None:
+        """Convenience wrapper for the self.elements.set method."""
+        self.elements.set(data)
+
+    def clear(self) -> None:
+        """Convenience wrapper for the self.elements.clear method."""
+        self.elements.clear()
+
+    @property
+    def is_header(self) -> bool:
+        """Gets the is_header property."""
+        return self._is_header
+
+    @is_header.setter
+    def is_header(self, value: bool) -> None:
+        """Sets the is_header property."""
+        self.tag = "td" if not value else "th"
+        self._is_header = value
 
     def construct(self) -> str:
         """Generates HTML from the stored elements."""
-
-        # Open the tag
-        html = f"<{self.tag}{self.attributes_to_string()}>"
-
-        # Add the data
-        for element in self.elements:
-            html += f"{element}"
-
-        # Close the tag and return the HTML
-        html += f"</{self.tag}>"
-        return html
+        return super().construct()
 
 
 class Row(HTMLBuilder):
@@ -68,82 +86,114 @@ class Row(HTMLBuilder):
 
     def __init__(
         self,
-        data: Any | list[Any],
-        classes: str | list[str] | None = None,
-        **kwargs: Any,
+        data: list[Data] | None = None,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Row object."""
 
         # Initialize the builder
-        super().__init__(classes=classes, **kwargs)
+        super().__init__(
+            elements=Elements(*data) if data else Elements(),
+            attributes=attributes,
+            classes=classes,
+        )
         self.tag = "tr"
 
         # Set the data
-        self.set_data(data)
+        if data is not None:
+            self.set(*data)
 
-    def add_data(self, data: Any) -> None:
-        """Adds data."""
-        self.add_element(data)
+    def add(self, *data: Data) -> None:
+        """Convenience wrapper for the self.elements.add method."""
+        self.elements.add(*data)
 
-    def set_data(self, data: Any | list[Any]) -> None:
-        """Sets the data."""
-        self.clear_elements()
-        if isinstance(data, list):
-            self.add_elements(data)
-        else:
-            self.add_element(data)
+    def set(self, *data: Data) -> None:
+        """Convenience wrapper for the self.elements.set method."""
+        self.elements.set(*data)
+
+    def insert(self, index: int, data: Data) -> None:
+        """Convenience wrapper for the self.elements.insert method."""
+        self.elements.insert(index, data)
+
+    def update(self, index: int, data: Data) -> None:
+        """Convenience wrapper for the self.elements.update method."""
+        self.elements.update(index, data)
+
+    def remove(self, index: int) -> None:
+        """Convenience wrapper for the self.elements.remove method."""
+        self.elements.remove(index)
+
+    def pop(self, index: int = -1) -> Data:
+        """Convenience wrapper for the self.elements.pop method."""
+        return self.elements.pop(index)
+
+    def clear(self) -> None:
+        """Convenience wrapper for the self.elements.clear method."""
+        self.elements.clear()
 
     def construct(self) -> str:
         """Generates HTML from the stored elements."""
+        return super().construct()
 
-        # Open the tag
-        html = f"<{self.tag}{self.attributes_to_string()}>"
-
-        # Add the data
-        for element in self.elements:
-            if isinstance(element, Data):
-                html += f"{element}"
-            else:
-                html += f"<td>{element}</td>"
-
-        # Close the tag and return the HTML
-        html += f"</{self.tag}>"
-        return html
+    def __iter__(self) -> Iterator[Data]:
+        """Iterates over the stored data."""
+        return iter(self.elements)
 
 
 class Header(Row):
     """Constructs an HTML table header row.
 
-    Simple wrapper around the Row class.
+    Convenience wrapper around the Row class that will change any Data being
+    added or modified to be header data.
     """
 
     def __init__(
         self,
-        data: list[Any],  # TODO: Implement span?
-        classes: str | list[str] | None = None,
-        **kwargs: Any,
+        data: list[Data] | None = None,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Header object."""
 
+        # Convert all data to header data
+        if data is not None:
+            for d in range(len(data)):
+                try:
+                    data[d].is_header = True
+                except AttributeError:
+                    raise TypeError(
+                        f"Expected {Data.__name__} object, got {type(data[d]).__name__}"
+                    )
+
         # Initialize the builder
-        super().__init__(data, classes=classes, **kwargs)
+        super().__init__(
+            data=Elements(*data) if data else Elements(),
+            attributes=attributes,
+            classes=classes,
+        )
 
-    def construct(self) -> str:
-        """Generates HTML from the stored elements."""
+    def add(self, *data: Data) -> None:
+        """Convenience wrapper for the self.elements.add method."""
+        for d in data:
+            d.is_header = True
+        self.elements.add(*data)
 
-        # Open the tag
-        html = f"<{self.tag}{self.attributes_to_string()}>"
+    def set(self, *data: Data) -> None:
+        """Convenience wrapper for the self.elements.set method."""
+        for d in data:
+            d.is_header = True
+        self.elements.set(*data)
 
-        # Add the data
-        for element in self.elements:
-            if isinstance(element, Data):
-                html += f"{element}"
-            else:
-                html += f"<th>{element}</th>"
+    def insert(self, index: int, data: Data) -> None:
+        """Convenience wrapper for the self.elements.insert method."""
+        data.is_header = True
+        self.elements.insert(index, data)
 
-        # Close the tag and return the HTML
-        html += f"</{self.tag}>"
-        return html
+    def update(self, index: int, data: Data) -> None:
+        """Convenience wrapper for the self.elements.update method."""
+        data.is_header = True
+        self.elements.update(index, data)
 
 
 class Table(HTMLBuilder):
@@ -151,24 +201,30 @@ class Table(HTMLBuilder):
 
     def __init__(
         self,
-        data: list[Row] | list[list[Any]],
-        header: Header | Row | None = None,
-        classes: str | list[str] | None = None,
-        **kwargs: Any,
+        rows: list[Row] | None = None,
+        header: Header | None = None,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Table object."""
 
         # Initialize the builder
-        super().__init__(classes=classes, **kwargs)
+        super().__init__(
+            elements=Elements(*rows) if rows else Elements(),
+            attributes=attributes,
+            classes=classes,
+        )
         self.tag = "table"
 
-        # Add header and data
-        self.add_data(data)
-        self.add_header(header)
+        # Set header and rows
+        if rows is not None:
+            self.set_rows(*rows)
+        if header is not None:
+            self.set_header(header)
 
     def _header_exists(self) -> bool:
-        """Determines whether or not a header exists in the stored data."""
-        return self.elements and isinstance(self.elements[0], Header)
+        """Determines whether or not a header exists in the stored elements."""
+        return bool(self.elements) and isinstance(self.elements[0], Header)
 
     @property
     def header(self) -> Header | Row | None:
@@ -178,81 +234,87 @@ class Table(HTMLBuilder):
     @header.setter
     def header(self, value: Header | Row | None) -> None:
         """Sets the header row."""
-        self.update_header(value)
+        self.set_header(value)
 
-    def add_header(self, header: Header | Row | None) -> None:
-        """Adds a header to the table."""
-        if not header:
-            return
-        elif not self._header_exists():
-            self.insert_element(0, header)
-        else:
-            self.update_header(header)
-
-    def remove_header(self) -> Header | Row | None:
-        """Removes the header row and returns it if one existed."""
+    @property
+    def rows(self) -> list[Row]:
+        """Gets the rows."""
         if self._header_exists():
-            return self.remove_element(0)
+            return self.elements[1:]
+        return self.elements
 
-    def update_header(self, header: Header | Row | None) -> None:
-        """Updates the header of the table."""
+    @rows.setter
+    def rows(self, rows: list[Row]) -> None:
+        """Sets the rows."""
+        self.set_rows(*rows)
+
+    def set_header(self, header: Header) -> None:
+        """Sets the header row."""
+        self._raise_if_incorrect_type(header, expected_type=Header)
+        if self._header_exists() and self.elements:
+            self.elements.update(0, header)
+        else:
+            self.elements.insert(0, header)
+
+    def clear_header(self) -> None:
+        """Clears the header row."""
         if self._header_exists():
-            self.update_element(0, header)
-        else:
-            self.insert_element(0, header)
+            self.elements.remove(0)
 
-    def add_data(self, data: list[Row] | list[list[Any]]) -> None:
-        """Adds data."""
-        for item in data:
-            # TODO: Account for Header?
-            # Convert to a row object if necessary
-            if not isinstance(item, Row):
-                item = Row(item)
-            self.add_element(item)
+    def add_rows(self, *rows: Row) -> None:
+        """Adds rows to the table."""
+        for row in rows:
+            self._raise_if_incorrect_type(row, expected_type=Row)
+            row.is_header = False
+        self.elements.add(*rows)
 
-    def set_data(self, data: list[Any]) -> None:
-        """Sets the data."""
-        self.clear_data()
-        self.add_data(data)
+    def set_rows(self, *rows: Row) -> None:
+        """Sets rows for the table."""
+        for row in rows:
+            self._raise_if_incorrect_type(row, expected_type=Row)
+            row.is_header = False
+        elements = [self.header] if self._header_exists() else []
+        elements.extend(rows)
+        self.elements.set(*elements)
 
-    def clear_data(self) -> None:
-        """Clears the data."""
-        if header := self.remove_header():
-            self.clear_elements()
-            self.add_header(header)
-        else:
-            self.clear_elements()
+    def clear_rows(self) -> None:
+        """Clears the rows."""
+        old_header = self.header
+        self.elements.clear()
+        if old_header is not None:
+            self.set_header(old_header)
 
     def clear(self) -> None:
-        """Clears both the header and the data."""
-        self.remove_header()
-        self.clear_data()
+        """Clears both the header and the rows."""
+        self.clear_header()
+        self.clear_rows()
 
     def construct(self) -> str:
         """Generates HTML from the stored elements."""
+        return super().construct()  # TODO: Change this in other places as well
 
-        # Open the tag
-        html = f"<{self.tag}{self.attributes_to_string()}>"
-
-        # Add the data
-        for element in self.elements:
-            html += f"{element}"
-
-        # Close the tag and return the HTML
-        html += f"</{self.tag}>"
-        return html
+    def _raise_if_incorrect_type(
+        self,
+        value: Any,
+        expected_type: Any,
+    ) -> None:
+        """Determines whether the input is of the expected type."""
+        if not isinstance(value, expected_type):
+            raise TypeError(
+                f"Expected {expected_type.__name__} object, got {type(value).__name__}"
+            )
 
     @classmethod
     @requires_modules("pandas", "numpy")
     def from_df(
         cls,
         df: pd.DataFrame,
-        table_classes: str | list[str] | None = None,
-        header_classes: str | list[str] | None = None,
-        body_classes: str | list[str] | None = None,
+        table_classes: ClassesType | None = None,
+        header_classes: ClassesType | None = None,
+        body_classes: ClassesType | None = None,
+        attributes: AttributesType | None = None,
         alternating_rows: bool = True,
         columns_as_classes: bool = True,
-        **kwargs: Any,
     ) -> Self:
         """Creates an HTMLTable object from a pandas dataframe.
 
@@ -267,21 +329,29 @@ class Table(HTMLBuilder):
             df.index = np.arange(1, len(df) + 1)
 
         # Create the body
-        body = []
+        body: list[Row] = []
         for r, row in df.iterrows():
-            data = []
+            data: list[Data] = []
             for i, item in enumerate(row):
-                data_classes = []
+                data_classes = Classes()
                 if columns_as_classes:
-                    data_classes.append(row.index[i])  # TODO: Sanitize name
+                    data_classes.add(row.index[i])
                 data.append(Data(item, classes=data_classes))
-            html_row = Row(data, classes=body_classes)
+            html_row = Row(data, classes=deepcopy(body_classes))
             if alternating_rows:
-                html_row.add_class("odd" if r % 2 != 0 else "even")
+                html_row.classes.add("odd" if r % 2 else "even")
             body.append(html_row)
 
         # Create the header
-        header = Header(df.columns.to_list(), classes=header_classes)
+        header = Header(
+            [Data(c) for c in df.columns],
+            classes=deepcopy(header_classes),
+        )
 
         # Create an instance with the results and return
-        return cls(body, header, classes=table_classes, **kwargs)
+        return cls(
+            rows=body,
+            header=header,
+            attributes=attributes,
+            classes=deepcopy(table_classes),
+        )

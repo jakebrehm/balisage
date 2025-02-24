@@ -163,8 +163,7 @@ class Attributes:
         """Initializes the Attributes object."""
 
         # Initialize instance variables
-        self._attributes: AttributeMap = dict()
-        self._classes: Classes = Classes()
+        self._attributes: AttributeMap = {"class": Classes()}
 
         # Set the attributes
         if attributes is not None:
@@ -192,9 +191,9 @@ class Attributes:
         return self._attributes
 
     @property
-    def classes(self) -> Classes | None:
+    def classes(self) -> Classes:
         """Gets the stored classes."""
-        return self._classes
+        return self._attributes["class"]
 
     @classes.setter
     def classes(self, classes: ClassesType) -> None:
@@ -215,34 +214,30 @@ class Attributes:
             # Handle any invalid data types during conversion
             classes = Classes(classes)
         self._attributes["class"] = classes
-        self._classes = classes
 
     def add(self, attributes: AttributeMap) -> None:
         """Adds attributes to the list of attributes.
 
-        Note that duplicate attributes will be ignored.
+        Note that duplicate attributes will be ignored, and that the 'class'
+        attribute will never be added since it is a special case (it will
+        always exist).
         """
-        attributes = {
-            key: value
-            for key, value in attributes.items()
-            if key not in self._attributes
-        }
-        if "class" in attributes and isinstance(attributes["class"], str):
-            classes = Classes.from_string(attributes["class"])
-            attributes["class"] = classes
-            self._classes = classes
-        elif "class" in attributes and isinstance(attributes["class"], Classes):
-            self._classes = attributes["class"]
-        self._attributes.update(attributes)
+        self._attributes.update(
+            {
+                key: value
+                for key, value in attributes.items()
+                if key not in self._attributes
+            }
+        )
 
     def set(self, attributes: AttributeMap) -> None:
         """Sets the list of attributes."""
         if "class" in attributes and isinstance(attributes["class"], str):
-            classes = Classes.from_string(attributes["class"])
-            attributes["class"] = classes
-            self._classes = classes
-        elif "class" in attributes and isinstance(attributes["class"], Classes):
-            self._classes = attributes["class"]
+            attributes["class"] = Classes.from_string(attributes["class"])
+        elif "class" in attributes and attributes["class"] is None:
+            attributes["class"] = Classes()
+        elif "class" not in attributes:
+            attributes["class"] = Classes()
         self._attributes = dict(attributes)
 
     def remove(self, name: str) -> None:
@@ -253,13 +248,14 @@ class Attributes:
         if name not in self._attributes:
             raise KeyError(f"Attribute '{name}' not found")
         elif name == "class":
-            self._classes.clear()
-        self._attributes.pop(name)
+            self._attributes["class"].clear()
+        else:
+            self._attributes.pop(name)
 
     def clear(self) -> None:
         """Clears the attributes of the HTML object."""
         self._attributes.clear()
-        self._classes.clear()
+        self._attributes["class"] = Classes()
 
     def construct(self) -> str:
         """Generates the attribute string."""
@@ -268,6 +264,8 @@ class Attributes:
             # None and True values are boolean attributes, False will be ignored
             if (value is None) or (isinstance(value, bool) and value):
                 pairs.append(f"{key}")
+            elif isinstance(value, Classes) and not value:
+                continue
             elif value:
                 pairs.append(f"{key}='{value}'")
         return " ".join(pairs)
@@ -290,7 +288,9 @@ class Attributes:
 
     def __bool__(self) -> bool:
         """Determines whether the instance is empty."""
-        return len(self._attributes) > 0
+        has_added_attributes = len(self._attributes) > 1
+        has_added_classes = bool(self.classes)
+        return has_added_attributes or has_added_classes
 
     def __str__(self) -> str:
         """Gets the string version of the object."""

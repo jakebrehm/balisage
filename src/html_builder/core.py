@@ -37,7 +37,12 @@ class HTMLBuilder(ABC):
     @abstractmethod
     def construct(self) -> str:
         """Generates HTML from the stored elements."""
-        pass
+        attributes_string = f" {self.attributes}" if self.attributes else ""
+        html = f"<{self.tag}{attributes_string}>"
+        for element in self.elements:
+            html += f"{element}"
+        html += f"</{self.tag}>"
+        return html
 
     def save(self, filepath: str) -> None:
         """Saves the HTML data to the specified filepath."""

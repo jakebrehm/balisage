@@ -23,7 +23,7 @@ class Text(HTMLBuilder):
 
     def __init__(
         self,
-        text: str,
+        text: str,  # TODO: Allow None
         tag: TextType = TextType.P,
         attributes: AttributesType | None = None,
         classes: ClassesType | None = None,
@@ -58,18 +58,7 @@ class Text(HTMLBuilder):
 
     def construct(self) -> str:
         """Generates HTML from the stored elements."""
-
-        # Open the tag
-        attributes_string = f" {self.attributes}" if self.attributes else ""
-        html = f"<{self.tag}{attributes_string}>"
-
-        # Add the data
-        for element in self.elements:
-            html += f"{element}"
-
-        # Close the tag and return the HTML
-        html += f"</{self.tag}>"
-        return html
+        return super().construct()
 
 
 class Paragraph(Text):
