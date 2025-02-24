@@ -291,7 +291,7 @@ class Table(HTMLBuilder):
 
     def construct(self) -> str:
         """Generates HTML from the stored elements."""
-        return super().construct()  # TODO: Change this in other places as well
+        return super().construct()
 
     def _raise_if_incorrect_type(
         self,

@@ -155,7 +155,6 @@ def test_html_builder_save() -> None:
     assert os.path.exists(filepath)
     with open(filepath, "r", encoding="utf-8") as f:
         data = f.read()
-    print(builder.prettify())  # TODO: Remove
     assert data == builder.prettify()
     os.remove(filepath)
 
