@@ -163,7 +163,8 @@ class Attributes:
         """Initializes the Attributes object."""
 
         # Initialize instance variables
-        self._attributes = dict()
+        self._attributes: AttributeMap = dict()
+        self._classes: Classes = Classes()
 
         # Set the attributes
         if attributes is not None:
@@ -193,9 +194,7 @@ class Attributes:
     @property
     def classes(self) -> Classes | None:
         """Gets the stored classes."""
-        if "class" not in self._attributes:
-            return None
-        return self._attributes["class"]
+        return self._classes
 
     @classes.setter
     def classes(self, classes: ClassesType) -> None:
@@ -216,6 +215,7 @@ class Attributes:
             # Handle any invalid data types during conversion
             classes = Classes(classes)
         self._attributes["class"] = classes
+        self._classes = classes
 
     def add(self, attributes: AttributeMap) -> None:
         """Adds attributes to the list of attributes.
@@ -228,28 +228,38 @@ class Attributes:
             if key not in self._attributes
         }
         if "class" in attributes and isinstance(attributes["class"], str):
-            attributes["class"] = Classes.from_string(attributes["class"])
+            classes = Classes.from_string(attributes["class"])
+            attributes["class"] = classes
+            self._classes = classes
+        elif "class" in attributes and isinstance(attributes["class"], Classes):
+            self._classes = attributes["class"]
         self._attributes.update(attributes)
 
     def set(self, attributes: AttributeMap) -> None:
         """Sets the list of attributes."""
         if "class" in attributes and isinstance(attributes["class"], str):
-            attributes["class"] = Classes.from_string(attributes["class"])
+            classes = Classes.from_string(attributes["class"])
+            attributes["class"] = classes
+            self._classes = classes
+        elif "class" in attributes and isinstance(attributes["class"], Classes):
+            self._classes = attributes["class"]
         self._attributes = dict(attributes)
 
-    def remove(self, name: str) -> AttributeValue | None:
+    def remove(self, name: str) -> None:
         """Removes attributes from the list of attributes.
 
-        Returns the removed attribute (if it exists) as a tuple, otherwise None.
-        The tuple is in the form of (attribute name, attribute value).
+        Will raise a KeyError if the attribute does not exist.
         """
         if name not in self._attributes:
             raise KeyError(f"Attribute '{name}' not found")
-        return name, self._attributes.pop(name)
+        elif name == "class":
+            self._classes.clear()
+        self._attributes.pop(name)
 
     def clear(self) -> None:
         """Clears the attributes of the HTML object."""
         self._attributes.clear()
+        self._classes.clear()
 
     def construct(self) -> str:
         """Generates the attribute string."""

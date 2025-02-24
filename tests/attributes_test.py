@@ -291,15 +291,17 @@ def test_classes_repr(classes: Classes) -> None:
 
 def test_attributes_init(attributes: Attributes) -> None:
     """Tests the initialization of the Attributes class."""
-    expected = {
-        "class": Classes("class 1", "class2"),
+    expected_classes = Classes("class 1", "class2")
+    expected_attributes = {
+        "class": expected_classes,
         "id": "test",
         "width": 50,
         "disabled": None,
         "checked": True,
         "itemscope": False,
     }
-    assert attributes.attributes == expected
+    assert attributes.attributes == expected_attributes
+    assert attributes.classes == expected_classes
 
 
 def test_attributes_from_string() -> None:
@@ -328,9 +330,11 @@ def test_attributes_classes(attributes: Attributes) -> None:
     # Test setting classes as a string
     expected = {"class1": "class1"}
     attributes.classes = "class1"
+    assert attributes.classes == Classes(*expected.keys())
     assert attributes.classes.classes == expected
     expected = {"class1": "class1", "class-2": "class-2"}
     attributes.classes = "class1 class-2"
+    assert attributes.classes == Classes(*expected.keys())
     assert attributes.classes.classes == expected
 
     # Test setting classes as a Classes object
@@ -341,6 +345,7 @@ def test_attributes_classes(attributes: Attributes) -> None:
         "cLass4": "class4",
     }
     attributes.classes = Classes("class 1", "class2", "Class 3", "cLass4")
+    assert attributes.classes == expected
     assert attributes.classes.classes == expected
 
     # Test setting classes as a list of strings
@@ -354,14 +359,20 @@ def test_attributes_classes(attributes: Attributes) -> None:
         with pytest.raises(TypeError, match=message):
             attributes.classes = invalid_value
 
+    # Test with a default instance
+    attributes = Attributes()
+    assert attributes.classes == Classes()
+
 
 def test_attributes_add(attributes: Attributes) -> None:
     """Tests the add method of the Attributes class."""
 
+    expected_classes = Classes("class 1", "class2")
+
     # Try adding a single new attribute that does not exist
     attributes.add({"required": True})
-    expected = {
-        "class": Classes("class 1", "class2"),
+    expected_attributes = {
+        "class": expected_classes,
         "id": "test",
         "width": 50,
         "disabled": None,
@@ -369,12 +380,12 @@ def test_attributes_add(attributes: Attributes) -> None:
         "itemscope": False,
         "required": True,
     }
-    assert attributes.attributes == expected
+    assert attributes.attributes == expected_attributes
 
     # Try adding a single attribute that already exists
     attributes.add({"checked": False})
-    expected = {
-        "class": Classes("class 1", "class2"),
+    expected_attributes = {
+        "class": expected_classes,
         "id": "test",
         "width": 50,
         "disabled": None,
@@ -382,12 +393,12 @@ def test_attributes_add(attributes: Attributes) -> None:
         "itemscope": False,
         "required": True,
     }
-    assert attributes.attributes == expected
+    assert attributes.attributes == expected_attributes
 
     # Try adding multiple new attributes that already exist
     attributes.add({"itemscope": None, "disabled": None})
-    expected = {
-        "class": Classes("class 1", "class2"),
+    expected_attributes = {
+        "class": expected_classes,
         "id": "test",
         "width": 50,
         "disabled": None,
@@ -395,12 +406,12 @@ def test_attributes_add(attributes: Attributes) -> None:
         "itemscope": False,
         "required": True,
     }
-    assert attributes.attributes == expected
+    assert attributes.attributes == expected_attributes
 
     # Try adding multiple new attributes that do not exist
     attributes.add({"height": 50, "open": True, "alt": "Alternate text"})
-    expected = {
-        "class": Classes("class 1", "class2"),
+    expected_attributes = {
+        "class": expected_classes,
         "id": "test",
         "width": 50,
         "disabled": None,
@@ -411,12 +422,12 @@ def test_attributes_add(attributes: Attributes) -> None:
         "open": True,
         "alt": "Alternate text",
     }
-    assert attributes.attributes == expected
+    assert attributes.attributes == expected_attributes
 
     # Try adding a mix of new and existing attributes
     attributes.add({"checked": False, "title": "Title text"})
-    expected = {
-        "class": Classes("class 1", "class2"),
+    expected_attributes = {
+        "class": expected_classes,
         "id": "test",
         "width": 50,
         "disabled": None,
@@ -428,11 +439,40 @@ def test_attributes_add(attributes: Attributes) -> None:
         "alt": "Alternate text",
         "title": "Title text",
     }
-    assert attributes.attributes == expected
+    assert attributes.attributes == expected_attributes
+
+    # Try adding a string to a fresh instance
+    attributes = Attributes()
+    assert attributes == Attributes()
+    assert attributes.attributes == dict()
+    attributes.add({"class": "class-3"})
+    assert attributes.attributes == {"class": Classes("class-3")}
+
+    # Try adding a Classes object to a fresh instance
+    attributes = Attributes()
+    assert attributes == Attributes()
+    assert attributes.attributes == dict()
+    attributes.add({"class": Classes("class-3")})
+    assert attributes.attributes == {"class": Classes("class-3")}
 
 
 def test_attributes_set(attributes: Attributes) -> None:
     """Tests the set method of the Attributes class."""
+
+    # Test with classes passes as a string
+    expected = {
+        "class": "class-1 class2",
+        "id": "test",
+        "width": 75,
+        "disabled": None,
+        "checked": True,
+        "itemscope": False,
+        "alt": "Attributes test",
+    }
+    attributes.set(expected)
+    assert attributes.attributes == expected
+
+    # Test with classes passes as a Classes object
     expected = {
         "class": Classes("class 1", "class2"),
         "id": "test",
@@ -444,24 +484,29 @@ def test_attributes_set(attributes: Attributes) -> None:
     }
     attributes.set(expected)
     assert attributes.attributes == expected
-    attributes.set(expected)
-    assert attributes.attributes == expected
 
 
 def test_attributes_remove(attributes: Attributes) -> None:
     """Tests the remove method of the Attributes class."""
 
     # Try removing an attribute by its name
-    expected_result = attributes.remove("id")
+    expected_classes = Classes("class 1", "class2")
     expected_attributes = {
-        "class": Classes("class 1", "class2"),
+        "class": expected_classes,
         "width": 50,
         "disabled": None,
         "checked": True,
         "itemscope": False,
     }
-    assert expected_result == ("id", "test")
+    attributes.remove("id")
     assert attributes.attributes == expected_attributes
+    assert attributes.classes == expected_classes
+
+    # Try removing the class attributes
+    attributes.remove("class")
+    expected_attributes.pop("class")
+    assert attributes.attributes == expected_attributes
+    assert attributes.classes == Classes()
 
     # Try removing an attribute that does not exist
     attribute_to_remove = "does-not-exist"
@@ -473,7 +518,9 @@ def test_attributes_remove(attributes: Attributes) -> None:
 def test_attributes_clear(attributes: Attributes) -> None:
     """Tests the clear method of the Attributes class."""
     attributes.clear()
+    assert attributes == Attributes()
     assert attributes.attributes == dict()
+    assert attributes.classes == Classes()
 
 
 def test_attributes_construct(attributes: Attributes) -> None:
@@ -512,6 +559,11 @@ def test_attributes_get_set(attributes: Attributes) -> None:
     assert attributes["checked"] is None
     assert attributes["itemscope"] is True
     assert attributes["required"] is True
+
+    # Test with a fresh instance
+    attributes = Attributes()
+    with pytest.raises(KeyError):
+        attributes["class"]
 
 
 def test_attributes_eq(attributes: Attributes) -> None:
