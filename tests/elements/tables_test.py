@@ -143,12 +143,16 @@ def test_data_init(
 def test_data_data(data: Data) -> None:
     """Tests the data property of the Data class."""
     assert data.data == "Test data"
+    assert Data().data is None
 
 
 def test_data_set(data: Data) -> None:
     """Tests the set method of the Data class."""
-    data.set("New data")
-    assert data.data == "New data"
+    data.set("New data 1")
+    assert data.data == "New data 1"
+    data = Data()
+    data.set("New data 2")
+    assert data.data == "New data 2"
 
 
 def test_data_clear(data: Data) -> None:
@@ -174,6 +178,7 @@ def test_data_construct(data: Data) -> None:
     expected = "<td id='test' disabled class='class-1 class2'>Test data</td>"
     assert data.construct() == expected
     assert Data("Some data").construct() == "<td>Some data</td>"
+    assert Data().construct() == "<td></td>"
 
 
 # MARK: Row

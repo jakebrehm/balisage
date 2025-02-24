@@ -122,23 +122,39 @@ def text_test_init(
     sample_classes: Classes,
 ) -> None:
     """Tests the initialization of the Text class."""
+
+    # Test with arguments from fixture
     assert text == text
     assert text.attributes == sample_attributes
     assert text.classes == sample_classes
     assert text.text == "Test text"
+    assert text.elements.max_elements == 1
     assert text.tag == TextType.H4.value
     assert Text("Test text").tag == TextType.P.value
+
+    # Test with default arguments
+    text = Text()
+    assert text == text
+    assert text.attributes == Attributes()
+    assert text.classes == Classes()
+    assert text.text == ""
+    assert text.elements.max_elements == 1
+    assert text.tag == TextType.P.value
 
 
 def test_text_text(text: Text) -> None:
     """Tests the text property of the Text class."""
     assert text.text == "Test text"
+    assert Text().text == ""
 
 
 def test_text_set_text(text: Text) -> None:
     """Tests the set_text method of the Text class."""
-    text.set("New text")
-    assert text.text == "New text"
+    text.set("New text 1")
+    assert text.text == "New text 1"
+    text = Text()
+    text.set("New text 2")
+    assert text.text == "New text 2"
 
 
 def test_text_clear(text: Text) -> None:
@@ -152,6 +168,7 @@ def test_text_construct(text: Text) -> None:
     expected = "<h4 id='test' disabled class='class-1 class2'>Test text</h4>"
     assert text.construct() == expected
     assert Text("Some text").construct() == "<p>Some text</p>"
+    assert Text().construct() == "<p></p>"
 
 
 # MARK: Paragraph

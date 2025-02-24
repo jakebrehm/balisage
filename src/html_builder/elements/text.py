@@ -23,7 +23,7 @@ class Text(HTMLBuilder):
 
     def __init__(
         self,
-        text: str,  # TODO: Allow None
+        text: str | None = None,
         tag: TextType = TextType.P,
         attributes: AttributesType | None = None,
         classes: ClassesType | None = None,
@@ -41,7 +41,8 @@ class Text(HTMLBuilder):
         self.elements.max_elements = 1
 
         # Set the text
-        self.set(text)
+        if text is not None:
+            self.set(text)
 
     @property
     def text(self) -> str:
