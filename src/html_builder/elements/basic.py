@@ -11,13 +11,27 @@ class Page(HTMLBuilder):
 
     def __init__(
         self,
+        title: str,
         elements: ElementsType | None = None,
-        title: str | None = None,
-        lang: str = "en",
-        charset: str = "UTF-8",
+        lang: str | None = "en",
+        charset: str | None = "UTF-8",
         stylesheets: list[str] | None = None,
     ) -> None:
-        """Initializes the Page object."""
+        """Initializes the Page object.
+
+        A non-empty title is required for valid HTML.
+
+        The 'lang' attribute is "en" (english) by default, but can be changed
+        to any valid language code. However, while it is highly recommended
+        that this attribute is specified, this argument can be set to None and
+        the attribute will not be added to the HTML.
+
+        If no charset is provided, the default value of "UTF-8" will be used;
+        however, if the charset is set to None, no charset meta tag will be
+        added to the HTML.
+
+        If no stylesheets are provided, no link tags will be added to the HTML.
+        """
 
         # Initialize the builder
         super().__init__(
@@ -25,13 +39,26 @@ class Page(HTMLBuilder):
             attributes=None,
             classes=None,
         )
-        self.tag = "html"
+        self.tag: str = "html"
 
         # Initialize instance variables
-        self.title = title
-        self.lang = lang
-        self.charset = charset
+        self.title: str = title
+        self.lang: str | None = lang
+        self.charset: str | None = charset
         self.stylesheets: list[str] = stylesheets
+
+    @property
+    def title(self) -> str:
+        """Gets the title."""
+        return self._title
+
+    @title.setter
+    def title(self, value: str) -> None:
+        """Sets the title. Title must be a non-empty string."""
+        if not (isinstance(value, str) and value):
+            property_name = Page.title.fget.__name__
+            raise TypeError(f"{property_name} must be a non-empty string")
+        self._title = value
 
     @property
     def stylesheets(self) -> list[str]:
@@ -85,13 +112,14 @@ class Page(HTMLBuilder):
         html = "<!DOCTYPE html>"
 
         # Open the tag
-        html += f"<{self.tag} lang='{self.lang}'>"
+        attribute_string = f" lang='{self.lang}'" if self.lang else ""
+        html += f"<{self.tag}{attribute_string}>"
 
         # Add the header
         html += "<head>"
-        html += f"<meta charset='{self.charset}'>"
-        if self.title:
-            html += f"<title>{self.title}</title>"
+        if self.charset:
+            html += f"<meta charset='{self.charset}'>"
+        html += f"<title>{self.title}</title>"
         for href in self.stylesheets:
             html += f"<link rel='stylesheet' href='{href}'>"
         html += "</head>"

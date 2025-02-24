@@ -32,8 +32,8 @@ def sample_elements() -> Elements:
 def page(sample_elements: Elements) -> Page:
     """Creates a sample Page object."""
     return Page(
-        elements=sample_elements,
         title="Test page",
+        elements=sample_elements,
         lang="fr",
         charset="UTF-16",
         stylesheets=["style1.css", "style2.css"],
@@ -54,14 +54,45 @@ def test_page_init(page: Page, sample_elements: Elements) -> None:
     assert page.charset == "UTF-16"
     assert page._stylesheets == ["style1.css", "style2.css"]
 
-    # Test with default arguments
-    page = Page()
+    # Test with passing minimal arguments
+    page = Page("Test page")
     assert page.elements == Elements()
     assert page.tag == "html"
-    assert page.title is None
+    assert page.title == "Test page"
     assert page.lang == "en"
     assert page.charset == "UTF-8"
     assert page._stylesheets == []
+
+    # Test with passing some arguments as None
+    page = Page("Test page", lang=None, charset=None)
+    assert page.elements == Elements()
+    assert page.tag == "html"
+    assert page.title == "Test page"
+    assert page.lang is None
+    assert page.charset is None
+    assert page._stylesheets == []
+
+    # Test with no arguments
+    with pytest.raises(TypeError):
+        page = Page()
+
+
+def test_page_title(page: Page) -> None:
+    """Tests the title property of the Page class."""
+
+    # Test getter property
+    assert page.title == "Test page"
+
+    # Test setter property
+    page.title = "New title"
+    assert page.title == "New title"
+
+    # Test with invalid type
+    message = "title must be a non-empty string"
+    invalid_values = ["", 1, 2.0, True, False, tuple(), dict(), None]
+    for invalid_value in invalid_values:
+        with pytest.raises(TypeError, match=message):
+            page.title = invalid_value
 
 
 def test_page_stylesheets(page: Page) -> None:
@@ -85,8 +116,8 @@ def test_page_stylesheets(page: Page) -> None:
     invalid_values = ["style.css", 1, 2.0, True, False, tuple(), dict(), [None]]
     for invalid_value in invalid_values:
         with pytest.raises(TypeError, match=message):
-            Page(stylesheets=invalid_value)
-    page = Page(stylesheets=[])
+            Page(title="Test title", stylesheets=invalid_value)
+    page = Page(title="Test title", stylesheets=[])
     assert page.stylesheets == []
 
 
@@ -169,12 +200,12 @@ def test_page_construct(page: Page) -> None:
     """Tests the construct method of the Page class."""
 
     # Define expected HTML
-    expected_boilerplate = (
+    boilerplate = (
         "<!DOCTYPE html>"
         "<html{language}>"
         "<head>"
         "{charset}"
-        "{title}"
+        "<title>{title}</title>"
         "{stylesheets}"
         "</head>"
         "<body>"
@@ -184,10 +215,10 @@ def test_page_construct(page: Page) -> None:
     )
 
     # Test with arguments from fixture
-    assert page.construct() == expected_boilerplate.format(
+    assert page.construct() == boilerplate.format(
         language=" lang='fr'",
         charset="<meta charset='UTF-16'>",
-        title="<title>Test page</title>",
+        title="Test page",
         stylesheets=(
             "<link rel='stylesheet' href='style1.css'>"
             "<link rel='stylesheet' href='style2.css'>"
@@ -203,11 +234,29 @@ def test_page_construct(page: Page) -> None:
         ),
     )
 
-    # Test with a fresh instance
-    assert Page().construct() == expected_boilerplate.format(
+    # Test with an instance made with minimal arguments
+    assert Page("Test page").construct() == boilerplate.format(
         language=" lang='en'",
         charset="<meta charset='UTF-8'>",
-        title="",
+        title="Test page",
+        stylesheets="",
+        body="",
+    )
+
+    # Test with charset passed as None
+    assert Page("Test page", charset=None).construct() == boilerplate.format(
+        language=" lang='en'",
+        charset="",
+        title="Test page",
+        stylesheets="",
+        body="",
+    )
+
+    # Test with lang passed as None
+    assert Page("Test page", lang=None).construct() == boilerplate.format(
+        language="",
+        charset="<meta charset='UTF-8'>",
+        title="Test page",
         stylesheets="",
         body="",
     )
