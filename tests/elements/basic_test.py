@@ -64,11 +64,11 @@ def test_page_init(page: Page, sample_elements: Elements) -> None:
     assert page._stylesheets == []
 
     # Test with passing some arguments as None
-    page = Page("Test page", charset=None)
+    page = Page("Test page", lang=None, charset=None)
     assert page.elements == Elements()
     assert page.tag == "html"
     assert page.title == "Test page"
-    assert page.lang == "en"
+    assert page.lang is None
     assert page.charset is None
     assert page._stylesheets == []
 
@@ -247,6 +247,15 @@ def test_page_construct(page: Page) -> None:
     assert Page("Test page", charset=None).construct() == boilerplate.format(
         language=" lang='en'",
         charset="",
+        title="Test page",
+        stylesheets="",
+        body="",
+    )
+
+    # Test with lang passed as None
+    assert Page("Test page", lang=None).construct() == boilerplate.format(
+        language="",
+        charset="<meta charset='UTF-8'>",
         title="Test page",
         stylesheets="",
         body="",
