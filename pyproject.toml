@@ -18,6 +18,8 @@ formatting = [
 dev = [
     "pandas>=2.2.3",
     "pytest>=8.3.4",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.9.7",
 ]
 
 [tool.pytest.ini_options]

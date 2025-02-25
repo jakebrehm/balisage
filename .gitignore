@@ -1,6 +1,10 @@
 .DS_Store
 __pycache__/
 .pytest_cache/
+.ruff_cache/
+*.egg-info/
 .venv/
+dist/
 ide/
 test/_temp/
+.coverage
