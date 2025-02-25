@@ -40,8 +40,8 @@ def requires_modules(*dependencies: str) -> Callable[[Callable], Callable]:
     return decorator
 
 
-def split_preserving_quotes(string: str, on: str = " ") -> list[str]:
-    """Splits a string into a list of strings, preserving quotes."""
+def split_preserving_quotes(string: str) -> list[str]:
+    """Splits an attribute string into a list of strings, preserving quotes."""
     return re.findall(r"[^'\s]+='[^']*'|\S+", string)
 
 

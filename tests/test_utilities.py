@@ -2,7 +2,33 @@
 Contains tests for the utilities module.
 """
 
-from html_builder.utilities import is_valid_class_name
+from html_builder.utilities import is_valid_class_name, split_preserving_quotes
+
+
+def test_split_preserving_quotes() -> None:
+    """Tests the split_preserving_quotes function."""
+
+    # Test with only boolean attributes
+    string = "required disabled itemscope"
+    expected = ["required", "disabled", "itemscope"]
+    assert split_preserving_quotes(string) == expected
+
+    # Test with only non-boolean attributes
+    string = "id='test' class='class1 class2' width='50'"
+    expected = ["id='test'", "class='class1 class2'", "width='50'"]
+    assert split_preserving_quotes(string) == expected
+
+    # Test with boolean and non-boolean attributes
+    string = "id='test' required disabled class='class1 class2' width='50' itemscope"
+    expected = [
+        "id='test'",
+        "required",
+        "disabled",
+        "class='class1 class2'",
+        "width='50'",
+        "itemscope",
+    ]
+    assert split_preserving_quotes(string) == expected
 
 
 def test_is_valid_class_name() -> None:
