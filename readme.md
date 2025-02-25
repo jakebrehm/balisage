@@ -4,9 +4,9 @@
 
 <br>
 
-<a href="https://github.com/jakebrehm/html-builder"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jakebrehm/html-builder?color=84B55A&logo=Git&logoColor=white&style=for-the-badge"></a>
-<a href="https://github.com/jakebrehm/html-builder/blob/main/license.txt"><img alt="GitHub license" src="https://img.shields.io/github/license/jakebrehm/html-builder?color=84B55A&style=for-the-badge"></a>
-<a href="https://codecov.io/gh/jakebrehm/html-builder"><img alt="Codecov test coverage" src="https://img.shields.io/codecov/c/gh/jakebrehm/html-builder?token=W6CWUDTYZC&color=84B55A&logo=codecov&logoColor=white&style=for-the-badge"></a>
+<a href="https://github.com/jakebrehm/balisage"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jakebrehm/balisage?color=84B55A&logo=Git&logoColor=white&style=for-the-badge"></a>
+<a href="https://github.com/jakebrehm/balisage/blob/main/license.txt"><img alt="GitHub license" src="https://img.shields.io/github/license/jakebrehm/balisage?color=84B55A&style=for-the-badge"></a>
+<a href="https://codecov.io/gh/jakebrehm/balisage"><img alt="Codecov test coverage" src="https://img.shields.io/codecov/c/gh/jakebrehm/balisage?token=W6CWUDTYZC&color=84B55A&logo=codecov&logoColor=white&style=for-the-badge"></a>
 
 <br>
 </div>
