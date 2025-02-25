@@ -5,16 +5,16 @@ Contains miscellaneous code such as utility functions.
 import importlib
 import re
 from functools import wraps
-from types import ModuleType
 from typing import Any, Callable
 
 
-def module_exists(module_name: str) -> ModuleType | None:
+def module_exists(module_name: str) -> bool:
     """Determines whether or not a module exists."""
     try:
-        return importlib.import_module(module_name)
+        importlib.import_module(module_name)
+        return True
     except ImportError:
-        return None
+        return False
 
 
 def requires_modules(*dependencies: str) -> Callable[[Callable], Callable]:
@@ -40,6 +40,11 @@ def requires_modules(*dependencies: str) -> Callable[[Callable], Callable]:
     return decorator
 
 
-def split_preserving_quotes(string: str, on: str = " ") -> list[str]:
-    """Splits a string into a list of strings, preserving quotes."""
+def split_preserving_quotes(string: str) -> list[str]:
+    """Splits an attribute string into a list of strings, preserving quotes."""
     return re.findall(r"[^'\s]+='[^']*'|\S+", string)
+
+
+def is_valid_class_name(name: str) -> bool:  # TODO: Implement into Classes
+    """Determines whether a string is a valid HTML/CSS class name."""
+    return re.match(r"^-?[_a-zA-Z]+[_a-zA-Z0-9-]*$", name) is not None
