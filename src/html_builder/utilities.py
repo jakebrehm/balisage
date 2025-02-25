@@ -5,16 +5,16 @@ Contains miscellaneous code such as utility functions.
 import importlib
 import re
 from functools import wraps
-from types import ModuleType
 from typing import Any, Callable
 
 
-def module_exists(module_name: str) -> ModuleType | None:
+def module_exists(module_name: str) -> bool:
     """Determines whether or not a module exists."""
     try:
-        return importlib.import_module(module_name)
+        importlib.import_module(module_name)
+        return True
     except ImportError:
-        return None
+        return False
 
 
 def requires_modules(*dependencies: str) -> Callable[[Callable], Callable]:

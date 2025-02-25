@@ -2,7 +2,37 @@
 Contains tests for the utilities module.
 """
 
-from html_builder.utilities import is_valid_class_name, split_preserving_quotes
+from unittest.mock import patch
+
+from html_builder.utilities import (
+    is_valid_class_name,
+    module_exists,
+    split_preserving_quotes,
+)
+
+
+def test_module_exists() -> None:
+    """Tests the module_exists function."""
+
+    # Test with built-in modules
+    assert module_exists("sys") is True
+    assert module_exists("os") is True
+
+    # Test with non-existent modules
+    assert module_exists("does_not_exist") is False
+
+    # Test with a third-party module
+    try:
+        import pandas  # noqa: F401
+
+        pandas_installed = True
+    except ImportError:
+        pandas_installed = False
+    assert module_exists("pandas") is (True if pandas_installed else False)
+
+    # Simulate an import error
+    with patch("importlib.import_module", side_effect=ImportError):
+        assert module_exists("html_builder") is False
 
 
 def test_split_preserving_quotes() -> None:
