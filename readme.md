@@ -12,5 +12,5 @@
 </div>
 
 <p align="center">
-    <strong>html_builder</strong> is a Python library that allows you to generate HTML files using an intuitive and easy-to-use interface.
+    <strong>html_builder</strong> is a Python library that allows you to generate HTML using an intuitive and easy-to-use interface.
 </p>
