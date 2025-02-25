@@ -92,10 +92,10 @@ def test_classes_replacements(classes: Classes) -> None:
     assert classes.classes == expected_classes
 
     # Try setting new replacements
-    new_replacements = {" ": "!", "a": "@"}
+    new_replacements = {" ": "_", "a": "zz"}
     expected_classes = {
-        "class 1": "cl@ss!1",
-        "class2": "cl@ss2",
+        "class 1": "clzzss_1",
+        "class2": "clzzss2",
     }
     classes.replacements = new_replacements
     assert classes.replacements == new_replacements
@@ -225,17 +225,24 @@ def test_classes_sanitize_name(classes: Classes) -> None:
     assert classes._sanitize_name("Class 3") == "class-3"
     assert classes._sanitize_name("  Class   4   ") == "class---4"
     # Test strip and lower options
-    test_string = "  ClASs 4 "
+    test_string = " ClASs 4  "
     assert classes._sanitize_name(test_string, lower=False) == "ClASs-4"
-    assert classes._sanitize_name(test_string, strip=False) == "--class-4-"
+    assert classes._sanitize_name(test_string, strip=False) == "-class-4--"
     assert (
         classes._sanitize_name(
             test_string,
             lower=False,
             strip=False,
         )
-        == "--ClASs-4-"
+        == "-ClASs-4--"
     )
+    # Test invalid class names
+    message = r"Class name '123' (sanitized to '123') is invalid"
+    with pytest.raises(ValueError, match=re.escape(message)):
+        classes._sanitize_name("123")
+    message = r"Class name '-cl@Ss ' (sanitized to '-cl@ss') is invalid"
+    with pytest.raises(ValueError, match=re.escape(message)):
+        classes._sanitize_name("-cl@Ss ")
 
 
 def test_classes_construct(classes: Classes) -> None:

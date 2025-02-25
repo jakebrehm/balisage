@@ -4,7 +4,7 @@ Contains code related to HTML attributes.
 
 from typing import Any, Iterator, Self, TypeAlias
 
-from .utilities import split_preserving_quotes
+from .utilities import is_valid_class_name, split_preserving_quotes
 
 
 class Classes:
@@ -114,11 +114,15 @@ class Classes:
         strip: bool = True,
     ) -> str:
         """Converts a class string into a valid class name."""
-        # TODO: Implement check for valid class names
+        original_name = name
         name = name.lower() if lower else name
         name = name.strip() if strip else name
         for k, v in self._replacements.items():
             name = name.replace(k, v)
+        if not is_valid_class_name(name):
+            raise ValueError(
+                f"Class name '{original_name}' (sanitized to '{name}') is invalid"
+            )
         return name
 
     def construct(self) -> str:
@@ -302,7 +306,7 @@ class Attributes:
 
 
 AttributesType: TypeAlias = Attributes | AttributeMap
-Element: TypeAlias = Any  # TODO: Change type hint?
+Element: TypeAlias = Any
 
 
 class Elements:

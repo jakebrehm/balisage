@@ -43,3 +43,8 @@ def requires_modules(*dependencies: str) -> Callable[[Callable], Callable]:
 def split_preserving_quotes(string: str, on: str = " ") -> list[str]:
     """Splits a string into a list of strings, preserving quotes."""
     return re.findall(r"[^'\s]+='[^']*'|\S+", string)
+
+
+def is_valid_class_name(name: str) -> bool:  # TODO: Implement into Classes
+    """Determines whether a string is a valid HTML/CSS class name."""
+    return re.match(r"^-?[_a-zA-Z]+[_a-zA-Z0-9-]*$", name) is not None
