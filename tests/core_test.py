@@ -15,6 +15,14 @@ from html_builder.elements.basic import Page
 from html_builder.elements.format import HorizontalRule
 from html_builder.elements.text import Heading1, Paragraph
 
+# Determine if beautifulsoup4 is installed
+try:
+    import bs4  # noqa: F401
+
+    BS4_INSTALLED = True
+except ImportError:
+    BS4_INSTALLED = False
+
 # MARK: Fixtures
 
 
@@ -113,16 +121,23 @@ def test_html_builder_prettify() -> None:
     current_directory = pathlib.Path(__file__).parent.resolve()
 
     # Test with default arguments
-    filepath = os.path.join(current_directory, r"_data/prettify_indent_2.html")
-    with open(filepath, "r", encoding="utf-8") as f:
-        expected = f.read()
-    assert page.prettify() == expected
+    if BS4_INSTALLED:
+        filepath = os.path.join(current_directory, r"_data/prettify_indent_2.html")
+        with open(filepath, "r", encoding="utf-8") as f:
+            expected = f.read()
+        assert page.prettify() == expected
 
-    # Test with a different indent
-    filepath = os.path.join(current_directory, r"_data/prettify_indent_4.html")
-    with open(filepath, "r", encoding="utf-8") as f:
-        expected = f.read()
-    assert page.prettify(indent=4) == expected
+        # Test with a different indent
+        filepath = os.path.join(current_directory, r"_data/prettify_indent_4.html")
+        with open(filepath, "r", encoding="utf-8") as f:
+            expected = f.read()
+        assert page.prettify(indent=4) == expected
+
+    else:
+        filepath = os.path.join(current_directory, r"_data/prettify_indent_0.html")
+        with open(filepath, "r", encoding="utf-8") as f:
+            expected = f.read()
+        assert page.construct() == expected
 
 
 def test_html_builder_save() -> None:
@@ -143,8 +158,8 @@ def test_html_builder_save() -> None:
     builder.save(filepath)
     assert os.path.exists(filepath)
     with open(filepath, "r", encoding="utf-8") as f:
-        data = f.read()
-    assert data == builder.construct()
+        expected = f.read()
+    assert expected == builder.construct()
     os.remove(filepath)
 
     # Test with prettify  # TODO: Verify optional dependency
@@ -154,20 +169,11 @@ def test_html_builder_save() -> None:
     builder.save(filepath, prettify=True)
     assert os.path.exists(filepath)
     with open(filepath, "r", encoding="utf-8") as f:
-        data = f.read()
-
-    # Determine if beautifulsoup4 is installed
-    try:
-        import bs4  # noqa: F401
-
-        bs4_installed = True
-    except ImportError:
-        bs4_installed = False
-
-    if bs4_installed:
-        assert data == builder.prettify()
+        expected = f.read()
+    if BS4_INSTALLED:
+        assert expected == builder.prettify()
     else:
-        assert data == builder.construct()
+        assert expected == builder.construct()
 
     os.remove(filepath)
 
