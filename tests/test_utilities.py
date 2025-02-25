@@ -4,9 +4,12 @@ Contains tests for the utilities module.
 
 from unittest.mock import patch
 
+import pytest
+
 from html_builder.utilities import (
     is_valid_class_name,
     module_exists,
+    requires_modules,
     split_preserving_quotes,
 )
 
@@ -30,9 +33,45 @@ def test_module_exists() -> None:
         pandas_installed = False
     assert module_exists("pandas") is (True if pandas_installed else False)
 
-    # Simulate an import error
+    # Simulate an Import or ModuleNotFound error
     with patch("importlib.import_module", side_effect=ImportError):
         assert module_exists("html_builder") is False
+    with patch("importlib.import_module", side_effect=ModuleNotFoundError):
+        assert module_exists("html_builder") is False
+
+
+def test_requires_modules() -> None:
+    """Tests the requires_modules decorator."""
+
+    # Verify normal execution when all modules are present
+    @requires_modules("sys", "os")
+    def test_function() -> str:
+        return "Success"
+
+    assert test_function() == "Success"
+
+    # Verify error when some modules are missing
+    with patch("html_builder.utilities.module_exists") as mock:
+        mock.side_effect = lambda module: module != "does_not_exist"
+
+        @requires_modules("sys", "does_not_exist")
+        def test_function() -> str:
+            return "Success"
+
+        for error in [ImportError, ModuleNotFoundError]:
+            with pytest.raises(error):
+                test_function()
+
+    # Verify error when all modules are missing
+    with patch("html_builder.utilities.module_exists", return_value=False):
+
+        @requires_modules("does_not_exist_1", "does_not_exist_2")
+        def test_function() -> str:
+            return "Success"
+
+        for error in [ImportError, ModuleNotFoundError]:
+            with pytest.raises(error):
+                test_function()
 
 
 def test_split_preserving_quotes() -> None:
