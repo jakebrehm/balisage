@@ -39,7 +39,7 @@ class Classes:
     def replacements(self) -> dict[str, str]:
         """Gets the replacements dictionary.
 
-        The replacements dictionary controls the replacement of specifed
+        The replacements dictionary controls the replacement of specified
         characters in provided class names when they are sanitized.
 
         Keys are the characters to be replaced, values are the replacements.
@@ -310,7 +310,7 @@ Element: TypeAlias = Any
 
 
 class Elements:
-    """Class for managing subelements of HTML elements."""
+    """Class for managing HTML elements."""
 
     def __init__(self, *elements: Element) -> None:
         """Initializes the Elements object."""
