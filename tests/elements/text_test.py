@@ -116,7 +116,7 @@ def heading6(sample_attributes: Attributes, sample_classes: Classes) -> Heading6
 # MARK: Text
 
 
-def text_test_init(
+def test_text_init(
     text: Text,
     sample_attributes: Attributes,
     sample_classes: Classes,
