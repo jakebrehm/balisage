@@ -6,6 +6,41 @@ resolution-markers = [
 ]
 
 [[package]]
+name = "balisage"
+version = "0.1.0"
+source = { virtual = "." }
+
+[package.optional-dependencies]
+data = [
+    { name = "pandas" },
+]
+formatting = [
+    { name = "beautifulsoup4" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pandas" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "beautifulsoup4", marker = "extra == 'formatting'", specifier = ">=4.13.3" },
+    { name = "pandas", marker = "extra == 'data'", specifier = ">=2.2.3" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "pytest", specifier = ">=8.3.4" },
+    { name = "pytest-cov", specifier = ">=6.0.0" },
+    { name = "ruff", specifier = ">=0.9.7" },
+]
+
+[[package]]
 name = "beautifulsoup4"
 version = "4.13.3"
 source = { registry = "https://pypi.org/simple" }
@@ -79,41 +114,6 @@ wheels = [
 [package.optional-dependencies]
 toml = [
     { name = "tomli", marker = "python_full_version <= '3.11'" },
-]
-
-[[package]]
-name = "html-builder"
-version = "0.1.0"
-source = { virtual = "." }
-
-[package.optional-dependencies]
-data = [
-    { name = "pandas" },
-]
-formatting = [
-    { name = "beautifulsoup4" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pandas" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "beautifulsoup4", marker = "extra == 'formatting'", specifier = ">=4.13.3" },
-    { name = "pandas", marker = "extra == 'data'", specifier = ">=2.2.3" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pandas", specifier = ">=2.2.3" },
-    { name = "pytest", specifier = ">=8.3.4" },
-    { name = "pytest-cov", specifier = ">=6.0.0" },
-    { name = "ruff", specifier = ">=0.9.7" },
 ]
 
 [[package]]

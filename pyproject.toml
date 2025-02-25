@@ -1,5 +1,5 @@
 [project]
-name = "html-builder"
+name = "balisage"
 version = "0.1.0"
 description = "Build HTML files piece-by-piece using Python."
 readme = "readme.md"

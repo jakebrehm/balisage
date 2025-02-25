@@ -4,8 +4,8 @@ Contains tests for the elements.image module.
 
 import pytest
 
-from html_builder.attributes import Attributes, Classes
-from html_builder.elements.image import Image
+from balisage.attributes import Attributes, Classes
+from balisage.elements.image import Image
 
 # MARK: Fixtures
 

@@ -7,8 +7,8 @@ from copy import deepcopy
 
 import pytest
 
-from html_builder import Div, HorizontalRule, Image, LineBreak
-from html_builder.attributes import Attributes, Classes, Element, Elements
+from balisage import Div, HorizontalRule, Image, LineBreak
+from balisage.attributes import Attributes, Classes, Element, Elements
 
 # TODO: Add edge case tests (invalid class names, data types, etc.)
 

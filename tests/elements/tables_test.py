@@ -5,8 +5,8 @@ Contains tests for the elements.tables module.
 import pandas as pd
 import pytest
 
-from html_builder.attributes import Attributes, Classes, Elements
-from html_builder.elements.tables import Data, Header, Row, Table
+from balisage.attributes import Attributes, Classes, Elements
+from balisage.elements.tables import Data, Header, Row, Table
 
 # TODO: Test mismatched row lengths, etc.
 

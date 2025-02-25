@@ -6,9 +6,9 @@ import re
 
 import pytest
 
-from html_builder.attributes import Attributes, Classes, Element, Elements
-from html_builder.elements.format import Div, HorizontalRule, LineBreak
-from html_builder.elements.image import Image
+from balisage.attributes import Attributes, Classes, Element, Elements
+from balisage.elements.format import Div, HorizontalRule, LineBreak
+from balisage.elements.image import Image
 
 # MARK: Fixtures
 

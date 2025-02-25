@@ -4,8 +4,8 @@ Contains tests for the elements.text module.
 
 import pytest
 
-from html_builder.attributes import Attributes, Classes
-from html_builder.elements.text import (
+from balisage.attributes import Attributes, Classes
+from balisage.elements.text import (
     Heading1,
     Heading2,
     Heading3,

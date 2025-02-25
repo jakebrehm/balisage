@@ -4,10 +4,10 @@ Contains tests for the elements.basic module.
 
 import pytest
 
-from html_builder.attributes import Attributes, Classes, Elements
-from html_builder.elements.basic import Page
-from html_builder.elements.format import Div, HorizontalRule, LineBreak
-from html_builder.elements.text import Heading1, Paragraph
+from balisage.attributes import Attributes, Classes, Elements
+from balisage.elements.basic import Page
+from balisage.elements.format import Div, HorizontalRule, LineBreak
+from balisage.elements.text import Heading1, Paragraph
 
 # MARK: Fixtures
 

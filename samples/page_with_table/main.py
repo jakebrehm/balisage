@@ -10,7 +10,7 @@ sys.path.append(src_path)
 
 import pandas as pd  # noqa: E402
 
-from html_builder import (  # noqa: E402
+from balisage import (  # noqa: E402
     Attributes,
     Classes,
     Div,

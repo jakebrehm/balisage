@@ -8,12 +8,12 @@ from copy import deepcopy
 
 import pytest
 
-from html_builder import Div, LineBreak
-from html_builder.attributes import Attributes, Classes, Elements
-from html_builder.core import HTMLBuilder
-from html_builder.elements.basic import Page
-from html_builder.elements.format import HorizontalRule
-from html_builder.elements.text import Heading1, Paragraph
+from balisage import Div, LineBreak
+from balisage.attributes import Attributes, Classes, Elements
+from balisage.core import HTMLBuilder
+from balisage.elements.basic import Page
+from balisage.elements.format import HorizontalRule
+from balisage.elements.text import Heading1, Paragraph
 
 # Determine if beautifulsoup4 is installed
 try:
