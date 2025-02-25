@@ -19,7 +19,7 @@ from html_builder.attributes import Attributes, Classes, Element, Elements
 @pytest.fixture
 def classes() -> Classes:
     """Creates a sample Classes object."""
-    return Classes("class 1", "class2")
+    return Classes("class 1", "clAss2")
 
 
 @pytest.fixture
@@ -64,7 +64,7 @@ def elements(element_data: list[Element]) -> Elements:
 
 def test_classes_init(classes: Classes) -> None:
     """Tests the initialization of the Classes class."""
-    assert classes.classes == {"class 1": "class-1", "class2": "class2"}
+    assert classes.classes == {"class 1": "class-1", "clAss2": "class2"}
 
 
 def test_classes_from_string() -> None:
@@ -86,7 +86,7 @@ def test_classes_replacements(classes: Classes) -> None:
     expected_replacements = {" ": "-"}
     expected_classes = {
         "class 1": "class-1",
-        "class2": "class2",
+        "clAss2": "class2",
     }
     assert classes.replacements == expected_replacements
     assert classes.classes == expected_classes
@@ -95,7 +95,7 @@ def test_classes_replacements(classes: Classes) -> None:
     new_replacements = {" ": "_", "a": "zz"}
     expected_classes = {
         "class 1": "clzzss_1",
-        "class2": "clzzss2",
+        "clAss2": "clzzss2",
     }
     classes.replacements = new_replacements
     assert classes.replacements == new_replacements
@@ -113,7 +113,7 @@ def test_classes_add(classes: Classes) -> None:
     classes.add("Class 3")
     expected = {
         "class 1": "class-1",
-        "class2": "class2",
+        "clAss2": "class2",
         "Class 3": "class-3",
     }
     assert classes.classes == expected
@@ -122,7 +122,7 @@ def test_classes_add(classes: Classes) -> None:
     classes.add("Class 3")
     expected = {
         "class 1": "class-1",
-        "class2": "class2",
+        "clAss2": "class2",
         "Class 3": "class-3",
     }
     assert classes.classes == expected
@@ -131,7 +131,7 @@ def test_classes_add(classes: Classes) -> None:
     classes.add("class-3")
     expected = {
         "class 1": "class-1",
-        "class2": "class2",
+        "clAss2": "class2",
         "Class 3": "class-3",
     }
     assert classes.classes == expected
@@ -140,7 +140,7 @@ def test_classes_add(classes: Classes) -> None:
     classes.add("class4", "class 1", "Class 5")
     expected = {
         "class 1": "class-1",
-        "class2": "class2",
+        "clAss2": "class2",
         "Class 3": "class-3",
         "class4": "class4",
         "Class 5": "class-5",
@@ -151,7 +151,7 @@ def test_classes_add(classes: Classes) -> None:
     classes.add("class4", "CLASS-1", "Class 5")
     expected = {
         "class 1": "class-1",
-        "class2": "class2",
+        "clAss2": "class2",
         "Class 3": "class-3",
         "class4": "class4",
         "Class 5": "class-5",
@@ -195,14 +195,14 @@ def test_classes_remove(classes: Classes) -> None:
 
     # Try removing a class by its pre-sanitized name
     expected_result = classes.remove("class 1")
-    expected_classes = {"class2": "class2"}
+    expected_classes = {"clAss2": "class2"}
     assert expected_result == ("class 1", "class-1")
     assert classes.classes == expected_classes
 
     # Try removing a class by its post-sanitized name
     expected_result = classes.remove("class2")
     expected_classes = {}
-    assert expected_result == ("class2", "class2")
+    assert expected_result == ("clAss2", "class2")
     assert classes.classes == expected_classes
 
     # Try removing a class that does not exist
@@ -221,7 +221,7 @@ def test_classes_clear(classes: Classes) -> None:
 def test_classes_sanitize_name(classes: Classes) -> None:
     """Tests the _sanitize_name method of the Classes class."""
     assert classes._sanitize_name("class 1") == "class-1"
-    assert classes._sanitize_name("class2") == "class2"
+    assert classes._sanitize_name("clAss2") == "class2"
     assert classes._sanitize_name("Class 3") == "class-3"
     assert classes._sanitize_name("  Class   4   ") == "class---4"
     # Test strip and lower options
@@ -290,7 +290,7 @@ def test_classes_str(classes: Classes) -> None:
 
 def test_classes_repr(classes: Classes) -> None:
     """Tests the __repr__ method of the Classes class."""
-    assert repr(classes) == "Classes('class 1', 'class2')"
+    assert repr(classes) == "Classes('class 1', 'clAss2')"
 
 
 # MARK: Attributes

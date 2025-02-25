@@ -52,7 +52,7 @@ class HTMLBuilder(ABC):
         html += f"</{self.tag}>"
         return html
 
-    @requires_modules("bs4")
+    @requires_modules("bs4", "bs4.formatter")
     def prettify(self, indent: int = 2) -> str:
         """Generates HTML from the stored elements."""
         formatter = HTMLFormatter(void_element_close_prefix="", indent=indent)
@@ -67,7 +67,7 @@ class HTMLBuilder(ABC):
             else:
                 try:
                     f.write(self.prettify())
-                except ModuleNotFoundError:  # TODO: Requires testing
+                except ModuleNotFoundError:
                     f.write(self.construct())
 
     @property

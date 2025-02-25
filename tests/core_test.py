@@ -162,7 +162,7 @@ def test_html_builder_save() -> None:
     assert expected == builder.construct()
     os.remove(filepath)
 
-    # Test with prettify  # TODO: Verify optional dependency
+    # Test with prettify
     filepath = os.path.join(current_directory, r"_temp/prettify_save.html")
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
