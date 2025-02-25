@@ -313,8 +313,13 @@ def test_attributes_init(attributes: Attributes) -> None:
 
 def test_attributes_from_string() -> None:
     """Tests the from_string method of the Attributes class."""
-    attributes = Attributes.from_string("class='class-1 class2' id='test-1'")
-    expected = {"class": Classes("class-1", "class2"), "id": "test-1"}
+    string = "class='class-1 class2' id='test-1' disabled"
+    attributes = Attributes.from_string(string)
+    expected = {
+        "class": Classes("class-1", "class2"),
+        "id": "test-1",
+        "disabled": True,
+    }
     assert attributes.attributes == expected
 
 
