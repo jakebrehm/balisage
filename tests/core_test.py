@@ -147,7 +147,7 @@ def test_html_builder_save() -> None:
     assert data == builder.construct()
     os.remove(filepath)
 
-    # Test with prettify
+    # Test with prettify  # TODO: Verify optional dependency
     filepath = os.path.join(current_directory, r"_temp/prettify_save.html")
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
@@ -155,7 +155,20 @@ def test_html_builder_save() -> None:
     assert os.path.exists(filepath)
     with open(filepath, "r", encoding="utf-8") as f:
         data = f.read()
-    assert data == builder.prettify()
+
+    # Determine if beautifulsoup4 is installed
+    try:
+        import bs4  # noqa: F401
+
+        bs4_installed = True
+    except ImportError:
+        bs4_installed = False
+
+    if bs4_installed:
+        assert data == builder.prettify()
+    else:
+        assert data == builder.construct()
+
     os.remove(filepath)
 
     # Reset the method

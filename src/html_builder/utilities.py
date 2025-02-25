@@ -45,6 +45,6 @@ def split_preserving_quotes(string: str) -> list[str]:
     return re.findall(r"[^'\s]+='[^']*'|\S+", string)
 
 
-def is_valid_class_name(name: str) -> bool:  # TODO: Implement into Classes
+def is_valid_class_name(name: str) -> bool:
     """Determines whether a string is a valid HTML/CSS class name."""
     return re.match(r"^-?[_a-zA-Z]+[_a-zA-Z0-9-]*$", name) is not None

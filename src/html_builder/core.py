@@ -62,7 +62,13 @@ class HTMLBuilder(ABC):
     def save(self, filepath: str, prettify: bool = False) -> None:
         """Saves the HTML data to the specified filepath."""
         with open(filepath, "w", encoding="utf-8") as f:
-            f.write(self.construct() if not prettify else self.prettify())
+            if not prettify:
+                f.write(self.construct())
+            else:
+                try:
+                    f.write(self.prettify())
+                except ModuleNotFoundError:  # TODO: Requires testing
+                    f.write(self.construct())
 
     @property
     def elements(self) -> list[Any]:

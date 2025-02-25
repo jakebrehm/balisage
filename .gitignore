@@ -8,3 +8,4 @@ dist/
 ide/
 test/_temp/
 .coverage
+coverage.xml
