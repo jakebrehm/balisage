@@ -1,7 +1,7 @@
 [project]
 name = "balisage"
-version = "0.1.0"
-description = "Build HTML files piece-by-piece using Python."
+version = "0.1.1"
+description = "Generate HTML using an intuitive Python interface."
 readme = "readme.md"
 requires-python = ">=3.11"
 dependencies = []
