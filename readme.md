@@ -97,7 +97,7 @@ from balisage import (
 # Create a page
 page = Page(
     title="Sample Page",
-    stylesheets=["style.css"],
+    stylesheets=["./style.css"],
 )
 
 # Add some elements

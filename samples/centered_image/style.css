@@ -1,0 +1,17 @@
+html, body {
+    padding: 0.5rem;
+}
+
+/* Title area */
+
+.title-area {
+    padding: 2rem;
+    margin: 2rem;
+    background-color: rgba(160, 160, 160, 0.25);
+}
+
+.title-area .logo {
+    display: block;
+    margin: 3rem auto;
+    width: 20%;
+}
