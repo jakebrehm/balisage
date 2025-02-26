@@ -65,7 +65,15 @@ However, for some more advanced features, you may need to install extra optional
   </tr>
 </table>
 
-You can install these dependencies using the command `pip install balisage[<extra>]`, where `<extra>` is the name of the extra dependency group. To install multiple extra dependencies at once, you can use `pip install balisage[<extra>,<extra>,...]`.
+You can install these dependencies using the command
+
+`pip install balisage[<extra>]`
+
+where `<extra>` is the name of the extra dependency group.
+
+To install multiple extra dependencies at once, you can use
+
+`pip install balisage[<extra>,<extra>,...]`
 
 ## Licensing
 
@@ -90,7 +98,10 @@ page = Page(
 
 # Add some elements
 page.add(
-    Heading1("Heading"),
+    Heading1(
+      "Heading",
+      classes=Classes("title", "large")
+    ),
     Paragraph("Some text"),
 )
 
