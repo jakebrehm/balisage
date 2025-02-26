@@ -43,6 +43,8 @@ The source code can be viewed on [GitHub](https://github.com/jakebrehm/balisage)
 
 ### Dependencies
 
+Currently, the minimum required Python version is **3.11**.
+
 `balisage` only uses the Python standard library, which means you don't need to install any additional dependencies to use it.
 
 However, for some more advanced features, you may need to install extra optional dependencies:
@@ -88,7 +90,7 @@ The [`samples`](https://github.com/jakebrehm/balisage/blob/main/samples) directo
 To create a basic page, you can use the `Page` object and its `add` method. You can also specify stylesheets to link using the `stylesheets` argument.
 
 ```python
-from balisage import Page, Heading1, Paragraph
+from balisage import Classes, Heading1, Page, Paragraph
 
 # Create a page
 page = Page(
