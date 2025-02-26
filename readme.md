@@ -90,7 +90,9 @@ The [`samples`](https://github.com/jakebrehm/balisage/blob/main/samples) directo
 To create a basic page, you can use the `Page` object and its `add` method. You can also specify stylesheets to link using the `stylesheets` argument.
 
 ```python
-from balisage import Classes, Heading1, Page, Paragraph
+from balisage import (
+  Attributes, Classes, Heading1, Page, Paragraph
+)
 
 # Create a page
 page = Page(
@@ -102,9 +104,13 @@ page = Page(
 page.add(
     Heading1(
       "Heading",
-      classes=Classes("title", "large")
+      classes=Classes("title", "large"),
+      attributes=Attributes({"id": "title"}),
     ),
-    Paragraph("Some text"),
+    Paragraph(
+      "Some text",
+      attributes=Attributes({"style": "color: red;"}),
+    ),
 )
 
 # Save the page
