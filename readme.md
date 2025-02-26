@@ -45,10 +45,14 @@ The source code can be viewed on [GitHub](https://github.com/jakebrehm/balisage)
 
 `balisage` only uses the Python standard library, which means you don't need to install any additional dependencies to use it.
 
-However, for some more advanced features, you may need to install additional dependencies:
+However, for some more advanced features, you may need to install extra optional dependencies:
 
-- [`pandas`](https://pypi.org/project/pandas/) for working with dataframes
-- [`beautifulsoup4`](https://pypi.org/project/beautifulsoup4/) for formatting HTML nicely
+| Extra        | Description          | Dependencies                                                 | Command                            |
+| ------------ | -------------------- | ------------------------------------------------------------ | ---------------------------------- |
+| `data`       | Work with dataframes | [`pandas`](https://pypi.org/project/pandas/)                 | `pip install balisage[data]`       |
+| `formatting` | Format HTML nicely   | [`beautifulsoup4`](https://pypi.org/project/beautifulsoup4/) | `pip install balisage[formatting]` |
+
+You can install multiple extra dependencies at once using, for example, `pip install balisage[data,formatting]`.
 
 ## Licensing
 
