@@ -47,12 +47,25 @@ The source code can be viewed on [GitHub](https://github.com/jakebrehm/balisage)
 
 However, for some more advanced features, you may need to install extra optional dependencies:
 
-| Extra        | Description          | Dependencies                                                 | Command                            |
-| ------------ | -------------------- | ------------------------------------------------------------ | ---------------------------------- |
-| `data`       | Work with dataframes | [`pandas`](https://pypi.org/project/pandas/)                 | `pip install balisage[data]`       |
-| `formatting` | Format HTML nicely   | [`beautifulsoup4`](https://pypi.org/project/beautifulsoup4/) | `pip install balisage[formatting]` |
+<table align="center">
+  <tr>
+    <th>Extra</th>
+    <th>Description</th>
+    <th>Dependencies</th>
+  </tr>
+  <tr>
+    <td><code>data</code></td>
+    <td>Work with dataframes</td>
+    <td><a href="https://pypi.org/project/pandas/"><code>pandas</code></a></td>
+  </tr>
+  <tr>
+    <td><code>formatting</code></td>
+    <td>Format HTML nicely</td>
+    <td><a href="https://pypi.org/project/beautifulsoup4/"><code>beautifulsoup4</code></a></td>
+  </tr>
+</table>
 
-You can install multiple extra dependencies at once using, for example, `pip install balisage[data,formatting]`.
+You can install these dependencies using the command `pip install balisage[<extra>]`, where `<extra>` is the name of the extra dependency group. To install multiple extra dependencies at once, you can use `pip install balisage[<extra>,<extra>,...]`.
 
 ## Licensing
 
@@ -91,7 +104,7 @@ The `balisage` package was originally created to generate hyper-customizable HTM
 
 Admittedly, other tools like `balisage` exist, and many are more mature. However, its creation provided an interesting opportunity to practice Python packaging and unit testing, as well as the ability to learn modern tools, including [`uv`](https://github.com/astral-sh/uv), [`ruff`](https://github.com/astral-sh/ruff), and [`pytest`](https://pypi.org/project/pytest/). Additionally, it was the perfect way to implement CI pipelining using [GitHub Actions](https://github.com/features/actions).
 
-Lastly, the package's name _balisage_ is the French work for _markup_ (as in markup languages); context may have been lost in translation, but it sounds fun, unique, and leaves room to expand to other markup languages in the future.
+Lastly, the package's name _balisage_ is the French word for _markup_ (as in _markup languages_); the word's true context may have been lost in translation, but it sounds fun, unique, and leaves room to expand to other markup languages in the future.
 
 ## Future improvements
 
