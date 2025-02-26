@@ -1,14 +1,16 @@
 <div align="center">
 
+<img src="https://raw.githubusercontent.com/jakebrehm/balisage/main/img/logo.png" alt="balisage Logo" style="width: 100%;"/>
+
 <h1>Use Python to build HTML.</h1>
 
 <br>
 
-<a href="https://github.com/jakebrehm/balisage"><img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/jakebrehm/balisage?color=84B55A&logo=Git&logoColor=white&style=for-the-badge"></a>
-<a href="https://github.com/jakebrehm/balisage/blob/main/license.txt"><img alt="GitHub License" src="https://img.shields.io/github/license/jakebrehm/balisage?color=84B55A&style=for-the-badge"></a>
-<a href="https://pypi.org/project/balisage/"><img alt="PyPI Page" src="https://img.shields.io/pypi/v/balisage?color=84B55A&logo=pypi&logoColor=white&style=for-the-badge"></a>
-<a href="https://github.com/jakebrehm/balisage/actions/workflows/tests.yaml"><img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/jakebrehm/balisage/tests.yaml?label=tests&color=84B55A&logo=github&logoColor=white&style=for-the-badge"></a>
-<a href="https://codecov.io/gh/jakebrehm/balisage"><img alt="Codecov Test Coverage" src="https://img.shields.io/codecov/c/gh/jakebrehm/balisage?token=W6CWUDTYZC&color=84B55A&logo=codecov&logoColor=white&style=for-the-badge"></a>
+<a href="https://github.com/jakebrehm/balisage"><img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/jakebrehm/balisage?color=F16529&logo=Git&logoColor=white&style=for-the-badge"></a>
+<a href="https://github.com/jakebrehm/balisage/blob/main/license.txt"><img alt="GitHub License" src="https://img.shields.io/github/license/jakebrehm/balisage?color=F16529&style=for-the-badge"></a>
+<a href="https://pypi.org/project/balisage/"><img alt="PyPI Page" src="https://img.shields.io/pypi/v/balisage?color=F16529&logo=pypi&logoColor=white&style=for-the-badge"></a>
+<a href="https://github.com/jakebrehm/balisage/actions/workflows/tests.yaml"><img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/jakebrehm/balisage/tests.yaml?label=tests&color=F16529&logo=github&logoColor=white&style=for-the-badge"></a>
+<a href="https://codecov.io/gh/jakebrehm/balisage"><img alt="Codecov Test Coverage" src="https://img.shields.io/codecov/c/gh/jakebrehm/balisage?token=W6CWUDTYZC&color=F16529&logo=codecov&logoColor=white&style=for-the-badge"></a>
 
 <br>
 
@@ -18,7 +20,7 @@
 
 </div>
 
-<hr>
+<img src="https://raw.githubusercontent.com/jakebrehm/balisage/main/img/divider.png" alt="balisage Section Divider" style="width: 100%;"/>
 
 ## Table of contents
 
@@ -139,7 +141,7 @@ Some ideas for future improvements, from highest priority to lowest priority:
   - However, attribute validation may be desirable, especially since classes are already validated
 - Expand to other markup languages, such as Markdown
 
-<hr>
+<img src="https://raw.githubusercontent.com/jakebrehm/balisage/main/img/divider.png" alt="balisage Section Divider" style="width: 100%;"/>
 
 ## Authors
 
