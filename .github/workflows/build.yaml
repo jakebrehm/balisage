@@ -1,0 +1,22 @@
+name: Build
+on:
+  workflow_run:
+    workflows: ["Code Quality", "Tests"]
+    branches: [main]
+    types:
+      - completed
+jobs:
+  lock_file:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run:  uv lock --locked
+  building:
+    runs-on: ubuntu-latest
+    needs:  [lock_file]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run:  uv build
