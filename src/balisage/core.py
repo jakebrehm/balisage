@@ -5,14 +5,8 @@ Contains core functionality for the package.
 from abc import ABC, abstractmethod
 from typing import Any
 
-from .attributes import (
-    Attributes,
-    AttributesType,
-    Classes,
-    ClassesType,
-    Elements,
-    ElementsType,
-)
+from .attributes import Attributes, Classes, Elements
+from .types import AttributesType, ClassesType, ElementsType
 from .utilities import requires_modules
 
 # Import optional dependencies

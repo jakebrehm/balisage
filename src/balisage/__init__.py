@@ -19,7 +19,6 @@ __all__ = [
     "Classes",
     "Page",
     "Div",
-    "Span",
     "HorizontalRule",
     "LineBreak",
     "Image",

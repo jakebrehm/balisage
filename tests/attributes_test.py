@@ -7,8 +7,11 @@ from copy import deepcopy
 
 import pytest
 
-from balisage import Div, HorizontalRule, Image, LineBreak
-from balisage.attributes import Attributes, Classes, Element, Elements
+from balisage.attributes import Attributes, Classes, Elements
+from balisage.elements.format import HorizontalRule, LineBreak
+from balisage.elements.image import Image
+from balisage.elements.styles import Div
+from balisage.types import Element
 
 # TODO: Add edge case tests (invalid class names, data types, etc.)
 

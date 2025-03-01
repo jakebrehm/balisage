@@ -4,10 +4,11 @@ Contains tests for the elements.styles module.
 
 import pytest
 
-from balisage.attributes import Attributes, Classes, Element, Elements
+from balisage.attributes import Attributes, Classes, Elements
 from balisage.elements.format import HorizontalRule, LineBreak
 from balisage.elements.image import Image
 from balisage.elements.styles import Div
+from balisage.types import Element
 
 # MARK: Fixtures
 

@@ -2,9 +2,14 @@
 Contains code related to HTML attributes.
 """
 
-from typing import Any, Iterator, Self, TypeAlias
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Iterator, Self
 
 from .utilities import is_valid_class_name, split_preserving_quotes
+
+if TYPE_CHECKING:
+    from .types import AttributeMap, AttributeValue, ClassesType, Element
 
 
 class Classes:
@@ -155,11 +160,6 @@ class Classes:
         return f"{self.__class__.__name__}({arg_string})"
 
 
-ClassesType: TypeAlias = Classes | str
-AttributeValue: TypeAlias = str | bool | None
-AttributeMap: TypeAlias = dict[str, AttributeValue]
-
-
 class Attributes:
     """Class for managing attributes for HTML elements."""
 
@@ -305,10 +305,6 @@ class Attributes:
         return f"{self.__class__.__name__}(attributes={self._attributes!r})"
 
 
-AttributesType: TypeAlias = Attributes | AttributeMap
-Element: TypeAlias = Any
-
-
 class Elements:
     """Class for managing HTML elements."""
 
@@ -447,6 +443,3 @@ class Elements:
         """Gets the string representation of the object."""
         contents = ", ".join(repr(e) for e in self._elements)
         return f"{self.__class__.__name__}({contents})"
-
-
-ElementsType: TypeAlias = Elements | list[Element]

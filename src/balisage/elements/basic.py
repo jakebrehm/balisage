@@ -2,8 +2,8 @@
 Contains code for all top-level HTML classes.
 """
 
-from ..attributes import Element, ElementsType
 from ..core import HTMLBuilder
+from ..types import Element, ElementsType
 
 
 class Page(HTMLBuilder):

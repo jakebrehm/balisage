@@ -2,13 +2,12 @@
 Contains code for all table-related HTML elements.
 """
 
-from __future__ import annotations
-
 from copy import deepcopy
 from typing import Any, Iterator, Self
 
-from ..attributes import AttributesType, Classes, ClassesType, Elements
+from ..attributes import Classes, Elements
 from ..core import HTMLBuilder
+from ..types import AttributesType, ClassesType
 from ..utilities import requires_modules
 
 # Import optional dependencies

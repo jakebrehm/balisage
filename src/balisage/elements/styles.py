@@ -2,8 +2,8 @@
 Contains code for all style-related HTML elements.
 """
 
-from ..attributes import AttributesType, ClassesType, Element, ElementsType
 from ..core import HTMLBuilder
+from ..types import AttributesType, ClassesType, Element, ElementsType
 
 
 class Div(HTMLBuilder):
