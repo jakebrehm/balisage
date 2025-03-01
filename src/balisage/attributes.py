@@ -129,7 +129,7 @@ class Classes:
         """Generates the class string."""
         return " ".join(self._classes.values())
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Determines whether two Classes objects are equal.
 
         Since keys are only kept for historical reasons, equality is determined
@@ -282,7 +282,7 @@ class Attributes:
         """Sets an attribute in the Attributes object."""
         self._attributes[key] = value
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Determines whether two Attributes objects are equal."""
         if isinstance(other, self.__class__):
             return self._attributes == other._attributes
@@ -423,7 +423,7 @@ class Elements:
         """Iterates over the elements in the list."""
         return iter(self._elements)
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Determines whether two Elements objects are equal."""
         if isinstance(other, self.__class__):
             return self._elements == other._elements

@@ -3,7 +3,7 @@ Contains core functionality for the package.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Self
+from typing import Any
 
 from .attributes import (
     Attributes,
@@ -85,7 +85,7 @@ class HTMLBuilder(ABC):
         """Gets the stored classes."""
         return self._attributes.classes
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Determines whether two HTMLBuilder objects are equal."""
         if isinstance(other, self.__class__):
             attributes_equal = self.attributes == other.attributes

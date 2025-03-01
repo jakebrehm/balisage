@@ -8,11 +8,11 @@ from copy import deepcopy
 
 import pytest
 
-from balisage import Div, LineBreak
 from balisage.attributes import Attributes, Classes, Elements
 from balisage.core import HTMLBuilder
 from balisage.elements.basic import Page
-from balisage.elements.format import HorizontalRule
+from balisage.elements.format import HorizontalRule, LineBreak
+from balisage.elements.styles import Div
 from balisage.elements.text import Heading1, Paragraph
 
 # Determine if beautifulsoup4 is installed
