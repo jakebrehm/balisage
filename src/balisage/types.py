@@ -2,9 +2,14 @@
 Contains types for the package.
 """
 
-from typing import Any, TypeAlias
+from typing import TypeAlias
 
 from .attributes import Attributes, Classes, Elements
+from .core import HTMLBuilder
+
+# MARK: Builders
+
+Builder: TypeAlias = HTMLBuilder
 
 # MARK: Classes
 
@@ -18,5 +23,5 @@ AttributesType: TypeAlias = Attributes | AttributeMap
 
 # MARK: Elements
 
-Element: TypeAlias = Any
+Element: TypeAlias = type[Builder] | str
 ElementsType: TypeAlias = Elements | list[Element]

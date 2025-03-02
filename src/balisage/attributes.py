@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Iterator, Self
 
-from .utilities import is_valid_class_name, split_preserving_quotes
+from .utilities import is_element, is_valid_class_name, split_preserving_quotes
 
 if TYPE_CHECKING:
     from .types import AttributeMap, AttributeValue, ClassesType, Element
@@ -302,6 +302,8 @@ class Attributes:
 
     def __repr__(self) -> str:
         """Gets the string representation of the object."""
+        if not bool(self):
+            return f"{self.__class__.__name__}()"
         return f"{self.__class__.__name__}(attributes={self._attributes!r})"
 
 
@@ -310,6 +312,10 @@ class Elements:
 
     def __init__(self, *elements: Element) -> None:
         """Initializes the Elements object."""
+
+        # Validate data types of elements
+        if not all(is_element(e) for e in elements):
+            raise TypeError("Elements must be strings or builder objects")
 
         # Initialize instance variables
         self._elements: list[Element] = []
@@ -380,7 +386,7 @@ class Elements:
         """Clears the list of elements."""
         self._elements.clear()
 
-    def _raise_if_exceeds_max_elements(
+    def _raise_if_exceeds_max_elements(  # TODO: Move to utilities
         self,
         new_elements: int,
         ignore_current_elements: bool = False,

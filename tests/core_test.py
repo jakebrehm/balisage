@@ -255,6 +255,8 @@ def test_html_builder_str() -> None:
 
 def test_html_builder_repr(builder: HTMLBuilder) -> None:
     """Tests the __repr__ method of the HTMLBuilder class."""
+
+    # Try using the fixture
     expected = (
         "HTMLBuilder(attributes="
         "Attributes(attributes="
@@ -262,3 +264,7 @@ def test_html_builder_repr(builder: HTMLBuilder) -> None:
         "))"
     )
     assert repr(builder) == expected
+
+    # Try with no attributes
+    builder.attributes.clear()
+    assert repr(builder) == "HTMLBuilder()"

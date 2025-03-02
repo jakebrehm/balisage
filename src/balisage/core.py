@@ -2,12 +2,16 @@
 Contains core functionality for the package.
 """
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .attributes import Attributes, Classes, Elements
-from .types import AttributesType, ClassesType, ElementsType
 from .utilities import requires_modules
+
+if TYPE_CHECKING:
+    from .types import AttributesType, ClassesType, ElementsType
 
 # Import optional dependencies
 try:
@@ -93,4 +97,6 @@ class HTMLBuilder(ABC):
 
     def __repr__(self) -> str:
         """Gets a string representation of the object."""
+        if not bool(self._attributes):
+            return f"{self.__class__.__name__}()"
         return f"{self.__class__.__name__}(attributes={self._attributes!r})"
