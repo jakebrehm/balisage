@@ -656,6 +656,8 @@ def test_attributes_str(attributes: Attributes) -> None:
 
 def test_attributes_repr(attributes: Attributes) -> None:
     """Tests the __repr__ method of the Attributes class."""
+
+    # Test using the fixture
     expected = (
         "Attributes(attributes={"
         "'class': Classes('class 1', 'class2'), "
@@ -667,6 +669,10 @@ def test_attributes_repr(attributes: Attributes) -> None:
         "})"
     )
     assert repr(attributes) == expected
+
+    # Test with no attributes
+    attributes = Attributes()
+    assert repr(attributes) == "Attributes()"
 
 
 # MARK: Elements
