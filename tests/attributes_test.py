@@ -227,25 +227,6 @@ def test_classes_sanitize_name(classes: Classes) -> None:
     assert classes._sanitize_name("clAss2") == "class2"
     assert classes._sanitize_name("Class 3") == "class-3"
     assert classes._sanitize_name("  Class   4   ") == "class---4"
-    # Test strip and lower options
-    test_string = " ClASs 4  "
-    assert classes._sanitize_name(test_string, lower=False) == "ClASs-4"
-    assert classes._sanitize_name(test_string, strip=False) == "-class-4--"
-    assert (
-        classes._sanitize_name(
-            test_string,
-            lower=False,
-            strip=False,
-        )
-        == "-ClASs-4--"
-    )
-    # Test invalid class names
-    message = r"Class name '123' (sanitized to '123') is invalid"
-    with pytest.raises(ValueError, match=re.escape(message)):
-        classes._sanitize_name("123")
-    message = r"Class name '-cl@Ss ' (sanitized to '-cl@ss') is invalid"
-    with pytest.raises(ValueError, match=re.escape(message)):
-        classes._sanitize_name("-cl@Ss ")
 
 
 def test_classes_construct(classes: Classes) -> None:

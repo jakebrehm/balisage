@@ -2,7 +2,15 @@
 Contains tests for the utilities.validate module.
 """
 
-from balisage.utilities.validate import is_valid_class_name, split_preserving_quotes
+import re
+
+import pytest
+
+from balisage.utilities.validate import (
+    is_valid_class_name,
+    sanitize_class_name,
+    split_preserving_quotes,
+)
 
 
 def test_split_preserving_quotes() -> None:
@@ -58,3 +66,30 @@ def test_is_valid_class_name() -> None:
     ]
     for invalid_class in invalid_classes:
         assert is_valid_class_name(invalid_class) is False
+
+
+def test_classes_sanitize_class_name() -> None:
+    """Tests the sanitize_class_name function."""
+    assert sanitize_class_name("class 1") == "class-1"
+    assert sanitize_class_name("clAss2") == "class2"
+    assert sanitize_class_name("Class 3") == "class-3"
+    assert sanitize_class_name("  Class   4   ") == "class---4"
+    # Test strip and lower options
+    test_string = " ClASs 4  "
+    assert sanitize_class_name(test_string, lower=False) == "ClASs-4"
+    assert sanitize_class_name(test_string, strip=False) == "-class-4--"
+    assert (
+        sanitize_class_name(
+            test_string,
+            lower=False,
+            strip=False,
+        )
+        == "-ClASs-4--"
+    )
+    # Test invalid class names
+    message = r"Class name '123' (sanitized to '123') is invalid"
+    with pytest.raises(ValueError, match=re.escape(message)):
+        sanitize_class_name("123")
+    message = r"Class name '-cl@Ss ' (sanitized to '-cl@ss') is invalid"
+    with pytest.raises(ValueError, match=re.escape(message)):
+        sanitize_class_name("-cl@Ss ")

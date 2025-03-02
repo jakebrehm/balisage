@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Iterator, Self
 
-from .utilities.validate import is_element, is_valid_class_name, split_preserving_quotes
+from .utilities.validate import is_element, sanitize_class_name, split_preserving_quotes
 
 if TYPE_CHECKING:
     from .types import AttributeMap, AttributeValue, ClassesType, Element
@@ -112,23 +112,9 @@ class Classes:
         """Clears the list of classes."""
         self._classes.clear()
 
-    def _sanitize_name(
-        self,
-        name: str,
-        lower: bool = True,
-        strip: bool = True,
-    ) -> str:
+    def _sanitize_name(self, name: str) -> str:
         """Converts a class string into a valid class name."""
-        original_name = name
-        name = name.lower() if lower else name
-        name = name.strip() if strip else name
-        for k, v in self._replacements.items():
-            name = name.replace(k, v)
-        if not is_valid_class_name(name):
-            raise ValueError(
-                f"Class name '{original_name}' (sanitized to '{name}') is invalid"
-            )
-        return name
+        return sanitize_class_name(name, replacements=self._replacements)
 
     def construct(self) -> str:
         """Generates the class string."""
@@ -386,7 +372,7 @@ class Elements:
         """Clears the list of elements."""
         self._elements.clear()
 
-    def _raise_if_exceeds_max_elements(  # TODO: Move to utilities
+    def _raise_if_exceeds_max_elements(
         self,
         new_elements: int,
         ignore_current_elements: bool = False,
