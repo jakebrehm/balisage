@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 from .attributes import Attributes, Classes, Elements
-from .utilities import requires_modules
+from .utilities.optional import requires_modules
 
 if TYPE_CHECKING:
     from .types import AttributesType, ClassesType, ElementsType

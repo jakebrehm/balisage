@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Iterator, Self
 
-from .utilities import is_element, is_valid_class_name, split_preserving_quotes
+from .utilities.validate import is_element, is_valid_class_name, split_preserving_quotes
 
 if TYPE_CHECKING:
     from .types import AttributeMap, AttributeValue, ClassesType, Element

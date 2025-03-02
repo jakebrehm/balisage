@@ -8,7 +8,7 @@ from typing import Any, Iterator, Self
 from ..attributes import Classes, Elements
 from ..core import HTMLBuilder
 from ..types import AttributesType, ClassesType
-from ..utilities import requires_modules
+from ..utilities.optional import requires_modules
 
 # Import optional dependencies
 try:
