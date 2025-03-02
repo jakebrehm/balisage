@@ -6,11 +6,49 @@ import re
 
 import pytest
 
+from balisage.core import HTMLBuilder
+from balisage.elements.styles import Div
 from balisage.utilities.validate import (
+    is_builder,
+    is_element,
     is_valid_class_name,
     sanitize_class_name,
     split_preserving_quotes,
 )
+
+
+def test_is_builder() -> None:
+    """Tests the is_builder function."""
+
+    # Override the abstract methods
+    HTMLBuilder.__abstractmethods__ = set()
+
+    # Test with with an HTMLBuilder object
+    assert is_builder(HTMLBuilder()) is False
+
+    # Test with a subclass of HTMLBuilder
+    assert is_builder(Div()) is True
+
+    # Test with other data types
+    invalid_valules = ["Test string", 1, 2.0, True, False, tuple(), dict(), None]
+    for invalid_value in invalid_valules:
+        assert is_builder(invalid_value) is False
+
+
+def test_is_element() -> None:
+    """Tests the is_element function."""
+
+    # Override the abstract methods
+    HTMLBuilder.__abstractmethods__ = set()
+
+    # Test with with an HTMLBuilder object
+    assert is_element(HTMLBuilder()) is False
+
+    # Test with a subclass of HTMLBuilder
+    assert is_element(Div()) is True
+
+    # Test with a string
+    assert is_element("Test string") is True
 
 
 def test_split_preserving_quotes() -> None:

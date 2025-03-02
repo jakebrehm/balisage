@@ -12,7 +12,7 @@ def is_builder(object: Any) -> bool:
     """Determines whether an object is a subclass of HTMLBuilder."""
     from ..types import Builder
 
-    return issubclass(type(object), Builder)
+    return issubclass(type(object), Builder) and type(object) is not Builder
 
 
 def is_element(object: Any) -> bool:
