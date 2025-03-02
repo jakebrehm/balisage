@@ -1,7 +1,8 @@
 from .attributes import Attributes, Classes
 from .elements.basic import Page
-from .elements.format import Div, HorizontalRule, LineBreak
+from .elements.format import HorizontalRule, LineBreak
 from .elements.image import Image
+from .elements.styles import Div, Span
 from .elements.tables import Data, Header, Row, Table
 from .elements.text import (
     Heading1,
@@ -18,6 +19,7 @@ __all__ = [
     "Classes",
     "Page",
     "Div",
+    "Span",
     "HorizontalRule",
     "LineBreak",
     "Image",

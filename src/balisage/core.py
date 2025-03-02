@@ -2,18 +2,16 @@
 Contains core functionality for the package.
 """
 
-from abc import ABC, abstractmethod
-from typing import Any, Self
+from __future__ import annotations
 
-from .attributes import (
-    Attributes,
-    AttributesType,
-    Classes,
-    ClassesType,
-    Elements,
-    ElementsType,
-)
-from .utilities import requires_modules
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Any
+
+from .attributes import Attributes, Classes, Elements
+from .utilities.optional import requires_modules
+
+if TYPE_CHECKING:
+    from .types import AttributesType, ClassesType, ElementsType
 
 # Import optional dependencies
 try:
@@ -85,7 +83,7 @@ class HTMLBuilder(ABC):
         """Gets the stored classes."""
         return self._attributes.classes
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Determines whether two HTMLBuilder objects are equal."""
         if isinstance(other, self.__class__):
             attributes_equal = self.attributes == other.attributes
@@ -99,4 +97,6 @@ class HTMLBuilder(ABC):
 
     def __repr__(self) -> str:
         """Gets a string representation of the object."""
+        if not bool(self._attributes):
+            return f"{self.__class__.__name__}()"
         return f"{self.__class__.__name__}(attributes={self._attributes!r})"

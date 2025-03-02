@@ -2,9 +2,14 @@
 Contains code related to HTML attributes.
 """
 
-from typing import Any, Iterator, Self, TypeAlias
+from __future__ import annotations
 
-from .utilities import is_valid_class_name, split_preserving_quotes
+from typing import TYPE_CHECKING, Any, Iterator, Self
+
+from .utilities.validate import is_element, sanitize_class_name, split_preserving_quotes
+
+if TYPE_CHECKING:
+    from .types import AttributeMap, AttributeValue, ClassesType, Element
 
 
 class Classes:
@@ -107,29 +112,15 @@ class Classes:
         """Clears the list of classes."""
         self._classes.clear()
 
-    def _sanitize_name(
-        self,
-        name: str,
-        lower: bool = True,
-        strip: bool = True,
-    ) -> str:
+    def _sanitize_name(self, name: str) -> str:
         """Converts a class string into a valid class name."""
-        original_name = name
-        name = name.lower() if lower else name
-        name = name.strip() if strip else name
-        for k, v in self._replacements.items():
-            name = name.replace(k, v)
-        if not is_valid_class_name(name):
-            raise ValueError(
-                f"Class name '{original_name}' (sanitized to '{name}') is invalid"
-            )
-        return name
+        return sanitize_class_name(name, replacements=self._replacements)
 
     def construct(self) -> str:
         """Generates the class string."""
         return " ".join(self._classes.values())
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Determines whether two Classes objects are equal.
 
         Since keys are only kept for historical reasons, equality is determined
@@ -153,11 +144,6 @@ class Classes:
         """Gets the string representation of the object."""
         arg_string = ", ".join(repr(c) for c in self._classes.keys())
         return f"{self.__class__.__name__}({arg_string})"
-
-
-ClassesType: TypeAlias = Classes | str
-AttributeValue: TypeAlias = str | bool | None
-AttributeMap: TypeAlias = dict[str, AttributeValue]
 
 
 class Attributes:
@@ -282,7 +268,7 @@ class Attributes:
         """Sets an attribute in the Attributes object."""
         self._attributes[key] = value
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Determines whether two Attributes objects are equal."""
         if isinstance(other, self.__class__):
             return self._attributes == other._attributes
@@ -302,11 +288,9 @@ class Attributes:
 
     def __repr__(self) -> str:
         """Gets the string representation of the object."""
+        if not bool(self):
+            return f"{self.__class__.__name__}()"
         return f"{self.__class__.__name__}(attributes={self._attributes!r})"
-
-
-AttributesType: TypeAlias = Attributes | AttributeMap
-Element: TypeAlias = Any
 
 
 class Elements:
@@ -314,6 +298,10 @@ class Elements:
 
     def __init__(self, *elements: Element) -> None:
         """Initializes the Elements object."""
+
+        # Validate data types of elements
+        if not all(is_element(e) for e in elements):
+            raise TypeError("Elements must be strings or builder objects")
 
         # Initialize instance variables
         self._elements: list[Element] = []
@@ -423,7 +411,7 @@ class Elements:
         """Iterates over the elements in the list."""
         return iter(self._elements)
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Determines whether two Elements objects are equal."""
         if isinstance(other, self.__class__):
             return self._elements == other._elements
@@ -447,6 +435,3 @@ class Elements:
         """Gets the string representation of the object."""
         contents = ", ".join(repr(e) for e in self._elements)
         return f"{self.__class__.__name__}({contents})"
-
-
-ElementsType: TypeAlias = Elements | list[Element]

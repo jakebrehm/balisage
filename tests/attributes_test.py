@@ -7,8 +7,11 @@ from copy import deepcopy
 
 import pytest
 
-from balisage import Div, HorizontalRule, Image, LineBreak
-from balisage.attributes import Attributes, Classes, Element, Elements
+from balisage.attributes import Attributes, Classes, Elements
+from balisage.elements.format import HorizontalRule, LineBreak
+from balisage.elements.image import Image
+from balisage.elements.styles import Div
+from balisage.types import Element
 
 # TODO: Add edge case tests (invalid class names, data types, etc.)
 
@@ -224,25 +227,6 @@ def test_classes_sanitize_name(classes: Classes) -> None:
     assert classes._sanitize_name("clAss2") == "class2"
     assert classes._sanitize_name("Class 3") == "class-3"
     assert classes._sanitize_name("  Class   4   ") == "class---4"
-    # Test strip and lower options
-    test_string = " ClASs 4  "
-    assert classes._sanitize_name(test_string, lower=False) == "ClASs-4"
-    assert classes._sanitize_name(test_string, strip=False) == "-class-4--"
-    assert (
-        classes._sanitize_name(
-            test_string,
-            lower=False,
-            strip=False,
-        )
-        == "-ClASs-4--"
-    )
-    # Test invalid class names
-    message = r"Class name '123' (sanitized to '123') is invalid"
-    with pytest.raises(ValueError, match=re.escape(message)):
-        classes._sanitize_name("123")
-    message = r"Class name '-cl@Ss ' (sanitized to '-cl@ss') is invalid"
-    with pytest.raises(ValueError, match=re.escape(message)):
-        classes._sanitize_name("-cl@Ss ")
 
 
 def test_classes_construct(classes: Classes) -> None:
@@ -672,6 +656,8 @@ def test_attributes_str(attributes: Attributes) -> None:
 
 def test_attributes_repr(attributes: Attributes) -> None:
     """Tests the __repr__ method of the Attributes class."""
+
+    # Test using the fixture
     expected = (
         "Attributes(attributes={"
         "'class': Classes('class 1', 'class2'), "
@@ -684,14 +670,42 @@ def test_attributes_repr(attributes: Attributes) -> None:
     )
     assert repr(attributes) == expected
 
+    # Test with no attributes
+    attributes = Attributes()
+    assert repr(attributes) == "Attributes()"
+
 
 # MARK: Elements
 
 
 def test_elements_init(elements: Elements, element_data: list[Element]) -> None:
     """Tests the initialization of the Elements class."""
+
+    # Test with only builder elements
     expected = element_data
     assert elements.elements == expected
+
+    # Test with only one string
+    expected = "String 1"
+    elements = Elements(expected)
+    assert elements.elements == [expected]
+
+    # Test with multiple strings
+    expected = ["String 1", "String 2"]
+    elements = Elements(*expected)
+    assert elements.elements == expected
+
+    # Test with both builder and string elements
+    expected = ["String 1", HorizontalRule()]
+    elements = Elements(*expected)
+    assert elements.elements == expected
+
+    # Test with invalid data types
+    invalid_values = [1, 2.0, True, False, tuple(), dict(), None]
+    message = "Elements must be strings or builder objects"
+    for invalid_value in invalid_values:
+        with pytest.raises(TypeError, match=message):
+            Elements(invalid_value)
 
 
 def test_elements_max_elements(elements: Elements) -> None:
@@ -749,13 +763,28 @@ def test_elements_add(elements: Elements, element_data: list[Element]) -> None:
 def test_elements_set(elements: Elements) -> None:
     """Tests the set method of the Elements class."""
 
-    # Try setting a single element
+    # Try setting a single builder element
     new_data = HorizontalRule()
     elements.set(new_data)
     assert elements.elements == [new_data]
 
-    # Try setting multiple elements
+    # Try setting multiple builder elements
     new_data = [LineBreak(), HorizontalRule()]
+    elements.set(*new_data)
+    assert elements.elements == new_data
+
+    # Try setting a single string element
+    new_data = "Test string"
+    elements.set(new_data)
+    assert elements.elements == [new_data]
+
+    # Try setting multiple string elements
+    new_data = ["Test string 1", "Test string 2"]
+    elements.set(*new_data)
+    assert elements.elements == new_data
+
+    # Try setting a mix of builder and string elements
+    new_data = [LineBreak(), "Test string", HorizontalRule()]
     elements.set(*new_data)
     assert elements.elements == new_data
 
@@ -860,6 +889,20 @@ def test_elements_get_set(elements: Elements, element_data: list[Element]) -> No
 
 def test_elements_iter(elements: Elements, element_data: list[Element]) -> None:
     """Tests the __iter__ method of the Elements class."""
+
+    # Test with builder elements
+    for actual_element, expected_element in zip(elements, element_data):
+        assert actual_element == expected_element
+
+    # Test with strings
+    element_data = ["String 1", "String 2"]
+    elements = Elements(*element_data)
+    for actual_element, expected_element in zip(elements, element_data):
+        assert actual_element == expected_element
+
+    # Test with mixed elements
+    element_data = ["String 1", HorizontalRule()]
+    elements = Elements(*element_data)
     for actual_element, expected_element in zip(elements, element_data):
         assert actual_element == expected_element
 
@@ -883,10 +926,24 @@ def test_elements_eq(elements: Elements, element_data: list[Element]) -> None:
     expected = Elements(HorizontalRule(), LineBreak())
     assert elements != expected
 
+    # Try comparing the elements object to one with only strings
+    expected = Elements("Test string 1", "Test string 2")
+    assert elements != expected
+
+    # Try comparing the elements object to one with strings and elements
+    expected = Elements("Test string 1", LineBreak())
+    assert elements != expected
+    assert Elements("Test string", LineBreak()) == ["Test string", LineBreak()]
+
+    # Try comparing the elements object to a list of strings and elements
+    expected = ["Test string 1", LineBreak()]
+    assert elements != expected
+
     # Try comparing the elements object to a list of elements
     assert elements == element_data
 
     # Try comparing the elements object to other data types
+    assert elements != "Test string"
     assert elements != 1
     assert elements != 2.0
     assert elements is not True
@@ -919,15 +976,46 @@ def test_elements_len(elements: Elements) -> None:
 
 def test_elements_str(elements: Elements) -> None:
     """Tests the __str__ method of the Elements class."""
+
+    # Try using the fixture
     assert str(elements) == "<div><hr><img src='image.png'></div><br>"
+
+    # Try using elements with mixed types
+    elements = Elements(Div(), LineBreak(), "Test string", HorizontalRule())
+    assert str(elements) == "<div></div><br>Test string<hr>"
+
+    # Try with some elements that have attributes
+    elements = Elements(
+        Div(attributes=Attributes({"id": "test"})),
+        "Test string",
+        HorizontalRule(),
+    )
+    assert str(elements) == ("<div id='test'></div>Test string<hr>")
 
 
 def test_elements_repr(elements: Elements) -> None:
     """Tests the __repr__ method of the Elements class."""
-    expected = (
-        "Elements("
-        "Div(attributes=Attributes(attributes={'class': Classes()})), "
-        "LineBreak(attributes=Attributes(attributes={'class': Classes()}))"
+
+    # Try using the fixture
+    expected = "Elements(Div(), LineBreak())"
+    assert repr(elements) == expected
+
+    # Try using elements with mixed types
+    elements = Elements(Div(), LineBreak(), "Test string", HorizontalRule())
+    assert repr(elements) == (
+        "Elements(Div(), LineBreak(), 'Test string', HorizontalRule())"
+    )
+
+    # Try with some elements that have attributes
+    elements = Elements(
+        Div(attributes=Attributes({"id": "test"})),
+        "Test string",
+        HorizontalRule(),
+    )
+    assert repr(elements) == (
+        "Elements(Div("
+        "attributes=Attributes(attributes={'id': 'test', 'class': Classes()})), "
+        "'Test string', "
+        "HorizontalRule()"
         ")"
     )
-    assert repr(elements) == expected

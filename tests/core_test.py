@@ -8,11 +8,11 @@ from copy import deepcopy
 
 import pytest
 
-from balisage import Div, LineBreak
 from balisage.attributes import Attributes, Classes, Elements
 from balisage.core import HTMLBuilder
 from balisage.elements.basic import Page
-from balisage.elements.format import HorizontalRule
+from balisage.elements.format import HorizontalRule, LineBreak
+from balisage.elements.styles import Div
 from balisage.elements.text import Heading1, Paragraph
 
 # Determine if beautifulsoup4 is installed
@@ -255,6 +255,8 @@ def test_html_builder_str() -> None:
 
 def test_html_builder_repr(builder: HTMLBuilder) -> None:
     """Tests the __repr__ method of the HTMLBuilder class."""
+
+    # Try using the fixture
     expected = (
         "HTMLBuilder(attributes="
         "Attributes(attributes="
@@ -262,3 +264,7 @@ def test_html_builder_repr(builder: HTMLBuilder) -> None:
         "))"
     )
     assert repr(builder) == expected
+
+    # Try with no attributes
+    builder.attributes.clear()
+    assert repr(builder) == "HTMLBuilder()"

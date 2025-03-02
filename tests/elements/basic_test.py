@@ -6,7 +6,8 @@ import pytest
 
 from balisage.attributes import Attributes, Classes, Elements
 from balisage.elements.basic import Page
-from balisage.elements.format import Div, HorizontalRule, LineBreak
+from balisage.elements.format import HorizontalRule, LineBreak
+from balisage.elements.styles import Div
 from balisage.elements.text import Heading1, Paragraph
 
 # MARK: Fixtures

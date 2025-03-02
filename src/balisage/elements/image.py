@@ -2,8 +2,8 @@
 Contains code for all formatting-related HTML elements.
 """
 
-from ..attributes import AttributesType, ClassesType
 from ..core import HTMLBuilder
+from ..types import AttributesType, ClassesType
 
 
 class Image(HTMLBuilder):

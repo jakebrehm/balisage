@@ -4,8 +4,8 @@ Contains code for all text-related HTML elements.
 
 from enum import Enum
 
-from ..attributes import AttributesType, ClassesType
 from ..core import HTMLBuilder
+from ..types import AttributesType, ClassesType
 
 
 class TextType(Enum):
