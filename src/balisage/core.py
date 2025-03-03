@@ -11,7 +11,7 @@ from .attributes import Attributes, Classes, Elements
 from .utilities.optional import requires_modules
 
 if TYPE_CHECKING:
-    from .types import AttributesType, ClassesType, ElementsType
+    from .types import AttributesType, ClassesType, Element, ElementsType
 
 # Import optional dependencies
 try:
@@ -100,3 +100,65 @@ class HTMLBuilder(ABC):
         if not bool(self._attributes):
             return f"{self.__class__.__name__}()"
         return f"{self.__class__.__name__}(attributes={self._attributes!r})"
+
+
+class GenericElement(HTMLBuilder):
+    """Constructs a generic HTML element.
+
+    This generic element class is useful for creating custom HTML elements that
+    are simply containers for other sub-elements. Typically, the only difference
+    between subclasses of GenericElement are the tags, but additional
+    functionality may be implemented.
+
+    It provides a convenient way to add, set, insert, update, remove, and pop
+    elements, as well as a clear method to remove all elements.
+    """
+
+    def __init__(
+        self,
+        tag: str,
+        elements: ElementsType | None = None,
+        attributes: AttributesType | None = None,
+        classes: ClassesType | None = None,
+    ) -> None:
+        """Initializes the GenericElement object."""
+
+        # Initialize the builder
+        super().__init__(
+            elements=elements,
+            attributes=attributes,
+            classes=classes,
+        )
+        self.tag = tag
+
+    def add(self, *elements: Element) -> None:
+        """Convenience wrapper for the self.elements.add method."""
+        self.elements.add(*elements)
+
+    def set(self, *elements: Element) -> None:
+        """Convenience wrapper for the self.elements.set method."""
+        self.elements.set(*elements)
+
+    def insert(self, index: int, element: Element) -> None:
+        """Convenience wrapper for the self.elements.insert method."""
+        self.elements.insert(index, element)
+
+    def update(self, index: int, element: Element) -> None:
+        """Convenience wrapper for the self.elements.update method."""
+        self.elements.update(index, element)
+
+    def remove(self, index: int) -> None:
+        """Convenience wrapper for the self.elements.remove method."""
+        self.elements.remove(index)
+
+    def pop(self, index: int = -1) -> Element:
+        """Convenience wrapper for the self.elements.pop method."""
+        return self.elements.pop(index)
+
+    def clear(self) -> None:
+        """Convenience wrapper for the self.elements.clear method."""
+        self.elements.clear()
+
+    def construct(self) -> str:
+        """Generates HTML from the stored elements."""
+        return super().construct()

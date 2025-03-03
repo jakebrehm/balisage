@@ -9,9 +9,10 @@ from copy import deepcopy
 import pytest
 
 from balisage.attributes import Attributes, Classes, Elements
-from balisage.core import HTMLBuilder
+from balisage.core import GenericElement, HTMLBuilder
 from balisage.elements.basic import Page
 from balisage.elements.format import HorizontalRule, LineBreak
+from balisage.elements.image import Image
 from balisage.elements.styles import Div
 from balisage.elements.text import Heading1, Paragraph
 
@@ -33,6 +34,27 @@ def builder() -> HTMLBuilder:
     return HTMLBuilder(
         elements=Elements(LineBreak(), HorizontalRule()),
         attributes=Attributes(attributes),
+    )
+
+
+@pytest.fixture
+def sample_elements() -> Elements:
+    """Creates a sample list of data."""
+    return Elements(
+        Image(attributes=Attributes({"src": "image1.png"})),
+        LineBreak(),
+        Image(attributes=Attributes({"src": "image2.png", "alt": "Image 2"})),
+    )
+
+
+@pytest.fixture
+def generic_element(sample_elements: Elements) -> GenericElement:
+    """Creates a sample GenericElement object that has classes and attributes."""
+    return GenericElement(
+        tag="div",
+        elements=sample_elements,
+        attributes=Attributes({"id": "test", "disabled": True}),
+        classes=Classes("class 1", "class2"),
     )
 
 
@@ -268,3 +290,124 @@ def test_html_builder_repr(builder: HTMLBuilder) -> None:
     # Try with no attributes
     builder.attributes.clear()
     assert repr(builder) == "HTMLBuilder()"
+
+
+# MARK: GenericElement
+
+
+def test_generic_element_init(
+    generic_element: GenericElement, sample_elements: Elements
+) -> None:
+    """Tests the initialization of the GenericElement class."""
+    expected_attributes = Attributes(
+        {
+            "id": "test",
+            "disabled": True,
+            "class": Classes("class 1", "class2"),
+        }
+    )
+    assert generic_element.elements == sample_elements
+    assert generic_element.attributes == expected_attributes
+    assert generic_element.classes == Classes("class 1", "class2")
+    assert generic_element.classes == Classes("class-1", "class2")
+    assert generic_element.tag == "div"
+
+
+def test_generic_element_add(
+    generic_element: GenericElement, sample_elements: Elements
+) -> None:
+    """Tests the add method of the GenericElement class."""
+    new_data = LineBreak()
+    generic_element.add(new_data)
+    sample_elements.add(new_data)
+    assert generic_element.elements == sample_elements
+    assert generic_element.elements.elements == sample_elements.elements
+
+
+def test_generic_element_set(
+    generic_element: GenericElement, sample_elements: Elements
+) -> None:
+    """Tests the set method of the GenericElement class."""
+    new_data = [HorizontalRule(), LineBreak(attributes={"id": "test"})]
+    generic_element.set(*new_data)
+    sample_elements._elements = new_data
+    assert generic_element.elements == sample_elements.elements
+    assert generic_element.elements.elements == sample_elements.elements
+
+
+def test_generic_element_insert(
+    generic_element: GenericElement, sample_elements: Elements
+) -> None:
+    """Tests the insert method of the GenericElement class."""
+    new_data = HorizontalRule()
+    sample_elements._elements.insert(1, new_data)
+    generic_element.insert(1, new_data)
+    assert generic_element.elements == sample_elements
+    assert generic_element.elements.elements == sample_elements.elements
+    assert len(generic_element.elements) == len(sample_elements.elements)
+
+
+def test_generic_element_update(
+    generic_element: GenericElement, sample_elements: Elements
+) -> None:
+    """Tests the update method of the GenericElement class."""
+    new_data = LineBreak()
+    sample_elements._elements[2] = new_data
+    generic_element.update(2, new_data)
+    assert generic_element.elements == sample_elements
+    assert generic_element.elements.elements == sample_elements.elements
+
+
+def test_generic_element_remove(
+    generic_element: GenericElement, sample_elements: Elements
+) -> None:
+    """Tests the remove method of the GenericElement class."""
+    generic_element.remove(1)
+    sample_elements.remove(1)
+    assert generic_element.elements == sample_elements
+    assert generic_element.elements.elements == sample_elements.elements
+    assert len(generic_element.elements) == len(sample_elements.elements)
+
+
+def test_generic_element_pop(
+    generic_element: GenericElement, sample_elements: Elements
+) -> None:
+    """Tests the pop method of the GenericElement class."""
+
+    # Pop with an integer argument
+    generic_element.pop(1)
+    sample_elements._elements = (
+        sample_elements.elements[:1] + sample_elements.elements[2:]
+    )
+    assert generic_element.elements == sample_elements
+    assert generic_element.elements.elements == sample_elements.elements
+
+    # Pop with a non-integer argument
+    with pytest.raises(TypeError):
+        generic_element.pop("1")
+
+    # Pop with no arguments
+    generic_element.pop()
+    sample_elements._elements = sample_elements.elements[:-1]
+    assert generic_element.elements == sample_elements
+    assert generic_element.elements.elements == sample_elements.elements
+
+
+def test_generic_element_clear(generic_element: GenericElement) -> None:
+    """Tests the clear method of the GenericElement class."""
+    generic_element.clear()
+    assert generic_element.elements == Elements()
+    assert generic_element.elements.elements == []
+
+
+def test_generic_element_construct(generic_element: GenericElement) -> None:
+    """Tests the construct method of the GenericElement class."""
+    expected = (
+        "<div id='test' disabled class='class-1 class2'>"
+        "<img src='image1.png'>"
+        "<br>"
+        "<img src='image2.png' alt='Image 2'>"
+        "</div>"
+    )
+    assert generic_element.construct() == expected
+    assert GenericElement("div").construct() == "<div></div>"
