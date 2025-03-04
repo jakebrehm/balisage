@@ -6,7 +6,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Iterator, Self
 
-from .utilities.validate import is_element, sanitize_class_name, split_preserving_quotes
+from .utilities.validate import (
+    is_element,
+    sanitize_class_name,
+    split_preserving_quotes,
+)
 
 if TYPE_CHECKING:
     from .types import AttributeMap, AttributeValue, ClassesType, Element
@@ -86,7 +90,9 @@ class Classes:
         """Sets the list of classes."""
         method_name = self.set.__name__
         if not all(isinstance(i, str) for i in names):
-            raise TypeError(f"Arguments passed to {method_name} must be strings")
+            raise TypeError(
+                f"Arguments passed to {method_name} must be strings"
+            )
         self._classes = {arg: self._sanitize_name(arg) for arg in names}
 
     def remove(self, name: str) -> tuple[str, str]:
@@ -389,7 +395,9 @@ class Elements:
             proposed_elements = len(self._elements) + new_elements
         exceeds_max_elements = proposed_elements > self.max_elements
         if exceeds_max_elements:
-            proposed_string = "element" if proposed_elements == 1 else "elements"
+            proposed_string = (
+                "element" if proposed_elements == 1 else "elements"
+            )
             raise ValueError(
                 f"{proposed_elements} {proposed_string} would exceed the "
                 f"maximum number of elements ({self.max_elements})"

@@ -282,7 +282,9 @@ def test_span_radd(span: Span) -> None:
 
 def test_span_construct(span: Span) -> None:
     """Tests the construct method of the Span class."""
-    expected = "<span id='test' disabled class='class-1 class2'>Test text</span>"
+    expected = (
+        "<span id='test' disabled class='class-1 class2'>Test text</span>"
+    )
     assert span.construct() == expected
     assert Span().construct() == "<span></span>"
 

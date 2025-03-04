@@ -58,7 +58,9 @@ def test_requires_modules() -> None:
                 test_function()
 
     # Verify error when all modules are missing
-    with patch("balisage.utilities.optional.module_exists", return_value=False):
+    with patch(
+        "balisage.utilities.optional.module_exists", return_value=False
+    ):
 
         @requires_modules("does_not_exist_1", "does_not_exist_2")
         def test_function() -> str:

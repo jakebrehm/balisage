@@ -98,7 +98,9 @@ def test_html_builder_init() -> None:
     # Pass classes via classes argument (overriding attributes)
     passed_attributes = Attributes({"id": "test", "class": "class3 Class-4"})
     expected_attributes = Attributes({"id": "test", "class": "class-1 class2"})
-    builder = HTMLBuilder(attributes=passed_attributes, classes=expected_classes)
+    builder = HTMLBuilder(
+        attributes=passed_attributes, classes=expected_classes
+    )
     assert builder.attributes == expected_attributes
     assert builder.attributes.classes == expected_classes
     assert builder.classes == expected_classes
@@ -144,19 +146,25 @@ def test_html_builder_prettify() -> None:
 
     # Test with default arguments
     if BS4_INSTALLED:
-        filepath = os.path.join(current_directory, r"_data/prettify_indent_2.html")
+        filepath = os.path.join(
+            current_directory, r"_data/prettify_indent_2.html"
+        )
         with open(filepath, "r", encoding="utf-8") as f:
             expected = f.read()
         assert page.prettify() == expected
 
         # Test with a different indent
-        filepath = os.path.join(current_directory, r"_data/prettify_indent_4.html")
+        filepath = os.path.join(
+            current_directory, r"_data/prettify_indent_4.html"
+        )
         with open(filepath, "r", encoding="utf-8") as f:
             expected = f.read()
         assert page.prettify(indent=4) == expected
 
     else:
-        filepath = os.path.join(current_directory, r"_data/prettify_indent_0.html")
+        filepath = os.path.join(
+            current_directory, r"_data/prettify_indent_0.html"
+        )
         with open(filepath, "r", encoding="utf-8") as f:
             expected = f.read()
         assert page.construct() == expected

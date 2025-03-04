@@ -44,7 +44,9 @@ def text(sample_attributes: Attributes, sample_classes: Classes) -> Text:
 
 
 @pytest.fixture
-def paragraph(sample_attributes: Attributes, sample_classes: Classes) -> Paragraph:
+def paragraph(
+    sample_attributes: Attributes, sample_classes: Classes
+) -> Paragraph:
     """Creates a sample Paragraph object that has classes and attributes."""
     return Paragraph(
         "Test paragraph",
@@ -54,7 +56,9 @@ def paragraph(sample_attributes: Attributes, sample_classes: Classes) -> Paragra
 
 
 @pytest.fixture
-def heading1(sample_attributes: Attributes, sample_classes: Classes) -> Heading1:
+def heading1(
+    sample_attributes: Attributes, sample_classes: Classes
+) -> Heading1:
     """Creates a sample Heading1 object that has classes and attributes."""
     return Heading1(
         "Test heading (size 1)",
@@ -64,7 +68,9 @@ def heading1(sample_attributes: Attributes, sample_classes: Classes) -> Heading1
 
 
 @pytest.fixture
-def heading2(sample_attributes: Attributes, sample_classes: Classes) -> Heading2:
+def heading2(
+    sample_attributes: Attributes, sample_classes: Classes
+) -> Heading2:
     """Creates a sample Heading2 object that has classes and attributes."""
     return Heading2(
         "Test heading (size 2)",
@@ -74,7 +80,9 @@ def heading2(sample_attributes: Attributes, sample_classes: Classes) -> Heading2
 
 
 @pytest.fixture
-def heading3(sample_attributes: Attributes, sample_classes: Classes) -> Heading3:
+def heading3(
+    sample_attributes: Attributes, sample_classes: Classes
+) -> Heading3:
     """Creates a sample Heading3 object that has classes and attributes."""
     return Heading3(
         "Test heading (size 3)",
@@ -84,7 +92,9 @@ def heading3(sample_attributes: Attributes, sample_classes: Classes) -> Heading3
 
 
 @pytest.fixture
-def heading4(sample_attributes: Attributes, sample_classes: Classes) -> Heading4:
+def heading4(
+    sample_attributes: Attributes, sample_classes: Classes
+) -> Heading4:
     """Creates a sample Heading4 object that has classes and attributes."""
     return Heading4(
         "Test heading (size 4)",
@@ -94,7 +104,9 @@ def heading4(sample_attributes: Attributes, sample_classes: Classes) -> Heading4
 
 
 @pytest.fixture
-def heading5(sample_attributes: Attributes, sample_classes: Classes) -> Heading5:
+def heading5(
+    sample_attributes: Attributes, sample_classes: Classes
+) -> Heading5:
     """Creates a sample Heading5 object that has classes and attributes."""
     return Heading5(
         "Test heading (size 5)",
@@ -104,7 +116,9 @@ def heading5(sample_attributes: Attributes, sample_classes: Classes) -> Heading5
 
 
 @pytest.fixture
-def heading6(sample_attributes: Attributes, sample_classes: Classes) -> Heading6:
+def heading6(
+    sample_attributes: Attributes, sample_classes: Classes
+) -> Heading6:
     """Creates a sample Heading6 object that has classes and attributes."""
     return Heading6(
         "Test heading (size 6)",

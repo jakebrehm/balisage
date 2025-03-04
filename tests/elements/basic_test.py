@@ -114,7 +114,7 @@ def test_page_stylesheets(page: Page) -> None:
 
     # Test for stylesheets of different types
     message = "stylesheets must be provided as a list of strings"
-    invalid_values = ["style.css", 1, 2.0, True, False, tuple(), dict(), [None]]
+    invalid_values = ["test.css", 1, 2.0, True, False, tuple(), dict(), [None]]
     for invalid_value in invalid_values:
         with pytest.raises(TypeError, match=message):
             Page(title="Test title", stylesheets=invalid_value)

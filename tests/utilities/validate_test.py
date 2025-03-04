@@ -30,8 +30,8 @@ def test_is_builder() -> None:
     assert is_builder(Div()) is True
 
     # Test with other data types
-    invalid_valules = ["Test string", 1, 2.0, True, False, tuple(), dict(), None]
-    for invalid_value in invalid_valules:
+    invalid_values = ["string", 1, 2.0, True, False, tuple(), dict(), None]
+    for invalid_value in invalid_values:
         assert is_builder(invalid_value) is False
 
 

@@ -678,7 +678,9 @@ def test_attributes_repr(attributes: Attributes) -> None:
 # MARK: Elements
 
 
-def test_elements_init(elements: Elements, element_data: list[Element]) -> None:
+def test_elements_init(
+    elements: Elements, element_data: list[Element]
+) -> None:
     """Tests the initialization of the Elements class."""
 
     # Test with only builder elements
@@ -789,7 +791,9 @@ def test_elements_set(elements: Elements) -> None:
     assert elements.elements == new_data
 
 
-def test_elements_insert(elements: Elements, element_data: list[Element]) -> None:
+def test_elements_insert(
+    elements: Elements, element_data: list[Element]
+) -> None:
     """Tests the insert method of the Elements class."""
     new_element = HorizontalRule()
     element_data.insert(1, new_element)
@@ -797,7 +801,9 @@ def test_elements_insert(elements: Elements, element_data: list[Element]) -> Non
     assert elements.elements == element_data
 
 
-def test_elements_update(elements: Elements, element_data: list[Element]) -> None:
+def test_elements_update(
+    elements: Elements, element_data: list[Element]
+) -> None:
     """Tests the update method of the Elements class."""
     new_element = HorizontalRule()
     expected_data = element_data
@@ -808,7 +814,9 @@ def test_elements_update(elements: Elements, element_data: list[Element]) -> Non
     assert len(elements.elements) == 2
 
 
-def test_elements_remove(elements: Elements, element_data: list[Element]) -> None:
+def test_elements_remove(
+    elements: Elements, element_data: list[Element]
+) -> None:
     """Tests the remove and __delitem__ methods of the Elements class."""
 
     # Test the remove method
@@ -876,7 +884,9 @@ def test_elements_raise_if_exceeds_max_elements(elements: Elements) -> None:
         elements.add(LineBreak())
 
 
-def test_elements_get_set(elements: Elements, element_data: list[Element]) -> None:
+def test_elements_get_set(
+    elements: Elements, element_data: list[Element]
+) -> None:
     """Tests the __getitem__ and __setitem__ methods of the Elements class."""
     new_element = HorizontalRule()
     expected_data = element_data
@@ -887,7 +897,9 @@ def test_elements_get_set(elements: Elements, element_data: list[Element]) -> No
     assert len(elements.elements) == 2
 
 
-def test_elements_iter(elements: Elements, element_data: list[Element]) -> None:
+def test_elements_iter(
+    elements: Elements, element_data: list[Element]
+) -> None:
     """Tests the __iter__ method of the Elements class."""
 
     # Test with builder elements

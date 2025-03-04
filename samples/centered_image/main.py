@@ -5,7 +5,8 @@ Creates a sample HTML page with a image centered within a div.
 import os
 import sys
 
-src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
+dir_name = os.path.dirname(__file__)
+src_path = os.path.abspath(os.path.join(dir_name, "../../src"))
 sys.path.append(src_path)
 
 from balisage import Attributes, Classes, Div, Image, Page  # noqa: E402

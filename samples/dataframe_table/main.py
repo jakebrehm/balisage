@@ -5,7 +5,8 @@ Creates a sample HTML page with some text and a table.
 import os
 import sys
 
-src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
+dir_name = os.path.dirname(__file__)
+src_path = os.path.abspath(os.path.join(dir_name, "../../src"))
 sys.path.append(src_path)
 
 import pandas as pd  # noqa: E402
