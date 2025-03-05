@@ -2,9 +2,6 @@
 Contains code for all style-related HTML elements.
 """
 
-from typing import Any
-
-from ..attributes import Elements
 from ..core import GenericElement
 from ..types import AttributesType, ClassesType, ElementsType
 
@@ -34,15 +31,11 @@ class Span(GenericElement):
 
     def __init__(
         self,
-        elements: ElementsType | str | None = None,
+        elements: ElementsType | None = None,
         attributes: AttributesType | None = None,
         classes: ClassesType | None = None,
     ) -> None:
         """Initializes the Span object."""
-
-        # Convert a string into an Elements object
-        if isinstance(elements, str):
-            elements = Elements(elements)
 
         # Initialize the builder
         super().__init__(
@@ -52,26 +45,8 @@ class Span(GenericElement):
             classes=classes,
         )
 
-    def __add__(self, other: Any) -> str:
-        """Overloads the addition operator when the instance is on the left."""
-        if isinstance(other, str):
-            return self.construct() + other
-        raise TypeError(
-            f"Invalid type {type(other).__name__} for addition on "
-            f"{self.__class__.__name__}; must be {str.__name__}"
-        )
 
-    def __radd__(self, other: Any) -> str:
-        """Overloads the addition operator when the instance is on the right."""
-        if isinstance(other, str):
-            return other + self.construct()
-        raise TypeError(
-            f"Invalid type {type(other).__name__} for reverse addition on "
-            f"{self.__class__.__name__}; must be {str.__name__}"
-        )
-
-
-class Bold(Span):
+class Bold(GenericElement):
     """Constructs an HTML bold element."""
 
     def __init__(
@@ -84,14 +59,14 @@ class Bold(Span):
 
         # Initialize the builder
         super().__init__(
+            tag="b",
             elements=elements,
             attributes=attributes,
             classes=classes,
         )
-        self.tag = "b"
 
 
-class Strong(Span):
+class Strong(GenericElement):
     """Constructs an HTML strong element."""
 
     def __init__(
@@ -104,14 +79,14 @@ class Strong(Span):
 
         # Initialize the builder
         super().__init__(
+            tag="strong",
             elements=elements,
             attributes=attributes,
             classes=classes,
         )
-        self.tag = "strong"
 
 
-class Italics(Span):
+class Italics(GenericElement):
     """Constructs an HTML italics element."""
 
     def __init__(
@@ -124,14 +99,14 @@ class Italics(Span):
 
         # Initialize the builder
         super().__init__(
+            tag="i",
             elements=elements,
             attributes=attributes,
             classes=classes,
         )
-        self.tag = "i"
 
 
-class Emphasis(Span):
+class Emphasis(GenericElement):
     """Constructs an HTML emphasis element."""
 
     def __init__(
@@ -144,14 +119,14 @@ class Emphasis(Span):
 
         # Initialize the builder
         super().__init__(
+            tag="em",
             elements=elements,
             attributes=attributes,
             classes=classes,
         )
-        self.tag = "em"
 
 
-class Underline(Span):
+class Underline(GenericElement):
     """Constructs an HTML underline element."""
 
     def __init__(
@@ -164,14 +139,14 @@ class Underline(Span):
 
         # Initialize the builder
         super().__init__(
+            tag="u",
             elements=elements,
             attributes=attributes,
             classes=classes,
         )
-        self.tag = "u"
 
 
-class Strikethrough(Span):
+class Strikethrough(GenericElement):
     """Constructs an HTML strikethrough element."""
 
     def __init__(
@@ -184,14 +159,14 @@ class Strikethrough(Span):
 
         # Initialize the builder
         super().__init__(
+            tag="s",
             elements=elements,
             attributes=attributes,
             classes=classes,
         )
-        self.tag = "s"
 
 
-class Subscript(Span):
+class Subscript(GenericElement):
     """Constructs an HTML subscript element."""
 
     def __init__(
@@ -204,14 +179,14 @@ class Subscript(Span):
 
         # Initialize the builder
         super().__init__(
+            tag="sub",
             elements=elements,
             attributes=attributes,
             classes=classes,
         )
-        self.tag = "sub"
 
 
-class Superscript(Span):
+class Superscript(GenericElement):
     """Constructs an HTML superscript element."""
 
     def __init__(
@@ -224,8 +199,8 @@ class Superscript(Span):
 
         # Initialize the builder
         super().__init__(
+            tag="sup",
             elements=elements,
             attributes=attributes,
             classes=classes,
         )
-        self.tag = "sup"

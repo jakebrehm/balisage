@@ -24,4 +24,4 @@ AttributesType: TypeAlias = Attributes | AttributeMap
 # MARK: Elements
 
 Element: TypeAlias = type[Builder] | str
-ElementsType: TypeAlias = Elements | list[Element]
+ElementsType: TypeAlias = Elements | list[Element] | Element

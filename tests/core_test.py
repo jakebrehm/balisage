@@ -113,6 +113,22 @@ def test_html_builder_init() -> None:
     assert builder.classes == Classes()
     assert builder.elements == expected_elements
 
+    # Pass elements as single string
+    passed_elements = "Test string"
+    expected_elements = Elements(passed_elements)
+    builder = HTMLBuilder(elements=passed_elements)
+    assert builder.attributes == Attributes()
+    assert builder.classes == Classes()
+    assert builder.elements == expected_elements
+
+    # Pass elements as single element
+    passed_elements = Div()
+    expected_elements = Elements(passed_elements)
+    builder = HTMLBuilder(elements=passed_elements)
+    assert builder.attributes == Attributes()
+    assert builder.classes == Classes()
+    assert builder.elements == expected_elements
+
     # Pass elements as a list of elements
     passed_elements = [Div(), LineBreak()]
     expected_elements = Elements(*passed_elements)
@@ -120,6 +136,19 @@ def test_html_builder_init() -> None:
     assert builder.attributes == Attributes()
     assert builder.classes == Classes()
     assert builder.elements == expected_elements
+
+    # Pass invalid values for elements
+    invalid_values = [
+        (1, "int"),
+        (2.0, "float"),
+        (True, "bool"),
+        ({}, "dict"),
+        ((), "tuple"),
+    ]
+    for invalid_value, invalid_type in invalid_values:
+        message = f"Invalid type {invalid_type} for Elements"
+        with pytest.raises(TypeError, match=message):
+            HTMLBuilder(elements=invalid_value)
 
 
 def test_html_builder_prettify() -> None:
@@ -336,7 +365,47 @@ def test_generic_element_set(
     generic_element: GenericElement, sample_elements: Elements
 ) -> None:
     """Tests the set method of the GenericElement class."""
+
+    # Test with only one builder element
+    new_data = HorizontalRule()
+    generic_element.set(new_data)
+    sample_elements._elements = [new_data]
+    assert generic_element.elements == sample_elements.elements
+    assert generic_element.elements.elements == sample_elements.elements
+    new_data = [HorizontalRule()]
+    generic_element.set(*new_data)
+    sample_elements._elements = new_data
+    assert generic_element.elements == sample_elements.elements
+    assert generic_element.elements.elements == sample_elements.elements
+
+    # Test with multiple builder elements
     new_data = [HorizontalRule(), LineBreak(attributes={"id": "test"})]
+    generic_element.set(*new_data)
+    sample_elements._elements = new_data
+    assert generic_element.elements == sample_elements.elements
+    assert generic_element.elements.elements == sample_elements.elements
+
+    # Test with only one string
+    new_data = "Test string"
+    generic_element.set(new_data)
+    sample_elements._elements = [new_data]
+    assert generic_element.elements == sample_elements.elements
+    assert generic_element.elements.elements == sample_elements.elements
+    new_data = ["Test string"]
+    generic_element.set(*new_data)
+    sample_elements._elements = new_data
+    assert generic_element.elements == sample_elements.elements
+    assert generic_element.elements.elements == sample_elements.elements
+
+    # Test with only multiple strings
+    new_data = ["Test string 1", "Test string 2"]
+    generic_element.set(*new_data)
+    sample_elements._elements = new_data
+    assert generic_element.elements == sample_elements.elements
+    assert generic_element.elements.elements == sample_elements.elements
+
+    # Test with a mix of builder and string elements
+    new_data = [HorizontalRule(), "Test string"]
     generic_element.set(*new_data)
     sample_elements._elements = new_data
     assert generic_element.elements == sample_elements.elements
@@ -419,3 +488,61 @@ def test_generic_element_construct(generic_element: GenericElement) -> None:
     )
     assert generic_element.construct() == expected
     assert GenericElement("div").construct() == "<div></div>"
+
+
+def test_generic_element_ladd(generic_element: GenericElement) -> None:
+    """Tests the __add__ method of the GenericElement class."""
+
+    # Try adding a string to the fixture
+    assert (generic_element + "Added text") == (
+        "<div id='test' disabled class='class-1 class2'>"
+        "<img src='image1.png'>"
+        "<br>"
+        "<img src='image2.png' alt='Image 2'>"
+        "</div>"
+        "Added text"
+    )
+
+    # Try adding a string to a fresh instance
+    assert (GenericElement("div") + "Added text") == "<div></div>Added text"
+
+    # Try adding an invalid type to the fixture
+    message = "Invalid type int for addition on GenericElement; must be str"
+    with pytest.raises(TypeError, match=message):
+        generic_element + 1
+
+    # Try adding an invalid type to a fresh instance
+    message = "Invalid type int for addition on GenericElement; must be str"
+    with pytest.raises(TypeError, match=message):
+        GenericElement("div") + 1
+
+
+def test_generic_element_radd(generic_element: GenericElement) -> None:
+    """Tests the __radd__ method of the GenericElement class."""
+
+    # Try adding a string to the fixture
+    assert ("Added text" + generic_element) == (
+        "Added text"
+        "<div id='test' disabled class='class-1 class2'>"
+        "<img src='image1.png'>"
+        "<br>"
+        "<img src='image2.png' alt='Image 2'>"
+        "</div>"
+    )
+
+    # Try adding a string to a fresh instance
+    assert ("Added text" + GenericElement("div")) == "Added text<div></div>"
+
+    # Try adding an invalid type to the fixture
+    message = (
+        "Invalid type dict for reverse addition on GenericElement; must be str"
+    )
+    with pytest.raises(TypeError, match=message):
+        {} + generic_element
+
+    # Try adding an invalid type to a fresh instance
+    message = (
+        "Invalid type dict for reverse addition on GenericElement; must be str"
+    )
+    with pytest.raises(TypeError, match=message):
+        {} + GenericElement("div")

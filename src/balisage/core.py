@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any
 
 from .attributes import Attributes, Classes, Elements
 from .utilities.optional import requires_modules
+from .utilities.validate import is_element
 
 if TYPE_CHECKING:
     from .types import AttributesType, ClassesType, Element, ElementsType
@@ -31,6 +32,17 @@ class HTMLBuilder(ABC):
         classes: ClassesType | None = None,
     ) -> None:
         """Initializes the HTMLTable object."""
+
+        # Standardize the elements
+        if elements is not None:
+            if is_element(elements):
+                elements = Elements(elements)
+            elif isinstance(elements, list):
+                elements = Elements(*elements)
+            elif not isinstance(elements, Elements):
+                raise TypeError(
+                    f"Invalid type {type(elements).__name__} for Elements"
+                )
 
         # Initialize instance variables
         self._elements = elements if elements else Elements()
@@ -69,7 +81,7 @@ class HTMLBuilder(ABC):
                     f.write(self.construct())
 
     @property
-    def elements(self) -> list[Any]:
+    def elements(self) -> Elements:
         """Gets the stored elements."""
         return self._elements
 
@@ -162,3 +174,21 @@ class GenericElement(HTMLBuilder):
     def construct(self) -> str:
         """Generates HTML from the stored elements."""
         return super().construct()
+
+    def __add__(self, other: Any) -> str:
+        """Overloads the addition operator when the instance is on the left."""
+        if isinstance(other, str):
+            return self.construct() + other
+        raise TypeError(
+            f"Invalid type {type(other).__name__} for addition on "
+            f"{self.__class__.__name__}; must be {str.__name__}"
+        )
+
+    def __radd__(self, other: Any) -> str:
+        """Overloads the addition operator when the instance is on the right."""
+        if isinstance(other, str):
+            return other + self.construct()
+        raise TypeError(
+            f"Invalid type {type(other).__name__} for reverse addition on "
+            f"{self.__class__.__name__}; must be {str.__name__}"
+        )

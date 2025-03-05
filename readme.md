@@ -9,6 +9,7 @@
 <a href="https://github.com/jakebrehm/balisage"><img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/jakebrehm/balisage?color=F16529&logo=Git&logoColor=white&style=for-the-badge"></a>
 <a href="https://github.com/jakebrehm/balisage/blob/main/license.txt"><img alt="GitHub License" src="https://img.shields.io/github/license/jakebrehm/balisage?color=F16529&style=for-the-badge"></a>
 <a href="https://pypi.org/project/balisage/"><img alt="PyPI Page" src="https://img.shields.io/pypi/v/balisage?color=F16529&logo=pypi&logoColor=white&style=for-the-badge"></a>
+<a href="https://pypistats.org/packages/balisage"><img alt="PyPI Downloads" src="https://img.shields.io/pypi/dm/balisage?color=F16529&logo=pypi&logoColor=white&style=for-the-badge"></a>
 <a href="https://github.com/jakebrehm/balisage/actions/workflows/tests.yaml"><img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/jakebrehm/balisage/tests.yaml?label=tests&color=F16529&logo=github&logoColor=white&style=for-the-badge"></a>
 <a href="https://codecov.io/gh/jakebrehm/balisage"><img alt="Codecov Test Coverage" src="https://img.shields.io/codecov/c/gh/jakebrehm/balisage?token=W6CWUDTYZC&color=F16529&logo=codecov&logoColor=white&style=for-the-badge"></a>
 
