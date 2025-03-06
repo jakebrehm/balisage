@@ -3,9 +3,9 @@ Contains validation-related code for the package.
 """
 
 import re
-from typing import Any
+from typing import Any, Type
 
-# MARK: Types
+# MARK: Types and conversions
 
 
 def is_builder(object: Any) -> bool:
@@ -20,19 +20,39 @@ def is_element(object: Any) -> bool:
     return is_builder(object) or isinstance(object, str)
 
 
-def is_valid_type(value: Any, expected_types: list[Any]) -> bool:
-    """Determines whether the input is of the expected type."""
-    return any(
-        isinstance(value, expected_type) for expected_type in expected_types
-    )
+def types_to_tuple(value: Any) -> tuple[Any, ...]:
+    """Converts a value for expected types to a tuple if necessary."""
+    if isinstance(value, tuple):
+        return value
+    elif isinstance(value, list):
+        return tuple(value)
+    elif not isinstance(value, Type):
+        instance_type = type(value).__name__
+        raise TypeError(f"Expected a type, got instance of {instance_type}")
+    return (value,)
 
 
-def raise_if_incorrect_type(value: Any, expected_type: Any) -> None:
+def is_valid_type(
+    value: Any,
+    expected_types: Type | list[Type] | tuple[Type, ...],
+) -> bool:
     """Determines whether the input is of the expected type."""
-    if not isinstance(value, expected_type):
+    return isinstance(value, types_to_tuple(expected_types))
+
+
+def raise_for_type(
+    value: Any,
+    expected_types: Type | list[Type] | tuple[Type, ...],
+) -> None:
+    """Determines whether the input is of the expected type."""
+    expected_types = types_to_tuple(expected_types)
+    if not is_valid_type(value, expected_types):
+        type_names = [t.__name__ for t in expected_types]
+        type_names = (
+            f"({', '.join(type_names)}{',' if len(type_names) == 1 else ''})"
+        )
         raise TypeError(
-            f"Expected {expected_type.__name__} object, got "
-            f"{type(value).__name__}"
+            f"Got {type(value).__name__}, expected one of {type_names}"
         )
 
 

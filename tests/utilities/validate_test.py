@@ -13,9 +13,10 @@ from balisage.utilities.validate import (
     is_element,
     is_valid_class_name,
     is_valid_type,
-    raise_if_incorrect_type,
+    raise_for_type,
     sanitize_class_name,
     split_preserving_quotes,
+    types_to_tuple,
 )
 
 
@@ -53,33 +54,93 @@ def test_is_element() -> None:
     assert is_element("Test string") is True
 
 
+def test_types_to_tuple() -> None:
+    """Tests the types_to_tuple function."""
+
+    # Test with valid types
+    assert types_to_tuple(Div) == (Div,)
+    assert types_to_tuple([int]) == (int,)
+    assert types_to_tuple([int, float]) == (int, float)
+    assert types_to_tuple((int,)) == (int,)
+    assert types_to_tuple((int, float)) == (int, float)
+
+    # Test with invalid types
+    invalid_types = [1, 2.0, "Test", set(), True, False, None, Div()]
+    for invalid_type in invalid_types:
+        instance_type = type(invalid_type).__name__
+        message = f"Expected a type, got instance of {instance_type}"
+        with pytest.raises(TypeError, match=re.escape(message)):
+            types_to_tuple(invalid_type)
+
+
 def test_is_valid_type() -> None:
     """Tests the is_valid_type function."""
 
-    # Test with valid types
+    # Test with valid types as a standalone type
+    assert is_valid_type(Div(), Div) is True
+    assert is_valid_type("test", str) is True
+
+    # Test with valid types as a list
     valid_types = [int, float, str, Div]
     assert is_valid_type(1, valid_types) is True
     assert is_valid_type(2.0, valid_types) is True
     assert is_valid_type("Test", valid_types) is True
     assert is_valid_type(Div(), valid_types) is True
 
-    # Test with invalid types
+    # Test with valid types as a tuple
+    valid_types = (Div, dict)
+    assert is_valid_type(Div(), valid_types) is True
+    assert is_valid_type(dict(), valid_types) is True
+
+    # Test with invalid types as standalone type
+    invalid_types = [1, 2.0, "Test", Div(), set, True, False, None]
+    for invalid_type in invalid_types:
+        assert is_valid_type(invalid_type, dict) is False
+
+    # Test with invalid types as a list
     valid_types = [list, dict, tuple]
-    invalid_types = [1, 2.0, "Test", Div(), True, False, None]
+    invalid_types = [1, 2.0, "Test", Div(), set, True, False, None]
+    for invalid_type in invalid_types:
+        assert is_valid_type(invalid_type, valid_types) is False
+
+    # Test with invalid types as a tuple
+    valid_types = (set, Div)
+    invalid_types = [1, 2.0, "Test", list, dict, tuple, True, False, None]
     for invalid_type in invalid_types:
         assert is_valid_type(invalid_type, valid_types) is False
 
 
-def test_raise_if_incorrect_type() -> None:
-    """Tests the raise_if_incorrect_type method of the Table class."""
+def test_raise_for_type() -> None:
+    """Tests the raise_for_type method of the Table class."""
 
-    # Test with correct type
-    raise_if_incorrect_type(1, expected_type=int)
+    # No exception should be raised with valid types
+    raise_for_type(1, expected_types=int)
+    raise_for_type(2.0, expected_types=[float])
+    raise_for_type("Test", expected_types=(str,))
+    raise_for_type(Div(), expected_types=[dict, Div])
 
-    # Test with incorrect type
-    message = "Expected int object, got str"
-    with pytest.raises(TypeError, match=message):
-        raise_if_incorrect_type("Test", expected_type=int)
+    # Test with invalid values for a single valid types
+    expected_types = float
+    invalid_values = [1, "test", set(), True, False, None, Div()]
+    for invalid_value in invalid_values:
+        invalid_name = invalid_value.__class__.__name__
+        message = f"Got {invalid_name}, expected one of (float,)"
+        with pytest.raises(TypeError, match=re.escape(message)):
+            raise_for_type(invalid_value, expected_types=expected_types)
+
+    # Test with invalid values for multiple valid types
+    expected_types = (str, float)
+    invalid_values = [1, set(), True, False, None, Div()]
+    for invalid_value in invalid_values:
+        invalid_name = invalid_value.__class__.__name__
+        message = f"Got {invalid_name}, expected one of (str, float)"
+        with pytest.raises(TypeError, match=re.escape(message)):
+            raise_for_type(invalid_value, expected_types=expected_types)
+
+    # Verify that an exception is raised with invalid expected_types argument
+    message = "Expected a type, got instance of int"
+    with pytest.raises(TypeError, match=re.escape(message)):
+        raise_for_type(1, expected_types=1)
 
 
 def test_split_preserving_quotes() -> None:

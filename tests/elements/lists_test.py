@@ -2,6 +2,8 @@
 Contains tests for the elements.lists module.
 """
 
+import re
+
 import pytest
 
 from balisage.attributes import Attributes, Classes, Elements
@@ -156,8 +158,8 @@ def test_ordered_list_add(ordered_list: OrderedList) -> None:
     ]
     for invalid_element in invalid_elements:
         class_name = invalid_element.__class__.__name__
-        message = f"Expected ListItem object, got {class_name}"
-        with pytest.raises(TypeError, match=message):
+        message = f"Got {class_name}, expected one of (ListItem,)"
+        with pytest.raises(TypeError, match=re.escape(message)):
             ordered_list.add(invalid_element)
 
 
@@ -197,8 +199,8 @@ def test_ordered_list_set(ordered_list: OrderedList) -> None:
     ]
     for invalid_element in invalid_elements:
         class_name = invalid_element.__class__.__name__
-        message = f"Expected ListItem object, got {class_name}"
-        with pytest.raises(TypeError, match=message):
+        message = f"Got {class_name}, expected one of (ListItem,)"
+        with pytest.raises(TypeError, match=re.escape(message)):
             ordered_list.set(invalid_element)
 
 
@@ -229,8 +231,8 @@ def test_ordered_list_insert(ordered_list: OrderedList) -> None:
     ]
     for invalid_element in invalid_elements:
         class_name = invalid_element.__class__.__name__
-        message = f"Expected ListItem object, got {class_name}"
-        with pytest.raises(TypeError, match=message):
+        message = f"Got {class_name}, expected one of (ListItem,)"
+        with pytest.raises(TypeError, match=re.escape(message)):
             ordered_list.insert(0, invalid_element)
 
 
@@ -260,8 +262,8 @@ def test_ordered_list_update(ordered_list: OrderedList) -> None:
     ]
     for invalid_element in invalid_elements:
         class_name = invalid_element.__class__.__name__
-        message = f"Expected ListItem object, got {class_name}"
-        with pytest.raises(TypeError, match=message):
+        message = f"Got {class_name}, expected one of (ListItem,)"
+        with pytest.raises(TypeError, match=re.escape(message)):
             ordered_list.update(0, invalid_element)
 
 

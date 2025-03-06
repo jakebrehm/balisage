@@ -2,6 +2,8 @@
 Contains tests for the elements.tables module.
 """
 
+import re
+
 import pandas as pd
 import pytest
 
@@ -478,8 +480,8 @@ def test_table_header(table: Table) -> None:
     assert all(d.is_header for d in table.header)
 
     # Test the setter with invalid type
-    message = "Expected Header object, got int"
-    with pytest.raises(TypeError, match=message):
+    message = "Got int, expected one of (Header,)"
+    with pytest.raises(TypeError, match=re.escape(message)):
         table.header = 1
 
     # Test the setter with no existing header
@@ -510,8 +512,8 @@ def test_table_rows(table: Table) -> None:
     assert all(not r.is_header for row in table.rows for r in row)
 
     # Test the setter with invalid type
-    message = "Expected Row object, got int"
-    with pytest.raises(TypeError, match=message):
+    message = "Got int, expected one of (Row,)"
+    with pytest.raises(TypeError, match=re.escape(message)):
         table.rows = [Row([Data("Test data 9")]), 10]
 
 
@@ -523,8 +525,8 @@ def test_table_set_header(table: Table) -> None:
     assert all(d.is_header for d in table.header)
 
     # Test with invalid type
-    message = "Expected Header object, got dict"
-    with pytest.raises(TypeError, match=message):
+    message = "Got dict, expected one of (Header,)"
+    with pytest.raises(TypeError, match=re.escape(message)):
         table.set_header(dict())
 
     # Test with no existing header
@@ -558,8 +560,8 @@ def test_table_add_rows(table: Table) -> None:
     assert all(not r.is_header for row in table.rows for r in row)
 
     # Test with invalid type
-    message = "Expected Row object, got tuple"
-    with pytest.raises(TypeError, match=message):
+    message = "Got tuple, expected one of (Row,)"
+    with pytest.raises(TypeError, match=re.escape(message)):
         table.add_rows(tuple(), dict())
 
 
@@ -577,8 +579,8 @@ def test_table_set_rows(table: Table) -> None:
     assert all(not r.is_header for row in table.rows for r in row)
 
     # Test with invalid type
-    message = "Expected Row object, got set"
-    with pytest.raises(TypeError, match=message):
+    message = "Got set, expected one of (Row,)"
+    with pytest.raises(TypeError, match=re.escape(message)):
         table.set_rows(set(), None)
 
     # Test with no existing header
@@ -820,4 +822,5 @@ def test_table_from_df(sample_df: pd.DataFrame) -> None:
     ]
     assert table.rows == expected_rows
     assert table.header == expected_header
+    assert table.attributes == expected_attributes
     assert table.attributes == expected_attributes

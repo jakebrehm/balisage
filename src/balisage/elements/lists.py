@@ -4,7 +4,7 @@ Contains code for all list-related HTML elements.
 
 from ..core import GenericElement
 from ..types import AttributesType, ClassesType, Element, ElementsType
-from ..utilities.validate import raise_if_incorrect_type
+from ..utilities.validate import raise_for_type
 
 
 class ListItem(GenericElement):
@@ -56,23 +56,23 @@ class OrderedList(GenericElement):
     def add(self, *elements: Element) -> None:
         """Convenience wrapper for the self.elements.add method."""
         for element in elements:  # TODO: Move functionality to Elements
-            raise_if_incorrect_type(element, expected_type=ListItem)
+            raise_for_type(element, expected_types=ListItem)
         self.elements.add(*elements)
 
     def set(self, *elements: Element) -> None:
         """Convenience wrapper for the self.elements.set method."""
         for element in elements:
-            raise_if_incorrect_type(element, expected_type=ListItem)
+            raise_for_type(element, expected_types=ListItem)
         self.elements.set(*elements)
 
     def insert(self, index: int, element: Element) -> None:
         """Convenience wrapper for the self.elements.insert method."""
-        raise_if_incorrect_type(element, expected_type=ListItem)
+        raise_for_type(element, expected_types=ListItem)
         self.elements.insert(index, element)
 
     def update(self, index: int, element: Element) -> None:
         """Convenience wrapper for the self.elements.update method."""
-        raise_if_incorrect_type(element, expected_type=ListItem)
+        raise_for_type(element, expected_types=ListItem)
         self.elements.update(index, element)
 
 
