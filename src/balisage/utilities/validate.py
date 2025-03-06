@@ -20,6 +20,15 @@ def is_element(object: Any) -> bool:
     return is_builder(object) or isinstance(object, str)
 
 
+def raise_if_incorrect_type(value: Any, expected_type: Any) -> None:
+    """Determines whether the input is of the expected type."""
+    if not isinstance(value, expected_type):
+        raise TypeError(
+            f"Expected {expected_type.__name__} object, got "
+            f"{type(value).__name__}"
+        )
+
+
 # MARK: Classes
 
 

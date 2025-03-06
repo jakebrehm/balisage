@@ -2,10 +2,9 @@
 Contains code for all list-related HTML elements.
 """
 
-from typing import Any
-
 from ..core import GenericElement
 from ..types import AttributesType, ClassesType, Element, ElementsType
+from ..utilities.validate import raise_if_incorrect_type
 
 
 class ListItem(GenericElement):
@@ -57,36 +56,24 @@ class OrderedList(GenericElement):
     def add(self, *elements: Element) -> None:
         """Convenience wrapper for the self.elements.add method."""
         for element in elements:  # TODO: Move functionality to Elements
-            self._raise_if_incorrect_type(element, expected_type=ListItem)
+            raise_if_incorrect_type(element, expected_type=ListItem)
         self.elements.add(*elements)
 
     def set(self, *elements: Element) -> None:
         """Convenience wrapper for the self.elements.set method."""
         for element in elements:
-            self._raise_if_incorrect_type(element, expected_type=ListItem)
+            raise_if_incorrect_type(element, expected_type=ListItem)
         self.elements.set(*elements)
 
     def insert(self, index: int, element: Element) -> None:
         """Convenience wrapper for the self.elements.insert method."""
-        self._raise_if_incorrect_type(element, expected_type=ListItem)
+        raise_if_incorrect_type(element, expected_type=ListItem)
         self.elements.insert(index, element)
 
     def update(self, index: int, element: Element) -> None:
         """Convenience wrapper for the self.elements.update method."""
-        self._raise_if_incorrect_type(element, expected_type=ListItem)
+        raise_if_incorrect_type(element, expected_type=ListItem)
         self.elements.update(index, element)
-
-    def _raise_if_incorrect_type(  # TODO: Move all instances to utilities
-        self,
-        value: Any,
-        expected_type: Any,
-    ) -> None:
-        """Determines whether the input is of the expected type."""
-        if not isinstance(value, expected_type):
-            raise TypeError(
-                f"Expected {expected_type.__name__} object, got "
-                f"{type(value).__name__}"
-            )
 
 
 class UnorderedList(OrderedList):

@@ -12,6 +12,7 @@ from balisage.utilities.validate import (
     is_builder,
     is_element,
     is_valid_class_name,
+    raise_if_incorrect_type,
     sanitize_class_name,
     split_preserving_quotes,
 )
@@ -49,6 +50,18 @@ def test_is_element() -> None:
 
     # Test with a string
     assert is_element("Test string") is True
+
+
+def test_raise_if_incorrect_type() -> None:
+    """Tests the raise_if_incorrect_type method of the Table class."""
+
+    # Test with correct type
+    raise_if_incorrect_type(1, expected_type=int)
+
+    # Test with incorrect type
+    message = "Expected int object, got str"
+    with pytest.raises(TypeError, match=message):
+        raise_if_incorrect_type("Test", expected_type=int)
 
 
 def test_split_preserving_quotes() -> None:

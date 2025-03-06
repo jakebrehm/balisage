@@ -635,18 +635,6 @@ def test_table_construct(table: Table) -> None:
     assert Table().construct() == "<table></table>"
 
 
-def test_table_raise_if_incorrect_type(table: Table) -> None:
-    """Tests the _raise_if_incorrect_type method of the Table class."""
-
-    # Test with correct type
-    table._raise_if_incorrect_type(1, expected_type=int)
-
-    # Test with incorrect type
-    message = "Expected int object, got str"
-    with pytest.raises(TypeError, match=message):
-        table._raise_if_incorrect_type("Test", expected_type=int)
-
-
 def test_table_from_df(sample_df: pd.DataFrame) -> None:
     """Tests the from_df method of the Table class."""
 

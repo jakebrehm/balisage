@@ -9,6 +9,7 @@ from ..attributes import Classes, Elements
 from ..core import HTMLBuilder
 from ..types import AttributesType, ClassesType
 from ..utilities.optional import requires_modules
+from ..utilities.validate import raise_if_incorrect_type
 
 # Import optional dependencies
 try:
@@ -250,7 +251,7 @@ class Table(HTMLBuilder):
 
     def set_header(self, header: Header) -> None:
         """Sets the header row."""
-        self._raise_if_incorrect_type(header, expected_type=Header)
+        raise_if_incorrect_type(header, expected_type=Header)
         if self._header_exists() and self.elements:
             self.elements.update(0, header)
         else:
@@ -264,14 +265,14 @@ class Table(HTMLBuilder):
     def add_rows(self, *rows: Row) -> None:
         """Adds rows to the table."""
         for row in rows:
-            self._raise_if_incorrect_type(row, expected_type=Row)
+            raise_if_incorrect_type(row, expected_type=Row)
             row.is_header = False
         self.elements.add(*rows)
 
     def set_rows(self, *rows: Row) -> None:
         """Sets rows for the table."""
         for row in rows:
-            self._raise_if_incorrect_type(row, expected_type=Row)
+            raise_if_incorrect_type(row, expected_type=Row)
             row.is_header = False
         elements = [self.header] if self._header_exists() else []
         elements.extend(rows)
@@ -292,18 +293,6 @@ class Table(HTMLBuilder):
     def construct(self) -> str:
         """Generates HTML from the stored elements."""
         return super().construct()
-
-    def _raise_if_incorrect_type(
-        self,
-        value: Any,
-        expected_type: Any,
-    ) -> None:
-        """Determines whether the input is of the expected type."""
-        if not isinstance(value, expected_type):
-            raise TypeError(
-                f"Expected {expected_type.__name__} object, got "
-                f"{type(value).__name__}"
-            )
 
     @classmethod
     @requires_modules("pandas", "numpy")
