@@ -3,6 +3,7 @@ from .core import GenericElement
 from .elements.basic import Page
 from .elements.format import HorizontalRule, LineBreak
 from .elements.image import Image
+from .elements.links import Link
 from .elements.styles import Div, Span
 from .elements.tables import Data, Header, Row, Table
 from .elements.text import (
@@ -23,6 +24,7 @@ __all__ = [
     "HorizontalRule",
     "LineBreak",
     "Image",
+    "Link",
     "Div",
     "Span",
     "Data",
