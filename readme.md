@@ -23,8 +23,6 @@
 
 <img src="https://raw.githubusercontent.com/jakebrehm/balisage/main/img/divider.png" alt="balisage Section Divider" style="width: 100%;"/>
 
-## Table of contents
-
 - [Installation](#installation)
   - [Dependencies](#dependencies)
 - [Licensing](#licensing)
@@ -33,6 +31,8 @@
 - [Background](#background)
 - [Future improvements](#future-improvements)
 - [Authors](#authors)
+
+<img src="https://raw.githubusercontent.com/jakebrehm/balisage/main/img/divider.png" alt="balisage Section Divider" style="width: 100%;"/>
 
 ## Installation
 
