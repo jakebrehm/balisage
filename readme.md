@@ -122,7 +122,7 @@ page.save("sample_page.html")
 
 ## Background
 
-The `balisage` package was originally created to generate hyper-customizable HTML tables from Pandas dataframes, since `DataFrame.to_html()` has very limited styling options. That said, it has since been expanded to include a wider range of HTML elements with support for more advanced features such as Pythonic ways to add classes and attributes.
+The `balisage` package was originally created to generate hyper-customizable HTML tables from [`pandas`](https://pypi.org/project/pandas/) dataframes, since `DataFrame.to_html()` has very limited styling options. That said, it has since been expanded to include a wider range of HTML elements with support for more advanced features such as Pythonic ways to add classes and attributes.
 
 Admittedly, other tools like `balisage` exist, and many are more mature. However, its creation provided an interesting opportunity to practice Python packaging and unit testing, as well as the ability to learn modern tools, including [`uv`](https://github.com/astral-sh/uv), [`ruff`](https://github.com/astral-sh/ruff), and [`pytest`](https://pypi.org/project/pytest/). Additionally, it was the perfect way to implement CI pipelining using [GitHub Actions](https://github.com/features/actions).
 
