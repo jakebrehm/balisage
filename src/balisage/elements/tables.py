@@ -162,7 +162,8 @@ class Header(Row):
                     data[d].is_header = True
                 except AttributeError:
                     raise TypeError(
-                        f"Expected {Data.__name__} object, got {type(data[d]).__name__}"
+                        f"Expected {Data.__name__} object, got "
+                        f"{type(data[d]).__name__}"
                     )
 
         # Initialize the builder
@@ -300,7 +301,8 @@ class Table(HTMLBuilder):
         """Determines whether the input is of the expected type."""
         if not isinstance(value, expected_type):
             raise TypeError(
-                f"Expected {expected_type.__name__} object, got {type(value).__name__}"
+                f"Expected {expected_type.__name__} object, got "
+                f"{type(value).__name__}"
             )
 
     @classmethod
