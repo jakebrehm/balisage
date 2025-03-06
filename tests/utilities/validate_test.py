@@ -12,6 +12,7 @@ from balisage.utilities.validate import (
     is_builder,
     is_element,
     is_valid_class_name,
+    is_valid_type,
     raise_if_incorrect_type,
     sanitize_class_name,
     split_preserving_quotes,
@@ -50,6 +51,23 @@ def test_is_element() -> None:
 
     # Test with a string
     assert is_element("Test string") is True
+
+
+def test_is_valid_type() -> None:
+    """Tests the is_valid_type function."""
+
+    # Test with valid types
+    valid_types = [int, float, str, Div]
+    assert is_valid_type(1, valid_types) is True
+    assert is_valid_type(2.0, valid_types) is True
+    assert is_valid_type("Test", valid_types) is True
+    assert is_valid_type(Div(), valid_types) is True
+
+    # Test with invalid types
+    valid_types = [list, dict, tuple]
+    invalid_types = [1, 2.0, "Test", Div(), True, False, None]
+    for invalid_type in invalid_types:
+        assert is_valid_type(invalid_type, valid_types) is False
 
 
 def test_raise_if_incorrect_type() -> None:

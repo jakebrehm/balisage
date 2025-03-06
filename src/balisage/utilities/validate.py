@@ -20,6 +20,13 @@ def is_element(object: Any) -> bool:
     return is_builder(object) or isinstance(object, str)
 
 
+def is_valid_type(value: Any, expected_types: list[Any]) -> bool:
+    """Determines whether the input is of the expected type."""
+    return any(
+        isinstance(value, expected_type) for expected_type in expected_types
+    )
+
+
 def raise_if_incorrect_type(value: Any, expected_type: Any) -> None:
     """Determines whether the input is of the expected type."""
     if not isinstance(value, expected_type):
