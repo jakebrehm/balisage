@@ -746,7 +746,13 @@ def test_elements_max_elements(elements: Elements) -> None:
 def test_elements_valid_types(elements: Elements) -> None:
     """Tests the valid_types property of the Elements class."""
 
-    # Test the default valid_types
+    # Try setting valid_types to types incompatible with the current elements
+    message = "Types of current elements are not one of (int,)"
+    with pytest.raises(TypeError, match=re.escape(message)):
+        elements.valid_types = int
+
+    # Test the default valid_types and clear the elements
+    elements.clear()
     assert elements.valid_types is None
 
     # Set valid_types to something valid
@@ -769,7 +775,7 @@ def test_elements_valid_types(elements: Elements) -> None:
         elements.valid_types = test_value
         assert elements.valid_types is None
 
-    # Set valid_types to an invalid type
+    # Set valid_types to an invalid value
     message = "Expected a type, got instance of int"
     with pytest.raises(TypeError, match=re.escape(message)):
         elements.valid_types = 1
@@ -791,11 +797,11 @@ def test_elements_add(elements: Elements, element_data: list[Element]) -> None:
     assert elements.elements == expected_elements
 
     # Try adding new elements that are allowed
+    elements.clear()
     elements.valid_types = str
     new_element = "Test string"
     elements.add(new_element)
-    expected_elements = expected_elements + [new_element]
-    assert elements.elements == expected_elements
+    assert elements.elements == [new_element]
 
     # Try adding new elements that are not allowed
     message = "Got LineBreak, expected one of (str,)"
@@ -832,6 +838,7 @@ def test_elements_set(elements: Elements) -> None:
     assert elements.elements == new_data
 
     # Try setting new elements that are allowed
+    elements.clear()
     elements.valid_types = str
     new_data = "Test string"
     elements.set(new_data)
@@ -853,11 +860,14 @@ def test_elements_insert(
     assert elements.elements == element_data
 
     # Try inserting elements that are allowed
+    elements.clear()
     elements.valid_types = str
+    expected_data = ["Test string 1", "Test string 2"]
+    elements.add(*expected_data)
     new_data = "Test string"
-    element_data.insert(1, new_data)
+    expected_data.insert(1, new_data)
     elements.insert(1, new_data)
-    assert elements.elements == element_data
+    assert elements.elements == expected_data
 
     # Try inserting elements that are not allowed
     message = "Got LineBreak, expected one of (str,)"
@@ -878,9 +888,11 @@ def test_elements_update(
     assert len(elements.elements) == 2
 
     # Try updating with elements that are allowed
+    elements.clear()
     elements.valid_types = str
+    expected_data = ["Test string 1", "Test string 2"]
+    elements.add(*expected_data)
     new_element = "Test string"
-    expected_data = element_data
     expected_data[0] = new_element
     elements.update(0, new_element)
     assert elements.elements[0] == new_element

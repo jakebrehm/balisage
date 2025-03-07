@@ -7,7 +7,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Iterator, Self, Type
 
 from .utilities.validate import (
+    get_type_name_string,
     is_element,
+    is_valid_type,
     raise_for_type,
     sanitize_class_name,
     split_preserving_quotes,
@@ -314,7 +316,7 @@ class Elements:
         # Initialize instance variables
         self._elements: list[Element] = []
         self._max_elements: int | None = None
-        self._valid_types: tuple[Type] | None = None
+        self._valid_types: tuple[Type, ...] | None = None
 
         # Set the elements
         self.set(*elements)
@@ -348,7 +350,7 @@ class Elements:
         self._max_elements = value
 
     @property
-    def valid_types(self) -> tuple[Type] | None:
+    def valid_types(self) -> tuple[Type, ...] | None:
         """Gets the valid types."""
         return self._valid_types
 
@@ -361,9 +363,13 @@ class Elements:
 
         A value of None will remove any type restrictions.
         """
+        # Always allow removing type restrictions
         if valid_types is None:
             self._valid_types = None
             return
+        # Check if current elements are not compatible with proposed types
+        self._raise_if_current_elements_are_invalid(valid_types=valid_types)
+        # Set the valid types
         if valid_types := types_to_tuple(valid_types):
             self._valid_types = valid_types
         else:
@@ -418,7 +424,7 @@ class Elements:
         new_elements: int,
         ignore_current_elements: bool = False,
     ) -> None:
-        """Determines whether the provided elements can be added."""
+        """Raises an exception if the provided elements can not be added."""
 
         if self.max_elements is None:
             return
@@ -437,6 +443,19 @@ class Elements:
                 f"{proposed_elements} {proposed_string} would exceed the "
                 f"maximum number of elements ({self.max_elements})"
             )
+
+    def _raise_if_current_elements_are_invalid(
+        self,
+        valid_types: Type | list[Type] | tuple[Type, ...] | None,
+    ) -> None:
+        """Raises an exception if the current elements are not valid types."""
+        valid_types = types_to_tuple(valid_types)
+        for element in self._elements:
+            if not is_valid_type(element, valid_types):
+                type_names = get_type_name_string(valid_types)
+                raise TypeError(
+                    f"Types of current elements are not one of {type_names}"
+                )
 
     def __getitem__(self, index: int) -> Element:
         """Gets the element at the specified index."""

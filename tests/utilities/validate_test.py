@@ -9,6 +9,7 @@ import pytest
 from balisage.core import HTMLBuilder
 from balisage.elements.styles import Div
 from balisage.utilities.validate import (
+    get_type_name_string,
     is_builder,
     is_element,
     is_valid_class_name,
@@ -52,6 +53,16 @@ def test_is_element() -> None:
 
     # Test with a string
     assert is_element("Test string") is True
+
+
+def test_get_type_name_string() -> None:
+    """Tests the get_type_name_string function."""
+    assert get_type_name_string(Div) == "(Div,)"
+    assert get_type_name_string(int) == "(int,)"
+    assert get_type_name_string([int]) == "(int,)"
+    assert get_type_name_string([int, float]) == "(int, float)"
+    assert get_type_name_string((int,)) == "(int,)"
+    assert get_type_name_string((int, float)) == "(int, float)"
 
 
 def test_types_to_tuple() -> None:

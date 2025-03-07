@@ -104,9 +104,9 @@ def test_ordered_list_init(ordered_list: OrderedList) -> None:
     assert ordered_list.tag == "ol"
 
     # Test with invalid elements
-    message = "All elements of OrderedList must be of type ListItem"
-    with pytest.raises(TypeError, match=message):
-        OrderedList(
+    message = "Got str, expected one of (ListItem,)"
+    with pytest.raises(TypeError, match=re.escape(message)):
+        ordered_list = OrderedList(
             elements=Elements(
                 ListItem(elements=Elements("First item")),
                 "Invalid element",
@@ -293,8 +293,8 @@ def test_unordered_list_init(unordered_list: UnorderedList) -> None:
     assert unordered_list.tag == "ul"
 
     # Test with invalid elements
-    message = "All elements of UnorderedList must be of type ListItem"
-    with pytest.raises(TypeError, match=message):
+    message = "Got str, expected one of (ListItem,)"
+    with pytest.raises(TypeError, match=re.escape(message)):
         UnorderedList(
             elements=Elements(
                 ListItem(elements=Elements("First item")),

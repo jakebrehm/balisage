@@ -1,6 +1,6 @@
 [project]
 name = "balisage"
-version = "0.3.4"
+version = "0.3.5"
 description = "Generate HTML using an intuitive Python interface."
 readme = "readme.md"
 requires-python = ">=3.11"

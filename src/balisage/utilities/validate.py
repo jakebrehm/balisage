@@ -20,6 +20,14 @@ def is_element(object: Any) -> bool:
     return is_builder(object) or isinstance(object, str)
 
 
+def get_type_name_string(
+    types: Type | list[Type] | tuple[Type, ...],
+) -> str:
+    """Formats a types tuple into a representation of its type names."""
+    type_names = [t.__name__ for t in types_to_tuple(types)]
+    return f"({', '.join(type_names)}{',' if len(type_names) == 1 else ''})"
+
+
 def types_to_tuple(value: Any) -> tuple[Any, ...]:
     """Converts a value for expected types to a tuple if necessary."""
     if isinstance(value, tuple):
@@ -47,12 +55,9 @@ def raise_for_type(
     """Determines whether the input is of the expected type."""
     expected_types = types_to_tuple(expected_types)
     if not is_valid_type(value, expected_types):
-        type_names = [t.__name__ for t in expected_types]
-        type_names = (
-            f"({', '.join(type_names)}{',' if len(type_names) == 1 else ''})"
-        )
         raise TypeError(
-            f"Got {type(value).__name__}, expected one of {type_names}"
+            f"Got {type(value).__name__}, expected one of "
+            f"{get_type_name_string(expected_types)}"
         )
 
 
