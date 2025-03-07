@@ -1,4 +1,4 @@
-from .attributes import Attributes, Classes
+from .attributes import Attributes, Classes, Elements
 from .core import GenericElement
 from .elements.basic import Page
 from .elements.format import HorizontalRule, LineBreak
@@ -20,6 +20,7 @@ from .elements.text import (
 __all__ = [
     "Attributes",
     "Classes",
+    "Elements",
     "GenericElement",
     "Page",
     "HorizontalRule",
