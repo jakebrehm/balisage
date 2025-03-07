@@ -5,7 +5,7 @@ Contains code for all table-related HTML elements.
 from copy import deepcopy
 from typing import Any, Iterator, Self
 
-from ..attributes import Classes, Elements
+from ..attributes import Classes
 from ..core import HTMLBuilder
 from ..types import AttributesType, ClassesType
 from ..utilities.optional import requires_modules
@@ -94,11 +94,13 @@ class Row(HTMLBuilder):
 
         # Initialize the builder
         super().__init__(
-            elements=Elements(*data) if data else Elements(),
+            elements=None,
             attributes=attributes,
             classes=classes,
         )
         self.tag = "tr"
+
+        self.elements.valid_types = Data
 
         # Set the data
         if data is not None:
@@ -156,20 +158,9 @@ class Header(Row):
     ) -> None:
         """Initializes the Header object."""
 
-        # Convert all data to header data
-        if data is not None:
-            for d in range(len(data)):
-                try:
-                    data[d].is_header = True
-                except AttributeError:
-                    raise TypeError(
-                        f"Expected {Data.__name__} object, got "
-                        f"{type(data[d]).__name__}"
-                    )
-
         # Initialize the builder
         super().__init__(
-            data=Elements(*data) if data else Elements(),
+            data=data,
             attributes=attributes,
             classes=classes,
         )
@@ -177,23 +168,27 @@ class Header(Row):
     def add(self, *data: Data) -> None:
         """Convenience wrapper for the self.elements.add method."""
         for d in data:
-            d.is_header = True
+            if isinstance(d, Data):
+                d.is_header = True
         self.elements.add(*data)
 
     def set(self, *data: Data) -> None:
         """Convenience wrapper for the self.elements.set method."""
         for d in data:
-            d.is_header = True
+            if isinstance(d, Data):
+                d.is_header = True
         self.elements.set(*data)
 
     def insert(self, index: int, data: Data) -> None:
         """Convenience wrapper for the self.elements.insert method."""
-        data.is_header = True
+        if isinstance(data, Data):
+            data.is_header = True
         self.elements.insert(index, data)
 
     def update(self, index: int, data: Data) -> None:
         """Convenience wrapper for the self.elements.update method."""
-        data.is_header = True
+        if isinstance(data, Data):
+            data.is_header = True
         self.elements.update(index, data)
 
 
@@ -211,11 +206,13 @@ class Table(HTMLBuilder):
 
         # Initialize the builder
         super().__init__(
-            elements=Elements(*rows) if rows else Elements(),
+            elements=None,
             attributes=attributes,
             classes=classes,
         )
         self.tag = "table"
+
+        self.elements.valid_types = (Row, Header)
 
         # Set header and rows
         if rows is not None:

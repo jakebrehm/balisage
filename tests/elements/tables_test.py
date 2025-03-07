@@ -208,6 +208,21 @@ def test_row_init(
     assert row.elements == Elements()
     assert row.tag == "tr"
 
+    # Test with invalid data types
+    invalid_values = [
+        (1, "int"),
+        (2.5, "float"),
+        ("Test", "str"),
+        (True, "bool"),
+        (None, "NoneType"),
+        (dict(), "dict"),
+        (Row(), "Row"),
+    ]
+    for invalid_value, invalid_type in invalid_values:
+        message = f"Got {invalid_type}, expected one of (Data,)"
+        with pytest.raises(TypeError, match=re.escape(message)):
+            Row([Data("Test data"), invalid_value])
+
 
 def test_row_add(row: Row) -> None:
     """Tests the add method of the Row class."""
@@ -339,11 +354,13 @@ def test_header_init(
         (2.5, "float"),
         ("Test", "str"),
         (True, "bool"),
-        (None, "None"),
+        (None, "NoneType"),
+        (dict(), "dict"),
+        (Row(), "Row"),
     ]
     for invalid_value, invalid_type in invalid_values:
-        message = f"Expected Data object, got {invalid_type}"
-        with pytest.raises(TypeError, match=message):
+        message = f"Got {invalid_type}, expected one of (Data,)"
+        with pytest.raises(TypeError, match=re.escape(message)):
             Header([Data("Test data"), invalid_value])
 
 
@@ -457,6 +474,30 @@ def test_table_init(
     assert table.rows == []
     assert table.header == expected_header
     assert table.tag == "table"
+
+    # Test with invalid values
+    invalid_values = [
+        (1, "int"),
+        (2.5, "float"),
+        ("Test", "str"),
+        (True, "bool"),
+        (dict(), "dict"),
+        (Data(), "Data"),
+    ]
+    for invalid_value, invalid_type in invalid_values:
+        message = f"Got {invalid_type}, expected one of (Row,)"
+        with pytest.raises(TypeError, match=re.escape(message)):
+            Table(rows=[invalid_value])
+    for invalid_value, invalid_type in invalid_values:
+        message = f"Got {invalid_type}, expected one of (Header,)"
+        with pytest.raises(TypeError, match=re.escape(message)):
+            Table(header=invalid_value)
+    # Irresponsibly try adding invalid values to the elements directly
+    table = Table()
+    for invalid_value, invalid_type in invalid_values:
+        message = f"Got {invalid_type}, expected one of (Row, Header)"
+        with pytest.raises(TypeError, match=re.escape(message)):
+            table.elements.add(invalid_value)
 
 
 def test_table_header_exists(table: Table) -> None:
