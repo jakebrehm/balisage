@@ -13,9 +13,6 @@ from balisage.elements.image import Image
 from balisage.elements.styles import Div
 from balisage.types import Element
 
-# TODO: Add edge case tests (invalid class names, data types, etc.)
-
-
 # MARK: Fixtures
 
 
@@ -746,6 +743,38 @@ def test_elements_max_elements(elements: Elements) -> None:
         elements.max_elements = 1
 
 
+def test_elements_valid_types(elements: Elements) -> None:
+    """Tests the valid_types property of the Elements class."""
+
+    # Test the default valid_types
+    assert elements.valid_types is None
+
+    # Set valid_types to something valid
+    for test_value, expected_value in [
+        (int, (int,)),
+        ([int], (int,)),
+        ((int,), (int,)),
+        ([int, str], (int, str)),
+        ((int, str), (int, str)),
+    ]:
+        elements.valid_types = test_value
+        assert elements.valid_types == expected_value
+
+    # Set valid_types to None again
+    elements.valid_types = None
+    assert elements.valid_types is None
+
+    # Set valid_types to empty lists and tuples
+    for test_value in [tuple(), list()]:
+        elements.valid_types = test_value
+        assert elements.valid_types is None
+
+    # Set valid_types to an invalid type
+    message = "Expected a type, got instance of int"
+    with pytest.raises(TypeError, match=re.escape(message)):
+        elements.valid_types = 1
+
+
 def test_elements_add(elements: Elements, element_data: list[Element]) -> None:
     """Tests the add method of the Elements class."""
 
@@ -760,6 +789,18 @@ def test_elements_add(elements: Elements, element_data: list[Element]) -> None:
     elements.add(*new_elements)
     expected_elements = expected_elements + new_elements
     assert elements.elements == expected_elements
+
+    # Try adding new elements that are allowed
+    elements.valid_types = str
+    new_element = "Test string"
+    elements.add(new_element)
+    expected_elements = expected_elements + [new_element]
+    assert elements.elements == expected_elements
+
+    # Try adding new elements that are not allowed
+    message = "Got LineBreak, expected one of (str,)"
+    with pytest.raises(TypeError, match=re.escape(message)):
+        elements.add(LineBreak())
 
 
 def test_elements_set(elements: Elements) -> None:
@@ -790,6 +831,17 @@ def test_elements_set(elements: Elements) -> None:
     elements.set(*new_data)
     assert elements.elements == new_data
 
+    # Try setting new elements that are allowed
+    elements.valid_types = str
+    new_data = "Test string"
+    elements.set(new_data)
+    assert elements.elements == [new_data]
+
+    # Try setting new elements that are not allowed
+    message = "Got LineBreak, expected one of (str,)"
+    with pytest.raises(TypeError, match=re.escape(message)):
+        elements.set(LineBreak())
+
 
 def test_elements_insert(
     elements: Elements, element_data: list[Element]
@@ -799,6 +851,18 @@ def test_elements_insert(
     element_data.insert(1, new_element)
     elements.insert(1, new_element)
     assert elements.elements == element_data
+
+    # Try inserting elements that are allowed
+    elements.valid_types = str
+    new_data = "Test string"
+    element_data.insert(1, new_data)
+    elements.insert(1, new_data)
+    assert elements.elements == element_data
+
+    # Try inserting elements that are not allowed
+    message = "Got LineBreak, expected one of (str,)"
+    with pytest.raises(TypeError, match=re.escape(message)):
+        elements.insert(1, LineBreak())
 
 
 def test_elements_update(
@@ -812,6 +876,21 @@ def test_elements_update(
     assert elements.elements[0] == new_element
     assert elements.elements == expected_data
     assert len(elements.elements) == 2
+
+    # Try updating with elements that are allowed
+    elements.valid_types = str
+    new_element = "Test string"
+    expected_data = element_data
+    expected_data[0] = new_element
+    elements.update(0, new_element)
+    assert elements.elements[0] == new_element
+    assert elements.elements == expected_data
+    assert len(elements.elements) == 2
+
+    # Try updating with elements that are not allowed
+    message = "Got HorizontalRule, expected one of (str,)"
+    with pytest.raises(TypeError, match=re.escape(message)):
+        elements.update(0, HorizontalRule())
 
 
 def test_elements_remove(

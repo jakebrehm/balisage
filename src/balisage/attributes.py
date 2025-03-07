@@ -4,12 +4,14 @@ Contains code related to HTML attributes.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Iterator, Self
+from typing import TYPE_CHECKING, Any, Iterator, Self, Type
 
 from .utilities.validate import (
     is_element,
+    raise_for_type,
     sanitize_class_name,
     split_preserving_quotes,
+    types_to_tuple,
 )
 
 if TYPE_CHECKING:
@@ -312,6 +314,7 @@ class Elements:
         # Initialize instance variables
         self._elements: list[Element] = []
         self._max_elements: int | None = None
+        self._valid_types: tuple[Type] | None = None
 
         # Set the elements
         self.set(*elements)
@@ -344,13 +347,41 @@ class Elements:
             )
         self._max_elements = value
 
+    @property
+    def valid_types(self) -> tuple[Type] | None:
+        """Gets the valid types."""
+        return self._valid_types
+
+    @valid_types.setter
+    def valid_types(
+        self,
+        valid_types: Type | list[Type] | tuple[Type, ...] | None,
+    ) -> None:
+        """Sets the valid types.
+
+        A value of None will remove any type restrictions.
+        """
+        if valid_types is None:
+            self._valid_types = None
+            return
+        if valid_types := types_to_tuple(valid_types):
+            self._valid_types = valid_types
+        else:
+            self._valid_types = None
+
     def add(self, *elements: Element) -> None:
         """Adds elements to the list of elements."""
+        if self.valid_types is not None:
+            for element in elements:
+                raise_for_type(element, expected_types=self.valid_types)
         self._raise_if_exceeds_max_elements(new_elements=len(elements))
         self._elements.extend(elements)
 
     def set(self, *elements: Element) -> None:
         """Sets the list of elements."""
+        if self.valid_types is not None:
+            for element in elements:
+                raise_for_type(element, expected_types=self.valid_types)
         self._raise_if_exceeds_max_elements(
             new_elements=len(elements),
             ignore_current_elements=True,
@@ -359,11 +390,15 @@ class Elements:
 
     def insert(self, index: int, element: Element) -> None:
         """Inserts the provided element at the specified index."""
+        if self.valid_types is not None:
+            raise_for_type(element, expected_types=self.valid_types)
         self._raise_if_exceeds_max_elements(new_elements=1)
         self._elements.insert(index, element)
 
     def update(self, index: int, element: Element) -> None:
         """Updates the provided element at the specified index."""
+        if self.valid_types is not None:
+            raise_for_type(element, expected_types=self.valid_types)
         self._elements[index] = element
 
     def remove(self, index: int) -> None:
